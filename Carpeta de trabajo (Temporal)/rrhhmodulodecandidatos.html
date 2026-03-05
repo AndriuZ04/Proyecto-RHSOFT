@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Módulo de Candidatos - RRHH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<header class="bg-blue-700 text-white p-6 text-center">
+    <h1 class="text-3xl font-bold">Módulo de Candidatos</h1>
+    <p class="text-sm">Gestión de aspirantes a la empresa</p>
+</header>
+
+<div class="max-w-6xl mx-auto mt-10 grid md:grid-cols-2 gap-8">
+
+    <!-- FORMULARIO -->
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-bold text-blue-600 mb-4">Registrar Candidato</h2>
+
+        <form id="formCandidato" class="space-y-4">
+
+            <input type="text" id="nombre" placeholder="Nombre completo"
+                class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+
+            <input type="tel" id="telefono" placeholder="Teléfono"
+                class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+
+            <input type="email" id="email" placeholder="Correo electrónico"
+                class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+
+            <select id="estado"
+                class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                <option disabled selected value="">Seleccione estado</option>
+                <option>En revisión</option>
+                <option>Entrevista</option>
+                <option>Seleccionado</option>
+                <option>Rechazado</option>
+            </select>
+
+            <!-- Subir Hoja de Vida -->
+            <input type="file" id="hojaVida" accept=".pdf,.doc,.docx"
+                class="w-full p-2 border rounded-lg bg-gray-50" required>
+
+            <button type="submit"
+                class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-800 transition transform hover:scale-105">
+                Guardar Candidato
+            </button>
+
+        </form>
+    </div>
+
+    <!-- LISTA -->
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-bold text-blue-600 mb-4">Lista de Candidatos</h2>
+        <div id="listaCandidatos" class="space-y-4"></div>
+    </div>
+
+</div>
+
+<footer class="bg-blue-700 text-white text-center p-4 mt-10">
+    Sistema de RRHH - Módulo Candidatos 2026
+</footer>
+
+<script>
+const form = document.getElementById("formCandidato");
+const lista = document.getElementById("listaCandidatos");
+
+form.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const nombre = document.getElementById("nombre").value;
+    const telefono = document.getElementById("telefono").value;
+    const email = document.getElementById("email").value;
+    const estado = document.getElementById("estado").value;
+    const hojaVidaInput = document.getElementById("hojaVida");
+
+    const archivo = hojaVidaInput.files[0];
+    const nombreArchivo = archivo ? archivo.name : "Sin archivo";
+
+    let colorEstado = "text-gray-600";
+    if (estado === "En revisión") colorEstado = "text-yellow-600";
+    if (estado === "Entrevista") colorEstado = "text-blue-600";
+    if (estado === "Seleccionado") colorEstado = "text-green-600";
+    if (estado === "Rechazado") colorEstado = "text-red-600";
+
+    const card = document.createElement("div");
+    card.className = "p-4 border rounded-lg shadow-md transition duration-300 transform hover:scale-105";
+
+    card.innerHTML = `
+        <div class="flex justify-between">
+            <div>
+                <h3 class="font-bold text-lg">${nombre}</h3>
+                <p class="text-sm text-gray-600">Teléfono: ${telefono}</p>
+                <p class="text-sm text-gray-600">Email: ${email}</p>
+                <p class="text-sm text-gray-600">Hoja de vida: ${nombreArchivo}</p>
+                <span class="${colorEstado} font-semibold">${estado}</span>
+            </div>
+            <button class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition">
+                Eliminar
+            </button>
+        </div>
+    `;
+
+    card.querySelector("button").addEventListener("click", function(){
+        card.remove();
+    });
+
+    lista.appendChild(card);
+    form.reset();
+});
+</script>
+
+</body>
+</html>
