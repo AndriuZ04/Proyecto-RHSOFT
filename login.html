@@ -1,44 +1,68 @@
-<!doctype html> <!--le dice al navegador que es HTML5-->
-<html lang="es">  <!--le dice al navegador que es HTML5-->
-    <head> 
-        <meta charset="utf-8"> <!--usa codificacion utf-8(UTF-8 (8-bit Unicode Transformation Forma)-->
-        <title>login RHSOFT</title> <!--usa codificacion utf-8(UTF-8 (8-bit Unicode Transformation Forma)-->
-        <script src="https://cdn.tailwindcss.com"></script> <!---->
-    </head><!--encabezado-->
-        <body style="background-color: #9CD5FF;"></body> <!--interfaz del login-->  
-        <div class="flex items-center justify-center h-screen">
+<!DOCTYPE html> <!-- Indica que el documento es HTML5 -->
 
-    <div class="bg-[#355872] p-8 rounded-2xl shadow-2xl w-80 text-black"><!--etiqueta definitoria-->
-<div class="text-center mb-4">
+<html lang="es"> <!-- Define el idioma de la página (español) -->
+
+<head>
+    <meta charset="UTF-8"> <!-- Permite usar tildes, ñ y caracteres especiales -->
     
-    <h1 class="text-4xl font-extrabold tracking-wide"
-    style="color: #0f4c5c; text-shadow: 2px 2px 4px rgba(0,0,0,0.4);">
-        COBALSA
-    </h1>
+    <title>Login RHSOFT</title> <!-- Título que aparece en la pestaña del navegador -->
+    
+    <!-- Importa Tailwind CSS (framework para estilos rápidos) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-    <p class="text-sm mt-1 tracking-widest"
-    style="color: #7AAACE;">
-        COLOMBIANA DE BALSA LTDA
-    </p>
+<!-- Cuerpo de la página -->
+<body class="bg-[#9CD5FF]"> <!-- Fondo azul claro -->
 
-</div>
-    <h2 class="text-2xl font-semibold text-center mb-6 text-white">
-        Iniciar Sesión
-    </h2>
+    <!-- Contenedor principal centrado vertical y horizontalmente -->
+    <div class="flex items-center justify-center h-screen">
+        
+        <!-- Caja del login -->
+        <div class="bg-[#355872] p-8 rounded-2xl shadow-2xl w-80 text-black">
+            
+            <!-- Encabezado (nombre de la empresa) -->
+            <div class="text-center mb-4">
+                
+                <!-- Título principal -->
+                <h1 class="text-4xl font-extrabold tracking-wide"
+                    style="color: #0f4c5c; text-shadow: 2px 2px 4px rgba(0,0,0,0.4);">
+                    COBALSA
+                </h1>
 
-    <input type="text" placeholder="Usuario"
-    class="w-full p-2 mb-4 rounded bg-white shadow-sm focus:ring-2 focus:ring-blue-400">
+                <!-- Subtítulo -->
+                <p class="text-sm mt-1 tracking-widest text-[#7AAACE]">
+                    COLOMBIANA DE BALSA LTDA
+                </p>
 
-    <input type="password" placeholder="Contraseña"
-    class="w-full p-2 mb-4 rounded bg-white shadow-sm focus:ring-2 focus:ring-blue-400">
+            </div>
 
-    <button class="w-full p-2 rounded mt-2 text-black"
-      style="background-color: #F7F8F0;">
-      Ingresar
-     </button>
+            <!-- Título del formulario -->
+            <h2 class="text-2xl font-semibold text-center mb-6 text-white">
+                Iniciar Sesión
+            </h2>
 
-</div>
+            <!-- Campo de usuario -->
+            <input 
+                type="text" 
+                placeholder="Usuario"
+                class="w-full p-2 mb-4 rounded bg-white shadow-sm focus:ring-2 focus:ring-blue-400"
+            >
 
-</div>
-    </body>
+            <!-- Campo de contraseña -->
+            <input 
+                type="password" 
+                placeholder="Contraseña"
+                class="w-full p-2 mb-4 rounded bg-white shadow-sm focus:ring-2 focus:ring-blue-400"
+            >
+
+            <!-- Botón de login -->
+            <button 
+                class="w-full p-2 rounded mt-2 text-black bg-[#F7F8F0] hover:bg-gray-200 transition">
+                Ingresar
+            </button>
+
+        </div>
+    </div>
+
+</body>
 </html>
