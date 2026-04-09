@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- Indica que el documento es HTML5 -->
+
+<html lang="es"> <!-- Define el idioma de la página (español) -->
+
+<head>
+    <meta charset="UTF-8"> <!-- Permite usar tildes, ñ y caracteres especiales -->
+    
+    <title>Login RHSOFT</title> <!-- Título que aparece en la pestaña del navegador -->
+    
+    <!-- Importa Tailwind CSS (framework para estilos rápidos) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<!-- Cuerpo de la página -->
+<body class="bg-[#9CD5FF]"> <!-- Fondo azul claro -->
+
+    <!-- Contenedor principal centrado vertical y horizontalmente -->
+    <div class="flex items-center justify-center h-screen">
+        
+        <!-- Caja del login -->
+        <div class="bg-[#355872] p-8 rounded-2xl shadow-2xl w-80 text-black">
+            
+            <!-- Encabezado (nombre de la empresa) -->
+            <div class="text-center mb-4">
+                
+                <!-- Título principal -->
+                <h1 class="text-4xl font-extrabold tracking-wide"
+                    style="color: #0f4c5c; text-shadow: 2px 2px 4px rgba(0,0,0,0.4);">
+                    COBALSA
+                </h1>
+
+                <!-- Subtítulo -->
+                <p class="text-sm mt-1 tracking-widest text-[#7AAACE]">
+                    COLOMBIANA DE BALSA LTDA
+                </p>
+
+            </div>
+
+            <!-- Título del formulario -->
+            <h2 class="text-2xl font-semibold text-center mb-6 text-white">
+                Iniciar Sesión
+            </h2>
+
+            <!-- Campo de usuario -->
+            <input 
+                type="text" 
+                placeholder="Usuario"
+                class="w-full p-2 mb-4 rounded bg-white shadow-sm focus:ring-2 focus:ring-blue-400"
+            >
+
+            <!-- Campo de contraseña -->
+            <input 
+                type="password" 
+                placeholder="Contraseña"
+                class="w-full p-2 mb-4 rounded bg-white shadow-sm focus:ring-2 focus:ring-blue-400"
+            >
+
+            <!-- Botón de login -->
+            <button 
+                class="w-full p-2 rounded mt-2 text-black bg-[#F7F8F0] hover:bg-gray-200 transition">
+                Ingresar
+            </button>
+
+        </div>
+    </div>
+
+</body>
+</html>
