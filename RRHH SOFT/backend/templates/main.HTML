@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Main Dashboard — COBALSA</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family: 'Poppins', sans-serif;
+      overflow-x:hidden;
+      background:#08131f;
+    }
+
+    /*═══════════════════════════════════════
+      FONDO ANIMADO
+    ═══════════════════════════════════════*/
+    .animated-bg{
+      position:fixed;
+      inset:0;
+      z-index:-3;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0,255,170,.15), transparent 25%),
+        radial-gradient(circle at 80% 30%, rgba(0,153,255,.18), transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(0,255,200,.10), transparent 30%),
+        linear-gradient(135deg,#071018,#0a1724,#071018);
+      animation:bgMove 15s ease infinite alternate;
+    }
+
+    @keyframes bgMove{
+      0%{
+        filter:hue-rotate(0deg);
+        transform:scale(1);
+      }
+      100%{
+        filter:hue-rotate(25deg);
+        transform:scale(1.05);
+      }
+    }
+
+    /*═══════════════════════════════════════
+      PARTICLES
+    ═══════════════════════════════════════*/
+    .particles span{
+      position:absolute;
+      width:5px;
+      height:5px;
+      background:#00ffd5;
+      border-radius:50%;
+      opacity:.3;
+      animation:float 10s linear infinite;
+    }
+
+    @keyframes float{
+      0%{
+        transform:translateY(100vh) scale(0);
+      }
+      100%{
+        transform:translateY(-10vh) scale(1);
+      }
+    }
+
+    /*═══════════════════════════════════════
+      SIDEBAR
+    ═══════════════════════════════════════*/
+    .sidebar{
+      width:280px;
+      height:100vh;
+      position:fixed;
+      top:0;
+      left:0;
+
+      background:rgba(255,255,255,0.05);
+      backdrop-filter:blur(20px);
+
+      border-right:1px solid rgba(255,255,255,0.08);
+
+      padding:30px 20px;
+
+      display:flex;
+      flex-direction:column;
+
+      z-index:100;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:15px;
+      margin-bottom:40px;
+    }
+
+    .logo-icon{
+      width:55px;
+      height:55px;
+
+      border-radius:18px;
+
+      background:linear-gradient(135deg,#00ffd5,#0099ff);
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      color:white;
+      font-size:1.4rem;
+
+      box-shadow:0 0 25px rgba(0,255,213,.35);
+    }
+
+    .logo h1{
+      color:white;
+      font-size:1.3rem;
+      font-weight:700;
+      letter-spacing:1px;
+    }
+
+    .logo p{
+      color:#9fb6ca;
+      font-size:.8rem;
+    }
+
+    /*═══════════════════════════════════════
+      PERFIL
+    ═══════════════════════════════════════*/
+    .profile-card{
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,.08);
+
+      padding:20px;
+      border-radius:24px;
+
+      text-align:center;
+      margin-bottom:35px;
+    }
+
+    .avatar{
+      width:90px;
+      height:90px;
+      border-radius:50%;
+
+      margin:auto;
+      margin-bottom:15px;
+
+      background:linear-gradient(135deg,#00ffd5,#0099ff);
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      font-size:2rem;
+      color:white;
+      font-weight:700;
+
+      box-shadow:0 0 25px rgba(0,255,213,.35);
+    }
+
+    .profile-card h2{
+      color:white;
+      font-size:1rem;
+      margin-bottom:5px;
+    }
+
+    .profile-card p{
+      color:#8ea7bd;
+      font-size:.8rem;
+    }
+
+    /*═══════════════════════════════════════
+      MENÚ
+    ═══════════════════════════════════════*/
+    .menu{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .menu a{
+      text-decoration:none;
+
+      display:flex;
+      align-items:center;
+      gap:15px;
+
+      padding:15px 18px;
+      border-radius:18px;
+
+      color:#dbe8f3;
+      transition:.3s;
+      position:relative;
+
+      overflow:hidden;
+    }
+
+    .menu a::before{
+      content:"";
+      position:absolute;
+      inset:0;
+
+      background:linear-gradient(90deg,rgba(0,255,213,.18),transparent);
+      opacity:0;
+      transition:.3s;
+    }
+
+    .menu a:hover::before{
+      opacity:1;
+    }
+
+    .menu a:hover{
+      transform:translateX(5px);
+      background:rgba(255,255,255,0.05);
+      color:white;
+    }
+
+    .menu a.active{
+      background:linear-gradient(135deg,#00ffd5,#0099ff);
+      color:white;
+      box-shadow:0 0 25px rgba(0,255,213,.25);
+    }
+
+    /*═══════════════════════════════════════
+      MAIN CONTENT
+    ═══════════════════════════════════════*/
+    .main{
+      margin-left:280px;
+      padding:40px;
+      min-height:100vh;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:35px;
+    }
+
+    .welcome h1{
+      color:white;
+      font-size:2rem;
+      font-weight:700;
+    }
+
+    .welcome p{
+      color:#9fb6ca;
+      margin-top:5px;
+    }
+
+    .top-actions{
+      display:flex;
+      gap:15px;
+      align-items:center;
+    }
+
+    .glass-btn{
+      width:50px;
+      height:50px;
+
+      border:none;
+      border-radius:18px;
+
+      background:rgba(255,255,255,0.05);
+      backdrop-filter:blur(12px);
+
+      color:white;
+      cursor:pointer;
+
+      transition:.3s;
+
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .glass-btn:hover{
+      transform:translateY(-3px);
+      background:rgba(0,255,213,.15);
+    }
+
+    /*═══════════════════════════════════════
+      CARDS
+    ═══════════════════════════════════════*/
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:25px;
+
+      margin-bottom:35px;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.05);
+      backdrop-filter:blur(18px);
+
+      border:1px solid rgba(255,255,255,.08);
+
+      border-radius:28px;
+
+      padding:28px;
+
+      position:relative;
+      overflow:hidden;
+
+      transition:.4s;
+    }
+
+    .card:hover{
+      transform:translateY(-8px);
+      box-shadow:0 20px 40px rgba(0,0,0,.35);
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      width:180px;
+      height:180px;
+      background:radial-gradient(circle,rgba(0,255,213,.15),transparent 70%);
+      top:-50px;
+      right:-50px;
+    }
+
+    .card-icon{
+      width:60px;
+      height:60px;
+
+      border-radius:18px;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      background:linear-gradient(135deg,#00ffd5,#0099ff);
+
+      color:white;
+      font-size:1.3rem;
+
+      margin-bottom:20px;
+    }
+
+    .card h3{
+      color:#9fb6ca;
+      font-size:.95rem;
+      margin-bottom:10px;
+    }
+
+    .card .number{
+      color:white;
+      font-size:2rem;
+      font-weight:700;
+    }
+
+    .card .growth{
+      margin-top:10px;
+      color:#00ffd5;
+      font-size:.9rem;
+    }
+
+    /*═══════════════════════════════════════
+      PANEL INFERIOR
+    ═══════════════════════════════════════*/
+    .bottom-grid{
+      display:grid;
+      grid-template-columns:2fr 1fr;
+      gap:25px;
+    }
+
+    .big-panel,
+    .activity-panel{
+      background:rgba(255,255,255,0.05);
+      backdrop-filter:blur(18px);
+
+      border:1px solid rgba(255,255,255,.08);
+
+      border-radius:28px;
+      padding:28px;
+    }
+
+    .panel-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+
+      margin-bottom:25px;
+    }
+
+    .panel-title h2{
+      color:white;
+      font-size:1.2rem;
+    }
+
+    .table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    .table tr{
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+
+    .table td{
+      padding:18px 10px;
+      color:#c9d7e4;
+    }
+
+    .status{
+      padding:8px 15px;
+      border-radius:999px;
+      font-size:.8rem;
+      display:inline-block;
+    }
+
+    .success{
+      background:rgba(0,255,170,.15);
+      color:#00ffbf;
+    }
+
+    .warning{
+      background:rgba(255,180,0,.15);
+      color:#ffbf00;
+    }
+
+    .danger{
+      background:rgba(255,0,85,.15);
+      color:#ff5b8f;
+    }
+
+    .activity{
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+
+    .activity-item{
+      display:flex;
+      gap:15px;
+      align-items:flex-start;
+    }
+
+    .activity-icon{
+      width:45px;
+      height:45px;
+      border-radius:14px;
+
+      background:linear-gradient(135deg,#00ffd5,#0099ff);
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      color:white;
+      flex-shrink:0;
+    }
+
+    .activity-item h4{
+      color:white;
+      font-size:.95rem;
+    }
+
+    .activity-item p{
+      color:#8ea7bd;
+      font-size:.82rem;
+      margin-top:4px;
+    }
+
+    /*═══════════════════════════════════════
+      RESPONSIVE
+    ═══════════════════════════════════════*/
+    @media(max-width:1100px){
+
+      .bottom-grid{
+        grid-template-columns:1fr;
+      }
+
+    }
+
+    @media(max-width:900px){
+
+      .sidebar{
+        left:-100%;
+      }
+
+      .main{
+        margin-left:0;
+        padding:20px;
+      }
+
+      .topbar{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:20px;
+      }
+
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Fondo -->
+  <div class="animated-bg"></div>
+
+  <!-- Partículas -->
+  <div class="particles">
+    <span style="left:10%; animation-delay:0s;"></span>
+    <span style="left:25%; animation-delay:2s;"></span>
+    <span style="left:40%; animation-delay:5s;"></span>
+    <span style="left:65%; animation-delay:1s;"></span>
+    <span style="left:85%; animation-delay:4s;"></span>
+  </div>
+
+  <!--═══════════════════════════════════════
+      SIDEBAR
+  ═══════════════════════════════════════-->
+  <aside class="sidebar">
+
+    <div class="logo">
+      <div class="logo-icon">
+        <i class="fa-solid fa-cube"></i>
+      </div>
+
+      <div>
+        <h1>COBALSA</h1>
+        <p>Sistema Administrativo</p>
+      </div>
+    </div>
+
+    <!-- PERFIL -->
+    <div class="profile-card">
+
+      <div class="avatar">
+        C
+      </div>
+
+      <h2>Cristian Escobar</h2>
+      <p>Administrador</p>
+
+    </div>
+
+    <!-- MENU -->
+    <nav class="menu">
+
+      <a href="#" class="active">
+        <i class="fa-solid fa-house"></i>
+        Dashboard
+      </a>
+
+      <a href="#">
+        <i class="fa-solid fa-users"></i>
+        Empleados
+      </a>
+
+      <a href="#">
+        <i class="fa-solid fa-box"></i>
+        Inventario
+      </a>
+
+      <a href="#">
+        <i class="fa-solid fa-chart-line"></i>
+        Reportes
+      </a>
+
+      <a href="#">
+        <i class="fa-solid fa-gear"></i>
+        Configuración
+      </a>
+
+      <a href="#">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Cerrar sesión
+      </a>
+
+    </nav>
+
+  </aside>
+
+  <!--═══════════════════════════════════════
+      MAIN
+  ═══════════════════════════════════════-->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+
+      <div class="welcome">
+        <h1>Bienvenido, Cristian 👋</h1>
+        <p>Panel principal del sistema COBALSA</p>
+      </div>
+
+      <div class="top-actions">
+
+        <button class="glass-btn">
+          <i class="fa-solid fa-bell"></i>
+        </button>
+
+        <button class="glass-btn">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fa-solid fa-dollar-sign"></i>
+        </div>
+
+        <h3>Ventas Totales</h3>
+        <div class="number">$12.450</div>
+        <div class="growth">
+          +12% este mes
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fa-solid fa-users"></i>
+        </div>
+
+        <h3>Usuarios Activos</h3>
+        <div class="number">1,248</div>
+        <div class="growth">
+          +5% crecimiento
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fa-solid fa-box-open"></i>
+        </div>
+
+        <h3>Productos</h3>
+        <div class="number">856</div>
+        <div class="growth">
+          +28 nuevos
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fa-solid fa-chart-column"></i>
+        </div>
+
+        <h3>Ganancias</h3>
+        <div class="number">$8.930</div>
+        <div class="growth">
+          +18% aumento
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PANEL INFERIOR -->
+    <div class="bottom-grid">
+
+      <!-- TABLA -->
+      <div class="big-panel">
+
+        <div class="panel-title">
+          <h2>Actividad Reciente</h2>
+        </div>
+
+        <table class="table">
+
+          <tr>
+            <td>Pedido #3921</td>
+            <td>Completado</td>
+            <td>
+              <span class="status success">
+                Exitoso
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Factura #1021</td>
+            <td>Pendiente</td>
+            <td>
+              <span class="status warning">
+                Esperando
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Empleado agregado</td>
+            <td>Nuevo usuario</td>
+            <td>
+              <span class="status success">
+                Registrado
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Error sistema</td>
+            <td>Servidor</td>
+            <td>
+              <span class="status danger">
+                Revisar
+              </span>
+            </td>
+          </tr>
+
+        </table>
+
+      </div>
+
+      <!-- ACTIVIDAD -->
+      <div class="activity-panel">
+
+        <div class="panel-title">
+          <h2>Notificaciones</h2>
+        </div>
+
+        <div class="activity">
+
+          <div class="activity-item">
+
+            <div class="activity-icon">
+              <i class="fa-solid fa-user-plus"></i>
+            </div>
+
+            <div>
+              <h4>Nuevo empleado</h4>
+              <p>Se registró un nuevo usuario.</p>
+            </div>
+
+          </div>
+
+          <div class="activity-item">
+
+            <div class="activity-icon">
+              <i class="fa-solid fa-box"></i>
+            </div>
+
+            <div>
+              <h4>Inventario actualizado</h4>
+              <p>Se agregaron 20 productos.</p>
+            </div>
+
+          </div>
+
+          <div class="activity-item">
+
+            <div class="activity-icon">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+
+            <div>
+              <h4>Ventas en aumento</h4>
+              <p>Las ventas subieron un 18%.</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</body>
+</html>

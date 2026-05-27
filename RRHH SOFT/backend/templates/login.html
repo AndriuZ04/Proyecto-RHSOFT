@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso al Sistema — COBALSA</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Sora', 'sans-serif'],
+            body:    ['DM Sans', 'sans-serif'],
+          },
+          animation: {
+            'fade-up':      'fadeUp .7s cubic-bezier(.16,1,.3,1) both',
+            'fade-in':      'fadeIn .5s ease both',
+            'spin-slow':    'spin 8s linear infinite',
+            'orb-drift':    'orbDrift 12s ease-in-out infinite alternate',
+            'orb-drift-2':  'orbDrift2 15s ease-in-out infinite alternate',
+            'shimmer':      'shimmer 2.4s linear infinite',
+            'pulse-glow':   'pulseGlow 3s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeUp: {
+              from: { opacity: '0', transform: 'translateY(28px)' },
+              to:   { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeIn: {
+              from: { opacity: '0' },
+              to:   { opacity: '1' },
+            },
+            orbDrift: {
+              from: { transform: 'translate(0,0) scale(1)' },
+              to:   { transform: 'translate(60px, 40px) scale(1.12)' },
+            },
+            orbDrift2: {
+              from: { transform: 'translate(0,0) scale(1)' },
+              to:   { transform: 'translate(-50px, -30px) scale(1.1)' },
+            },
+            shimmer: {
+              '0%':   { backgroundPosition: '-400px 0' },
+              '100%': { backgroundPosition: '400px 0' },
+            },
+            pulseGlow: {
+              '0%,100%': { boxShadow: '0 0 20px 4px rgba(53,88,114,.35)' },
+              '50%':     { boxShadow: '0 0 40px 10px rgba(53,88,114,.55)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0d1c27;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .bg-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 90% 70% at 15% 5%,  rgba(53,88,114,.28) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 55% at 85% 90%, rgba(122,170,206,.18) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(13,28,39,.95)   0%, transparent 75%),
+        #0d1c27;
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(72px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .orb-1 {
+      width: 520px; height: 420px;
+      top: -160px; left: -120px;
+      background: radial-gradient(circle, rgba(53,88,114,.30) 0%, transparent 70%);
+      animation: orbDrift 12s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      width: 440px; height: 380px;
+      bottom: -120px; right: -100px;
+      background: radial-gradient(circle, rgba(122,170,206,.22) 0%, transparent 70%);
+      animation: orbDrift2 15s ease-in-out infinite alternate;
+    }
+    .orb-3 {
+      width: 280px; height: 240px;
+      top: 45%; right: 12%;
+      background: radial-gradient(circle, rgba(156,213,255,.12) 0%, transparent 70%);
+      animation: orbDrift 18s ease-in-out infinite alternate-reverse;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(156,213,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(156,213,255,.018) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 80%);
+    }
+
+    .glass-card {
+      position: relative;
+      z-index: 10;
+      background: rgba(13, 28, 42, 0.75);
+      border: 1px solid rgba(122,170,206,.12);
+      border-radius: 28px;
+      backdrop-filter: blur(32px) saturate(180%);
+      -webkit-backdrop-filter: blur(32px) saturate(180%);
+      box-shadow:
+        0 0 0 1px rgba(53,88,114,.18),
+        0 40px 80px -20px rgba(0,0,0,.75),
+        0 8px 20px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(156,213,255,.07);
+      width: 100%;
+      max-width: 430px;
+      padding: 3rem 2.75rem 2.75rem;
+      animation: fadeUp .7s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(156,213,255,.55), transparent);
+    }
+
+    .card-glow {
+      position: absolute;
+      inset: -2px;
+      border-radius: 30px;
+      background: transparent;
+      z-index: 9;
+      pointer-events: none;
+      box-shadow: 0 0 80px 10px rgba(53,88,114,.10);
+      transition: box-shadow .4s ease;
+    }
+    .glass-card:hover ~ .card-glow,
+    .glass-card:focus-within ~ .card-glow {
+      box-shadow: 0 0 120px 20px rgba(53,88,114,.18);
+    }
+
+    .cobalsa-logo { display: flex; flex-direction: column; line-height: 1; }
+
+    .cobalsa-main {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 2rem;
+      letter-spacing: 0.06em;
+      background: linear-gradient(135deg, #9CD5FF 0%, #7AAACE 40%, #355872 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 8px rgba(156,213,255,.35));
+    }
+
+    .cobalsa-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      font-size: 0.52rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(156,213,255,.5);
+      margin-top: 1px;
+      padding-left: 2px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: rgba(156,213,255,.35);
+      margin-bottom: .5rem;
+      transition: color .2s;
+    }
+    .field-wrap:focus-within .field-label { color: rgba(156,213,255,.8); }
+
+    .field-wrap { position: relative; }
+
+    .field-input {
+      width: 100%;
+      height: 50px;
+      padding: 0 46px 0 16px;
+      background: rgba(156,213,255,.04);
+      border: 1px solid rgba(122,170,206,.10);
+      border-radius: 13px;
+      color: rgba(247,248,240,.9);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      outline: none;
+      transition: all .25s ease;
+      caret-color: #9CD5FF;
+    }
+    .field-input::placeholder { color: rgba(156,213,255,.18); font-style: italic; }
+    .field-input:hover {
+      border-color: rgba(122,170,206,.18);
+      background: rgba(156,213,255,.06);
+    }
+    .field-input:focus {
+      border-color: rgba(122,170,206,.55);
+      background: rgba(53,88,114,.10);
+      box-shadow: 0 0 0 3px rgba(53,88,114,.18), inset 0 1px 0 rgba(156,213,255,.10);
+    }
+
+    .field-icon {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: rgba(122,170,206,.28);
+      transition: color .25s;
+      display: flex;
+    }
+    .field-wrap:focus-within .field-icon { color: rgba(156,213,255,.7); }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(156,213,255,.2);
+      font-size: .72rem;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      margin: 1.75rem 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(122,170,206,.08);
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 52px;
+      background: linear-gradient(135deg, #355872 0%, #7AAACE 100%);
+      color: #F7F8F0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .92rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+      box-shadow: 0 4px 24px rgba(53,88,114,.55), 0 1px 0 rgba(255,255,255,.12) inset;
+    }
+    .btn-submit::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(255,255,255,.10) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      transform: skewX(-18deg);
+      transition: left .45s ease;
+    }
+    .btn-submit:hover::after { left: 160%; }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 36px rgba(53,88,114,.60), 0 1px 0 rgba(255,255,255,.15) inset;
+      filter: brightness(1.08);
+    }
+    .btn-submit:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 14px rgba(53,88,114,.4);
+      filter: brightness(.96);
+    }
+    .btn-submit.loading { pointer-events: none; filter: brightness(.85); }
+    .btn-submit.loading .btn-text   { opacity: 0; }
+    .btn-submit.loading .btn-spinner { opacity: 1; }
+    .btn-text    { transition: opacity .2s; }
+    .btn-spinner {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .2s;
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      color: rgba(122,170,206,.30);
+      cursor: pointer; padding: 4px;
+      display: flex; transition: color .2s; z-index: 2;
+    }
+    .toggle-pass:hover { color: rgba(156,213,255,.8); }
+
+    .status-dot {
+      width: 7px; height: 7px;
+      background: #9CD5FF;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(156,213,255,.7);
+      animation: pulseDot 2.2s ease-in-out infinite;
+    }
+    @keyframes pulseDot {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .4; transform: scale(.75); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes orbDrift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(60px, 40px) scale(1.12); }
+    }
+    @keyframes orbDrift2 {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(-50px, -30px) scale(1.1); }
+    }
+
+    .corner-dot {
+      position: absolute;
+      width: 5px; height: 5px;
+      background: rgba(156,213,255,.3);
+      border-radius: 50%;
+    }
+    .corner-tl { top: 16px; left: 16px; }
+    .corner-tr { top: 16px; right: 16px; }
+    .corner-bl { bottom: 16px; left: 16px; }
+    .corner-br { bottom: 16px; right: 16px; }
+
+    .forgot-link { color: rgba(156,213,255,.55); transition: color .2s; }
+    .forgot-link:hover { color: rgba(156,213,255,.9); }
+
+    @media (max-width: 480px) {
+      .glass-card { padding: 2.25rem 1.75rem 2rem; border-radius: 22px; margin: 1rem; }
+      .cobalsa-main { font-size: 1.65rem; }
+    }
+
+    .anim-1 { animation: fadeUp .7s .08s cubic-bezier(.16,1,.3,1) both; }
+    .anim-2 { animation: fadeUp .7s .18s cubic-bezier(.16,1,.3,1) both; }
+    .anim-3 { animation: fadeUp .7s .28s cubic-bezier(.16,1,.3,1) both; }
+    .anim-4 { animation: fadeUp .7s .38s cubic-bezier(.16,1,.3,1) both; }
+    .anim-5 { animation: fadeUp .7s .48s cubic-bezier(.16,1,.3,1) both; }
+    .anim-6 { animation: fadeUp .7s .56s cubic-bezier(.16,1,.3,1) both; }
+  </style>
+</head>
+<body>
+
+  <div class="bg-scene" aria-hidden="true"></div>
+  <div class="bg-grid"  aria-hidden="true"></div>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+
+  <main class="relative z-10 flex items-center justify-center w-full px-4 py-10">
+
+    <div class="card-glow pointer-events-none" aria-hidden="true"></div>
+
+    <div class="glass-card">
+
+      <span class="corner-dot corner-tl" aria-hidden="true"></span>
+      <span class="corner-dot corner-tr" aria-hidden="true"></span>
+      <span class="corner-dot corner-bl" aria-hidden="true"></span>
+      <span class="corner-dot corner-br" aria-hidden="true"></span>
+
+      <!-- Logo -->
+      <header class="flex items-center gap-4 mb-8 anim-1">
+        <div class="cobalsa-logo">
+          <span class="cobalsa-main">COBALSA</span>
+          <span class="cobalsa-sub">Colombiana de Balsa Ltda</span>
+        </div>
+      </header>
+
+      <div style="height:1px; background:linear-gradient(90deg,rgba(156,213,255,.18),rgba(53,88,114,.05)); margin-bottom:1.75rem;" class="anim-1" aria-hidden="true"></div>
+
+      <!-- Título -->
+      <div class="mb-7 anim-2">
+        <h1 class="font-display font-semibold text-2xl leading-tight mb-1" style="color:#F7F8F0;">
+          Bienvenido de vuelta
+        </h1>
+        <p class="text-sm leading-relaxed" style="color:rgba(156,213,255,.35);">
+          Introduce tus credenciales para acceder al panel de control.
+        </p>
+      </div>
+
+      <!-- Formulario -->
+      <form action="/validar" method="POST" id="loginForm" novalidate autocomplete="off">
+
+        <!-- Usuario -->
+        <div class="field-wrap mb-5 anim-3">
+          <label for="usuario" class="field-label">Usuario</label>
+          <input type="text" id="usuario" name="usuario" class="field-input"
+                 placeholder="tu.usuario@cobalsa.com" autocomplete="username" required />
+          <span class="field-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </span>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="field-wrap mb-2 anim-4">
+          <div class="flex items-center justify-between mb-2">
+            <label for="contrasena" class="field-label mb-0">Contraseña</label>
+            <a href="#" class="forgot-link text-xs leading-none">¿Olvidaste tu clave?</a>
+          </div>
+          <input type="password" id="contrasena" name="contraseña" class="field-input"
+                 placeholder="••••••••••••" autocomplete="current-password" required />
+          <button type="button" class="toggle-pass" id="togglePass" aria-label="Mostrar u ocultar contraseña">
+            <svg id="iconEye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg id="iconEyeOff" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+              <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider anim-5" aria-hidden="true">Acceso seguro</div>
+
+        <!-- Botón -->
+        <div class="anim-5">
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span class="btn-text flex items-center justify-center gap-2.5">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              Iniciar sesión
+            </span>
+            <span class="btn-spinner">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" class="animate-spin">
+                <circle cx="12" cy="12" r="10" stroke-opacity=".3"/>
+                <path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- Pie -->
+      <footer class="mt-7 text-center anim-6">
+        <div class="flex items-center justify-center gap-2 mb-2">
+          <div class="status-dot"></div>
+          <span class="text-xs tracking-wide" style="color:rgba(156,213,255,.25);">Sistema activo</span>
+        </div>
+        <p class="text-xs leading-relaxed tracking-wide" style="color:rgba(247,248,240,.18);">
+          Acceso restringido · Solo personal autorizado
+        </p>
+        <p class="text-xs mt-1 tracking-wide" style="color:rgba(247,248,240,.10);">
+          © 2025 COBALSA — Colombiana de Balsa Ltda
+        </p>
+      </footer>
+
+    </div>
+  </main>
+
+  <script>
+    const toggleBtn  = document.getElementById('togglePass');
+    const passInput  = document.getElementById('contrasena');
+    const iconEye    = document.getElementById('iconEye');
+    const iconEyeOff = document.getElementById('iconEyeOff');
+
+    toggleBtn.addEventListener('click', function () {
+      var isPass = passInput.type === 'password';
+      passInput.type = isPass ? 'text' : 'password';
+      iconEye.style.display    = isPass ? 'none'  : 'block';
+      iconEyeOff.style.display = isPass ? 'block' : 'none';
+    });
+
+    const form      = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function (e) {
+      var usuario = document.getElementById('usuario').value.trim();
+      var clave   = passInput.value.trim();
+      if (!usuario || !clave) {
+        e.preventDefault();
+        var card = document.querySelector('.glass-card');
+        card.style.transition = 'transform 0.07s ease';
+        var moves = [-8, 8, -5, 5, 0];
+        moves.forEach(function (x, i) {
+          setTimeout(function () { card.style.transform = 'translateX(' + x + 'px)'; }, i * 70);
+        });
+        return;
+      }
+      submitBtn.classList.add('loading');
+    });
+
+    var card = document.querySelector('.glass-card');
+    card.addEventListener('mousemove', function (e) {
+      var rect = card.getBoundingClientRect();
+      var x = ((e.clientX - rect.left) / rect.width)  * 100;
+      var y = ((e.clientY - rect.top)  / rect.height) * 100;
+      card.style.background =
+        'radial-gradient(circle at ' + x + '% ' + y + '%, rgba(53,88,114,.12) 0%, rgba(13,28,42,.75) 50%)';
+    });
+    card.addEventListener('mouseleave', function () {
+      card.style.background = '';
+    });
+  </script>
+
+</body>
+</html>
