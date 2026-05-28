@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Empleado</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+    <!-- HEADER -->
+    <header class="bg-blue-600 text-white px-6 py-4 flex justify-between items-center">
+
+        <h1 class="text-xl font-bold">RHSOFT</h1>
+
+        <div class="flex items-center gap-4">
+            <span class="font-medium">Juan Pérez</span>
+
+            <button class="bg-red-500 px-4 py-2 rounded hover:bg-red-600">
+                Salir
+            </button>
+        </div>
+
+    </header>
+
+    <!-- CONTENEDOR -->
+    <div class="flex">
+
+        <!-- SIDEBAR -->
+        <aside class="w-64 bg-white min-h-screen shadow-lg p-5">
+
+            <nav class="space-y-4">
+
+                <button onclick="mostrarSeccion('dashboard')"
+                    class="block w-full text-left hover:text-blue-600 font-semibold">
+                    📊 Dashboard
+                </button>
+
+                <button onclick="mostrarSeccion('perfil')"
+                    class="block w-full text-left hover:text-blue-600">
+                    👤 Perfil
+                </button>
+
+                <button onclick="mostrarSeccion('historial')"
+                    class="block w-full text-left hover:text-blue-600">
+                    📅 Historial
+                </button>
+
+            </nav>
+
+        </aside>
+
+        <!-- CONTENIDO -->
+        <main class="flex-1 p-6">
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="space-y-6">
+
+                <!-- REGISTRO -->
+                <div class="bg-white p-6 rounded-xl shadow">
+
+                    <h2 class="text-2xl font-bold mb-4">
+                        Registro de Asistencia
+                    </h2>
+
+                    <div class="flex gap-4">
+
+                        <button onclick="registrarEntrada()"
+                            class="bg-green-500 text-white px-5 py-2 rounded-lg hover:bg-green-600">
+                            Registrar Entrada
+                        </button>
+
+                        <button onclick="registrarSalida()"
+                            class="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600">
+                            Registrar Salida
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- ESTADO -->
+                <div class="bg-white p-6 rounded-xl shadow">
+
+                    <h2 class="text-xl font-bold mb-2">
+                        Estado Actual
+                    </h2>
+
+                    <p id="estado">
+                        No has registrado entrada
+                    </p>
+
+                </div>
+
+            </section>
+
+            <!-- PERFIL -->
+            <section id="perfil" class="hidden">
+
+                <div class="bg-white p-6 rounded-xl shadow max-w-lg">
+
+                    <h2 class="text-2xl font-bold mb-4">
+                        Mi Perfil
+                    </h2>
+
+                    <div class="space-y-2">
+                        <p><strong>Nombre:</strong> Juan Pérez</p>
+                        <p><strong>Correo:</strong> juan@email.com</p>
+                        <p><strong>Cargo:</strong> Desarrollador</p>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- HISTORIAL -->
+            <section id="historial" class="hidden">
+
+                <div class="bg-white p-6 rounded-xl shadow">
+
+                    <h2 class="text-2xl font-bold mb-4">
+                        Historial
+                    </h2>
+
+                    <table class="w-full border-collapse border border-gray-300">
+
+                        <thead class="bg-gray-200">
+
+                            <tr>
+                                <th class="border p-2">Fecha</th>
+                                <th class="border p-2">Entrada</th>
+                                <th class="border p-2">Salida</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr class="text-center">
+                                <td class="border p-2">2026-04-08</td>
+                                <td class="border p-2">08:00</td>
+                                <td class="border p-2">17:00</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+
+        let entro = false;
+
+        // Registrar entrada
+        function registrarEntrada() {
+
+            if (entro) {
+                alert("Ya registraste entrada");
+                return;
+            }
+
+            entro = true;
+
+            document.getElementById("estado").innerHTML =
+                "🟢 En jornada laboral";
+        }
+
+        // Registrar salida
+        function registrarSalida() {
+
+            if (!entro) {
+                alert("Primero debes registrar entrada");
+                return;
+            }
+
+            entro = false;
+
+            document.getElementById("estado").innerHTML =
+                "🔴 Jornada finalizada";
+        }
+
+        // Cambiar secciones
+        function mostrarSeccion(seccion) {
+
+            document.getElementById("dashboard").classList.add("hidden");
+            document.getElementById("perfil").classList.add("hidden");
+            document.getElementById("historial").classList.add("hidden");
+
+            document.getElementById(seccion).classList.remove("hidden");
+        }
+
+    </script>
+
+</body>
+
+</html>
