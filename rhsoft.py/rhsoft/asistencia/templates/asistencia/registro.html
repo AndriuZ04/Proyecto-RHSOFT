@@ -1,0 +1,305 @@
+{% extends "asistencia/base.html" %}
+{% block title %}Asistencia — {{ nombre }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:var(--azul-oscuro); padding:32px 24px; display:flex; flex-direction:column; z-index:100; }
+  .sidebar-logo { display:flex; align-items:center; gap:12px; margin-bottom:40px; }
+  .sidebar-logo .icon { width:40px; height:40px; background:rgba(255,255,255,.15); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .sidebar-logo .icon svg { width:20px; fill:white; }
+  .sidebar-logo span { font-family:'DM Serif Display',serif; color:white; font-size:1.05rem; line-height:1.2; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; color:rgba(255,255,255,.7); text-decoration:none; font-size:.92rem; transition:all .2s; margin-bottom:4px; }
+  .nav-item svg { width:18px; fill:currentColor; flex-shrink:0; }
+  .nav-item:hover { background:rgba(255,255,255,.1); color:white; }
+  .nav-item.active { background:rgba(255,255,255,.18); color:white; font-weight:600; }
+  .sidebar-footer { margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); }
+  .user-chip { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(255,255,255,.1); border-radius:12px; margin-bottom:10px; }
+  .user-avatar { width:36px; height:36px; background:var(--azul-medio); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:.9rem; }
+  .user-info .uname { color:white; font-size:.88rem; font-weight:500; }
+  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; text-transform:capitalize; }
+  .logout-btn { display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:none; border:1.5px solid rgba(255,255,255,.15); border-radius:10px; color:rgba(255,255,255,.6); font-family:'DM Sans',sans-serif; font-size:.88rem; cursor:pointer; transition:all .2s; text-decoration:none; }
+  .logout-btn:hover { border-color:rgba(255,255,255,.4); color:white; }
+  .info-card { background:rgba(255,255,255,.08); border-radius:12px; padding:14px; margin-top:16px; }
+  .info-card .ic-title { font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:8px; }
+  .info-card .ic-row { display:flex; align-items:center; gap:8px; color:rgba(255,255,255,.75); font-size:.82rem; margin-bottom:5px; }
+  .dias-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+  .dia-chip { padding:2px 8px; border-radius:5px; font-size:.7rem; font-weight:600; background:rgba(156,213,255,.15); color:var(--azul-claro); }
+
+  .main { margin-left:260px; padding:36px 40px; min-height:100vh; }
+  .page-header { margin-bottom:28px; }
+  .page-header h1 { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--texto); margin-bottom:4px; }
+  .page-header p  { color:var(--azul-oscuro); opacity:.6; font-size:.92rem; }
+
+  .clock-widget { background:var(--azul-oscuro); border-radius:20px; padding:28px 32px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:20px; color:white; }
+  .clock-time { font-family:'DM Serif Display',serif; font-size:3.5rem; line-height:1; }
+  .clock-date { font-size:.9rem; opacity:.6; margin-top:4px; }
+  .clock-actions { display:flex; gap:12px; flex-wrap:wrap; }
+  .action-btn { display:flex; align-items:center; gap:8px; padding:14px 24px; border:none; border-radius:14px; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-entrada { background:#27ae60; color:white; }
+  .btn-entrada:hover:not(:disabled) { background:#219150; }
+  .btn-salida  { background:#e67e22; color:white; }
+  .btn-salida:hover:not(:disabled) { background:#ca6f1e; }
+  .action-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+  .today-card { background:white; border-radius:16px; padding:20px 24px; margin-bottom:20px; display:flex; align-items:center; gap:16px; box-shadow:var(--sombra); }
+  .status-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+  .status-dot.verde   { background:var(--verde); box-shadow:0 0 0 4px rgba(39,174,96,.2); }
+  .status-dot.amarillo{ background:var(--naranja); box-shadow:0 0 0 4px rgba(230,126,34,.2); }
+  .status-dot.gris    { background:#bdc3c7; }
+  .today-info .label { font-size:.78rem; color:var(--azul-oscuro); opacity:.6; text-transform:uppercase; letter-spacing:.05em; }
+  .today-info .value { font-size:1rem; font-weight:600; color:var(--texto); }
+  .today-times { display:flex; gap:20px; margin-left:auto; }
+  .time-block .t-label { font-size:.72rem; opacity:.5; text-transform:uppercase; }
+  .time-block .t-value { font-size:1.1rem; font-weight:700; color:var(--azul-oscuro); }
+
+  .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+  .stat-card { background:white; border-radius:16px; padding:20px 24px; box-shadow:var(--sombra); }
+  .stat-label { font-size:.78rem; color:var(--azul-oscuro); opacity:.6; text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+  .stat-value { font-family:'DM Serif Display',serif; font-size:2.2rem; color:var(--texto); line-height:1; }
+  .stat-sub { font-size:.78rem; color:var(--azul-oscuro); opacity:.45; margin-top:4px; }
+
+  .section-title { font-family:'DM Serif Display',serif; font-size:1.3rem; color:var(--texto); margin-bottom:16px; }
+  .table-wrap { background:white; border-radius:16px; box-shadow:var(--sombra); overflow:hidden; }
+  table { width:100%; border-collapse:collapse; }
+  th { background:rgba(53,88,114,.06); padding:12px 16px; text-align:left; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-oscuro); font-weight:600; }
+  td { padding:12px 16px; font-size:.9rem; border-top:1px solid rgba(53,88,114,.07); }
+  .badge { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.75rem; font-weight:600; }
+  .badge-tipo { background:rgba(122,170,206,.15); color:var(--azul-oscuro); }
+  .badge-ok   { background:rgba(39,174,96,.12); color:#1a7a40; }
+  .badge-parcial { background:rgba(230,126,34,.12); color:#a05010; }
+  .empty-state { text-align:center; padding:32px; opacity:.4; }
+
+  .jornada-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  .jornada-label { font-size:.72rem; color:rgba(255,255,255,.5); display:block; }
+  .jornada-value { font-size:.92rem; color:white; font-weight:500; }
+
+  .toast { position:fixed; bottom:24px; right:24px; background:#1e3344; color:white; padding:14px 20px; border-radius:12px; font-size:.9rem; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; z-index:999; }
+  .toast.show { opacity:1; transform:translateY(0); }
+  .toast.success { background:#27ae60; }
+  .toast.error   { background:#c0392b; }
+</style>
+{% endblock %}
+
+{% block body %}
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+    </div>
+    <span>Gestión<br>Empresarial</span>
+  </div>
+
+  <a href="{% url 'registro' %}" class="nav-item active">
+    <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+    Mi Asistencia
+  </a>
+  {% if rol == 'admin' %}
+  <a href="{% url 'admin_panel' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    Panel Admin
+  </a>
+  {% endif %}
+
+  <!-- Info del empleado en sidebar -->
+  <div class="info-card">
+    <div class="ic-title">Mi cargo</div>
+    <div class="ic-row">{{ cargo.Nombre_Cargo }}</div>
+    <div class="ic-row" style="font-size:.78rem;opacity:.7;">{{ departamento.Nombre_Departamento }}</div>
+    {% if cargo.Hora_Inicio_Jornada %}
+    <div class="ic-row" style="margin-top:6px;">
+      🕐 {{ cargo.Hora_Inicio_Jornada|time:"H:i" }} – {{ cargo.Hora_Fin_Jornada|time:"H:i" }}
+    </div>
+    {% endif %}
+    {% if dias_laborales %}
+    <div class="dias-chips" style="margin-top:8px;">
+      {% for dia in dias_laborales %}
+        <span class="dia-chip">{{ dia|slice:":3" }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% if contrato_vigente %}
+  <div class="info-card" style="margin-top:10px;">
+    <div class="ic-title">Contrato vigente</div>
+    <div class="ic-row">{{ contrato_vigente.Tipo_Contrato }}</div>
+    {% if contrato_vigente.Salario_Pactado %}
+    <div class="ic-row">$ {{ contrato_vigente.Salario_Pactado|floatformat:0 }}</div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">{{ nombre|slice:":1" }}</div>
+      <div class="user-info">
+        <span class="uname">{{ nombre }}</span>
+        <span class="urole">{{ rol }}</span>
+      </div>
+    </div>
+    <a href="{% url 'login' %}?logout=1" class="logout-btn">
+      <svg viewBox="0 0 24 24" width="16" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Cerrar sesión
+    </a>
+  </div>
+</nav>
+
+<main class="main">
+  <div class="page-header">
+    <h1>Hola, <em>{{ emp.ID_Persona.Nombres }}</em></h1>
+    <p>{{ hoy|date:"l, d \d\e F \d\e Y" }}</p>
+  </div>
+
+  <!-- Reloj y botones -->
+  <div class="clock-widget">
+    <div>
+      <div class="clock-time" id="reloj">--:--:--</div>
+      <div class="clock-date">{{ hoy|date:"d/m/Y" }}</div>
+    </div>
+    <div class="clock-actions">
+      <button class="action-btn btn-entrada" id="btnEntrada"
+        {% if hay_entrada %}disabled{% endif %}
+        onclick="marcar('entrada')">
+        <svg width="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11 16l-4-4 4-4 1.41 1.41L10.83 11H18v2h-7.17l1.59 1.59L11 16zm-6 3H5V5h2V3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h2v-2H5z"/></svg>
+        Registrar Entrada
+      </button>
+      <button class="action-btn btn-salida" id="btnSalida"
+        {% if not hay_entrada or hay_salida %}disabled{% endif %}
+        onclick="marcar('salida')">
+        <svg width="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 8l4 4-4 4-1.41-1.41L13.17 13H6v-2h7.17l-1.58-1.59L13 8zm4 11h-2v2h2c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-2v2h2v14z"/></svg>
+        Registrar Salida
+      </button>
+    </div>
+  </div>
+
+  <!-- Estado hoy -->
+  <div class="today-card">
+    {% if hay_entrada and not hay_salida %}
+      <div class="status-dot verde"></div>
+      <div class="today-info"><div class="label">Estado hoy</div><div class="value">Jornada en curso</div></div>
+    {% elif hay_entrada and hay_salida %}
+      <div class="status-dot amarillo"></div>
+      <div class="today-info"><div class="label">Estado hoy</div><div class="value">Jornada completada</div></div>
+    {% else %}
+      <div class="status-dot gris"></div>
+      <div class="today-info"><div class="label">Estado hoy</div><div class="value">Sin registro</div></div>
+    {% endif %}
+
+    {% if hay_entrada %}
+    <div class="today-times">
+      <div class="time-block">
+        <div class="t-label">Entrada</div>
+        <div class="t-value">{{ registro_hoy.Hora_Entrada|time:"H:i" }}</div>
+      </div>
+      {% if hay_salida %}
+      <div class="time-block">
+        <div class="t-label">Salida</div>
+        <div class="t-value">{{ registro_hoy.Hora_Salida|time:"H:i" }}</div>
+      </div>
+      <div class="time-block">
+        <div class="t-label">Duración</div>
+        <div class="t-value">{{ duracion_hoy }}</div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Estadísticas del mes -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Días registrados</div>
+      <div class="stat-value">{{ total_dias }}</div>
+      <div class="stat-sub">Este mes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Jornadas completas</div>
+      <div class="stat-value">{{ dias_completos }}</div>
+      <div class="stat-sub">Con entrada y salida</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Promedio de horas</div>
+      <div class="stat-value">{{ promedio_horas|default:"--" }}</div>
+      <div class="stat-sub">Por jornada completa</div>
+    </div>
+  </div>
+
+  <!-- Historial -->
+  <div class="section-title">Historial reciente</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Duración</th><th>Tipo</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        {% if not historial %}
+        <tr><td colspan="6"><div class="empty-state">No hay registros aún</div></td></tr>
+        {% else %}
+        {% for item in historial %}
+        <tr>
+          <td>{{ item.reg.Fecha|date:"d/m/Y" }}</td>
+          <td>{{ item.reg.Hora_Entrada|time:"H:i"|default:"—" }}</td>
+          <td>{{ item.reg.Hora_Salida|time:"H:i"|default:"—" }}</td>
+          <td>{{ item.duracion|default:"—" }}</td>
+          <td><span class="badge badge-tipo">{{ item.reg.Tipo }}</span></td>
+          <td>
+            {% if item.reg.Hora_Salida %}
+              <span class="badge badge-ok">Completo</span>
+            {% else %}
+              <span class="badge badge-parcial">En curso</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function tick() {
+    const now = new Date();
+    document.getElementById('reloj').textContent =
+      now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  tick(); setInterval(tick, 1000);
+
+  const hayEntrada = {{ hay_entrada|yesno:"true,false" }};
+  const haySalida  = {{ hay_salida|yesno:"true,false" }};
+
+  async function marcar(accion) {
+    const btnE = document.getElementById('btnEntrada');
+    const btnS = document.getElementById('btnSalida');
+    btnE.disabled = btnS.disabled = true;
+
+    const fd = new FormData();
+    fd.append('accion', accion);
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    try {
+      const res  = await fetch('{% url "registro" %}', {method:'POST', body:fd});
+      const data = await res.json();
+      showToast(data.msg, data.ok ? 'success' : 'error');
+      if (data.ok) { setTimeout(() => location.reload(), 1500); }
+      else {
+        btnE.disabled = hayEntrada;
+        btnS.disabled = !hayEntrada || haySalida;
+      }
+    } catch(e) {
+      showToast('Error de comunicación', 'error');
+      btnE.disabled = hayEntrada;
+      btnS.disabled = !hayEntrada || haySalida;
+    }
+  }
+
+  function showToast(msg, tipo='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + tipo + ' show';
+    setTimeout(() => t.className = 'toast', 4000);
+  }
+</script>
+{% endblock %}
