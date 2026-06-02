@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Login | RHSOFT
+{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen flex">
+
+    <!-- LADO IZQUIERDO -->
+
+    <div class="hidden lg:flex w-1/2 sidebar-blue items-center justify-center">
+
+        <div class="text-center px-10">
+
+            <img
+                src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
+                alt="COBALSA"
+                class="w-72 mx-auto mb-8">
+
+            <h1 class="text-white text-5xl font-bold">
+                RHSOFT
+            </h1>
+
+            <p class="text-blue-100 text-xl mt-4">
+                Sistema Integral de Recursos Humanos
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- LADO DERECHO -->
+
+    <div class="w-full lg:w-1/2 flex justify-center items-center">
+
+        <div class="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md">
+
+            <div class="text-center">
+
+                <img
+                    src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
+                    alt="Logo"
+                    class="w-28 mx-auto mb-5">
+
+                <h2 class="text-3xl font-bold text-blue-900">
+                    Iniciar Sesión
+                </h2>
+
+                <p class="text-gray-500 mt-2">
+                    Ingrese sus credenciales
+                </p>
+
+            </div>
+
+            <form method="POST" class="mt-8">
+
+                <div class="mb-5">
+
+                    <label class="block mb-2 font-medium">
+                        Correo Electrónico
+                    </label>
+
+                    <input
+                        type="email"
+                        name="correo"
+                        required
+                        class="w-full border rounded-lg px-4 py-3">
+
+                </div>
+
+                <div class="mb-6">
+
+                    <label class="block mb-2 font-medium">
+                        Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        required
+                        class="w-full border rounded-lg px-4 py-3">
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full primary-blue text-white py-3 rounded-lg hover:opacity-90">
+
+                    Ingresar
+
+                </button>
+
+            </form>
+
+            {% if error %}
+
+            <div class="bg-red-100 text-red-600 p-3 rounded mt-4">
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

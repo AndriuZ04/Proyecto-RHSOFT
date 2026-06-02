@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        RHSOFT
+        {% endblock %}
+    </title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+
+        .sidebar-blue{
+            background:#003B7A;
+        }
+
+        .primary-blue{
+            background:#0056B3;
+        }
+
+    </style>
+
+</head>
+
+<body class="bg-slate-100">
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+
+</html>

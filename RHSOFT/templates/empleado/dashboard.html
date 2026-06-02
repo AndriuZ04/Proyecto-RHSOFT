@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Panel Empleado
+{% endblock %}
+
+{% block content %}
+
+<div class="flex min-h-screen">
+
+    <!-- MENU -->
+
+    <aside class="w-64 bg-blue-900 text-white">
+
+        <div class="p-6 text-center border-b border-blue-800">
+
+            <img
+                src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
+                class="w-24 mx-auto mb-4">
+
+            <h2 class="font-bold text-xl">
+                RHSOFT
+            </h2>
+
+        </div>
+
+        <nav class="mt-6">
+
+            <a href="/empleado"
+               class="block px-6 py-3 bg-blue-800">
+                Dashboard
+            </a>
+
+            <a href="/perfil"
+               class="block px-6 py-3 hover:bg-blue-800">
+                Mi Perfil
+            </a>
+
+            <a href="/asistencia"
+               class="block px-6 py-3 hover:bg-blue-800">
+                Mi Asistencia
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+
+    <main class="flex-1 p-8">
+
+        <h1 class="text-4xl font-bold text-blue-900 mb-8">
+            Bienvenido Empleado
+        </h1>
+
+        <div class="grid md:grid-cols-3 gap-6">
+
+            <div class="bg-white p-6 rounded-xl shadow">
+
+                <h3 class="text-gray-500">
+                    Cargo
+                </h3>
+
+                <p class="text-2xl font-bold text-blue-900 mt-2">
+                    Auxiliar RRHH
+                </p>
+
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+
+                <h3 class="text-gray-500">
+                    Departamento
+                </h3>
+
+                <p class="text-2xl font-bold text-blue-900 mt-2">
+                    Recursos Humanos
+                </p>
+
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+
+                <h3 class="text-gray-500">
+                    Estado
+                </h3>
+
+                <p class="text-2xl font-bold text-green-600 mt-2">
+                    Activo
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="mt-10">
+
+            <h2 class="text-2xl font-bold text-blue-900 mb-4">
+                Acciones Rápidas
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+
+                <a href="/perfil"
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+
+                    Ver Perfil
+
+                </a>
+
+                <a href="/asistencia"
+                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+
+                    Ver Asistencia
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

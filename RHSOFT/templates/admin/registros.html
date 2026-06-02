@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Registros de Asistencia
+{% endblock %}
+
+{% block content %}
+
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+
+    <aside class="w-64 bg-blue-900 text-white">
+
+        <div class="p-6 text-center border-b border-blue-800">
+
+            <img
+                src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
+                class="w-24 mx-auto mb-4">
+
+            <h2 class="font-bold text-xl">
+                RHSOFT
+            </h2>
+
+        </div>
+
+        <nav class="mt-6">
+
+            <a href="/admin"
+               class="block px-6 py-3 hover:bg-blue-800">
+                Dashboard
+            </a>
+
+            <a href="/empleados"
+               class="block px-6 py-3 hover:bg-blue-800">
+                Empleados
+            </a>
+
+            <a href="/cargos"
+               class="block px-6 py-3 hover:bg-blue-800">
+                Cargos
+            </a>
+
+            <a href="/registros"
+               class="block px-6 py-3 bg-blue-800">
+                Registros
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+
+    <main class="flex-1 p-8">
+
+        <div class="flex justify-between items-center mb-8">
+
+            <h1 class="text-3xl font-bold text-blue-900">
+                Registros de Asistencia
+            </h1>
+
+        </div>
+
+        <!-- BUSCADOR -->
+
+        <div class="bg-white p-4 rounded-xl shadow mb-6">
+
+            <input
+                type="text"
+                placeholder="Buscar empleado..."
+                class="w-full border rounded-lg px-4 py-3">
+
+        </div>
+
+        <!-- TABLA -->
+
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+
+            <table class="w-full">
+
+                <thead class="bg-blue-900 text-white">
+
+                    <tr>
+
+                        <th class="p-4 text-left">ID</th>
+                        <th class="p-4 text-left">Empleado</th>
+                        <th class="p-4 text-left">Fecha</th>
+                        <th class="p-4 text-left">Entrada</th>
+                        <th class="p-4 text-left">Salida</th>
+                        <th class="p-4 text-left">Estado</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr class="border-b">
+
+                        <td class="p-4">1</td>
+
+                        <td class="p-4">
+                            Jerson Sarmiento
+                        </td>
+
+                        <td class="p-4">
+                            01/06/2026
+                        </td>
+
+                        <td class="p-4">
+                            07:00 AM
+                        </td>
+
+                        <td class="p-4">
+                            05:00 PM
+                        </td>
+
+                        <td class="p-4">
+
+                            <span
+                                class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+
+                                Completo
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td class="p-4">2</td>
+
+                        <td class="p-4">
+                            Laura Gómez
+                        </td>
+
+                        <td class="p-4">
+                            01/06/2026
+                        </td>
+
+                        <td class="p-4">
+                            07:15 AM
+                        </td>
+
+                        <td class="p-4">
+                            -
+                        </td>
+
+                        <td class="p-4">
+
+                            <span
+                                class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+
+                                Pendiente
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

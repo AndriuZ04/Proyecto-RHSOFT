@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Nuevo Empleado
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-6xl mx-auto p-8">
+
+    <h1 class="text-3xl font-bold text-blue-900 mb-8">
+        Registrar Nuevo Empleado
+    </h1>
+
+    <form method="POST" action="/guardar_empleado">
+
+        <div class="grid grid-cols-2 gap-6">
+
+            <input type="text" name="nombres"
+                placeholder="Nombres"
+                class="border p-3 rounded">
+
+            <input type="text" name="apellidos"
+                placeholder="Apellidos"
+                class="border p-3 rounded">
+
+            <input type="text" name="documento"
+                placeholder="Documento"
+                class="border p-3 rounded">
+
+            <input type="text" name="telefono"
+                placeholder="Teléfono"
+                class="border p-3 rounded">
+
+            <input type="email" name="correo"
+                placeholder="Correo"
+                class="border p-3 rounded">
+
+            <input type="text" name="direccion"
+                placeholder="Dirección"
+                class="border p-3 rounded">
+
+            <input type="date" name="fecha_nacimiento"
+                class="border p-3 rounded">
+
+            <select name="genero"
+                class="border p-3 rounded">
+
+                <option value="M">
+                    Masculino
+                </option>
+
+                <option value="F">
+                    Femenino
+                </option>
+
+            </select>
+
+            <select name="id_cargo"
+                class="border p-3 rounded">
+
+                {% for cargo in cargos %}
+
+                <option value="{{ cargo[0] }}">
+                    {{ cargo[1] }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <select name="id_departamento"
+                class="border p-3 rounded">
+
+                {% for departamento in departamentos %}
+
+                <option value="{{ departamento[0] }}">
+                    {{ departamento[1] }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <input type="password"
+                name="password"
+                placeholder="Contraseña"
+                class="border p-3 rounded">
+
+            <input type="date"
+                name="fecha_ingreso"
+                class="border p-3 rounded">
+
+        </div>
+
+        <button
+            type="submit"
+            class="mt-8 bg-blue-900 text-white px-8 py-3 rounded">
+
+            Guardar Empleado
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

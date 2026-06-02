@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Nuevo Cargo
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto p-8">
+
+    <h1 class="text-3xl font-bold text-blue-900 mb-8">
+        Registrar Nuevo Cargo
+    </h1>
+
+    <form method="POST" action="/guardar_cargo">
+
+        <div class="space-y-6">
+
+            <input
+                type="text"
+                name="nombre"
+                placeholder="Nombre del Cargo"
+                class="w-full border rounded-lg px-4 py-3"
+                required>
+
+            <input
+                type="number"
+                name="salario"
+                placeholder="Salario de Referencia"
+                class="w-full border rounded-lg px-4 py-3"
+                required>
+
+            <textarea
+                name="descripcion"
+                placeholder="Descripción"
+                class="w-full border rounded-lg px-4 py-3 h-32"
+                required></textarea>
+
+        </div>
+
+        <button
+            type="submit"
+            class="mt-6 bg-blue-900 text-white px-6 py-3 rounded-lg">
+
+            Guardar Cargo
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

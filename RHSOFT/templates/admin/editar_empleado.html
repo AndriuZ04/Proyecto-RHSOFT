@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar Empleado
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-6xl mx-auto p-8">
+
+    <h1 class="text-3xl font-bold text-blue-900 mb-8">
+        Editar Empleado
+    </h1>
+
+    <form method="POST" action="/actualizar_empleado/{{ empleado[0] }}">
+
+        <div class="grid grid-cols-2 gap-6">
+
+            <input
+                type="text"
+                name="nombres"
+                value="{{ empleado[1] }}"
+                class="border p-3 rounded">
+
+            <input
+                type="text"
+                name="apellidos"
+                value="{{ empleado[2] }}"
+                class="border p-3 rounded">
+
+            <input
+                type="text"
+                name="telefono"
+                value="{{ empleado[3] }}"
+                class="border p-3 rounded">
+
+            <input
+                type="text"
+                name="direccion"
+                value="{{ empleado[4] }}"
+                class="border p-3 rounded">
+
+        </div>
+
+        <button
+            type="submit"
+            class="mt-8 bg-blue-900 text-white px-8 py-3 rounded">
+
+            Actualizar Empleado
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
