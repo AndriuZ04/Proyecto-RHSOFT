@@ -19,10 +19,48 @@ from controllers.cargo_controller import (
     nuevo_cargo,
     guardar_cargo
 )
+from controllers.departamento_controller import (
+    listar_departamentos,
+    nuevo_departamento,
+    guardar_departamento,
+    editar_departamento,
+    actualizar_departamento,
+    eliminar_departamento
+)
 from controllers.registro_controller import (
     ver_asistencia,
     marcar_entrada,
-    marcar_salida
+    marcar_salida,
+    listar_registros,
+    perfil_empleado,
+    dashboard_empleado
+)
+from controllers.admin_controller import (
+    dashboard_admin
+)
+from controllers.contrato_controller import (
+    listar_contratos,
+    nuevo_contrato,
+    guardar_contrato,
+    editar_contrato,
+    actualizar_contrato,
+    eliminar_contrato
+)
+from controllers.vacacion_controller import (
+    listar_vacaciones,
+    nueva_vacacion,
+    guardar_vacacion,
+    editar_vacacion,
+    actualizar_vacacion,
+    eliminar_vacacion
+)
+from controllers.permiso_controller import (
+    listar_permisos,
+    nuevo_permiso,
+    guardar_permiso,
+    editar_permiso,
+    actualizar_permiso,
+    eliminar_permiso
 )
 app = Flask(__name__)
 
@@ -64,11 +102,11 @@ app.add_url_rule(
 # ADMIN
 # ==========================
 
-@app.route("/admin")
-def admin_dashboard():
-    return render_template(
-        "admin/dashboard.html"
-    )
+app.add_url_rule(
+    '/admin',
+    'admin',
+    dashboard_admin
+)
 
 # ==========================
 # EMPLEADOS
@@ -114,15 +152,14 @@ app.add_url_rule(
 # ==========================
 # REGISTROS
 # ==========================
-
-@app.route("/registros")
-def registros():
-    return render_template(
-        "admin/registros.html"
-    )
+app.add_url_rule(
+    '/registros',
+    'registros',
+    listar_registros
+)
 
 # ==========================
-# EMPLEADO
+# CARGO
 # ==========================
 
 app.add_url_rule(
@@ -142,18 +179,111 @@ app.add_url_rule(
     guardar_cargo,
     methods=['POST']
 )
-@app.route("/empleado")
-def dashboard_empleado():
-    return render_template(
-        "empleado/dashboard.html"
-    )
+# ==========================
+# DEPARTAMENTO
+# ==========================
+app.add_url_rule(
+    '/departamentos',
+    'departamentos',
+    listar_departamentos
+)
+app.add_url_rule(
+    '/nuevo_departamento',
+    'nuevo_departamento',
+    nuevo_departamento
+)
 
-@app.route("/perfil")
-def perfil():
-    return render_template(
-        "empleado/perfil.html"
-    )
+app.add_url_rule(
+    '/guardar_departamento',
+    'guardar_departamento',
+    guardar_departamento,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/editar_departamento/<int:id_departamento>',
+    'editar_departamento',
+    editar_departamento
+)
 
+app.add_url_rule(
+    '/actualizar_departamento/<int:id_departamento>',
+    'actualizar_departamento',
+    actualizar_departamento,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/eliminar_departamento/<int:id_departamento>',
+    'eliminar_departamento',
+    eliminar_departamento
+)
+# ==========================
+# CONTRATO
+# ==========================
+app.add_url_rule(
+    '/contratos',
+    'contratos',
+    listar_contratos
+)
+app.add_url_rule(
+    '/nuevo_contrato',
+    'nuevo_contrato',
+    nuevo_contrato
+)
+app.add_url_rule(
+    '/guardar_contrato',
+    'guardar_contrato',
+    guardar_contrato,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/editar_contrato/<int:id_contrato>',
+    'editar_contrato',
+    editar_contrato
+)
+app.add_url_rule(
+    '/actualizar_contrato/<int:id_contrato>',
+    'actualizar_contrato',
+    actualizar_contrato,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/eliminar_contrato/<int:id_contrato>',
+    'eliminar_contrato',
+    eliminar_contrato
+)
+# ==========================
+# EMPLEADO
+# ==========================
+app.add_url_rule(
+    '/empleado',
+    'empleado',
+    dashboard_empleado
+)
+
+@app.route("/test_empleado")
+def test_empleado():
+
+    from flask import session
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""
+        SELECT id_empleado
+        FROM empleados
+        WHERE id_usuario=%s
+    """, (session["id_usuario"],))
+
+    empleado = cursor.fetchone()
+
+    return str(empleado)
+# ==========================
+# PERFIL
+# ==========================
+app.add_url_rule(
+    '/perfil',
+    'perfil',
+    perfil_empleado
+)
 # ==========================
 # ASISTENCIA
 # ==========================
@@ -175,7 +305,77 @@ app.add_url_rule(
     'marcar_salida',
     marcar_salida
 )
+# ==========================
+# VACACIONES
+# ==========================
+app.add_url_rule(
+    '/vacaciones',
+    'vacaciones',
+    listar_vacaciones
+)
+app.add_url_rule(
+    '/nueva_vacacion',
+    'nueva_vacacion',
+    nueva_vacacion
+)
+app.add_url_rule(
+    '/guardar_vacacion',
+    'guardar_vacacion',
+    guardar_vacacion,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/editar_vacacion/<int:id_vacacion>',
+    'editar_vacacion',
+    editar_vacacion
+)
+app.add_url_rule(
+    '/actualizar_vacacion/<int:id_vacacion>',
+    'actualizar_vacacion',
+    actualizar_vacacion,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/eliminar_vacacion/<int:id_vacacion>',
+    'eliminar_vacacion',
+    eliminar_vacacion
+)
+# ==========================
+# PERMISOS
+# ==========================
+app.add_url_rule(
+    '/permisos',
+    'permisos',
+    listar_permisos
+)
+app.add_url_rule(
+    '/nuevo_permiso',
+    'nuevo_permiso',
+    nuevo_permiso
+)
 
+app.add_url_rule(
+    '/guardar_permiso',
+    'guardar_permiso',
+    guardar_permiso,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/editar_permiso/<int:id_permiso>',
+    'editar_permiso',
+    editar_permiso
+)
+app.add_url_rule(
+    '/actualizar_permiso/<int:id_permiso>',
+    'actualizar_permiso',
+    actualizar_permiso,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/eliminar_permiso/<int:id_permiso>',
+    'eliminar_permiso',
+    eliminar_permiso
+)
 # ==========================
 # TEST MYSQL
 # ==========================

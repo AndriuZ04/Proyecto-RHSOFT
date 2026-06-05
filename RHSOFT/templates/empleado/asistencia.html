@@ -8,38 +8,52 @@ Mi Asistencia
 
 <div class="flex min-h-screen">
 
-    <aside class="w-64 bg-blue-900 text-white">
-
-        <div class="p-6 text-center">
-
-            <img
-                src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
-                class="w-24 mx-auto mb-4">
-
-            <h2 class="font-bold text-xl">
-                RHSOFT
-            </h2>
-
-        </div>
-
-    </aside>
+    {% include 'partials/sidebar_empleado.html' %}
 
     <main class="flex-1 p-8">
 
         <h1 class="text-4xl font-bold text-blue-900 mb-8">
             Mi Asistencia
         </h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        {% for category, message in messages %}
+
+            <div class="
+                mb-4
+                p-4
+                rounded-lg
+
+                {% if category == 'success' %}
+                    bg-green-100 text-green-700
+                {% endif %}
+
+                {% if category == 'warning' %}
+                    bg-yellow-100 text-yellow-700
+                {% endif %}
+            ">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
 
         <div class="bg-white rounded-xl shadow p-6 mb-6">
 
-            <a
+           <a
     href="/marcar_entrada"
     class="bg-green-600 text-white px-6 py-3 rounded-lg">
 
     Registrar Entrada
 
 </a>
-
 <a
     href="/marcar_salida"
     class="bg-red-600 text-white px-6 py-3 rounded-lg ml-4">

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Nuevo Departamento
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto mt-10">
+
+    <div class="bg-white p-8 rounded-xl shadow">
+
+        <h1 class="text-3xl font-bold text-blue-900 mb-6">
+            Nuevo Departamento
+        </h1>
+
+        <form action="/guardar_departamento" method="POST">
+
+            <div class="mb-4">
+
+                <label class="block mb-2 font-semibold">
+                    Nombre
+                </label>
+
+                <input
+                    type="text"
+                    name="nombre"
+                    required
+                    class="w-full border rounded-lg px-4 py-3">
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="block mb-2 font-semibold">
+                    Descripción
+                </label>
+
+                <textarea
+                    name="descripcion"
+                    class="w-full border rounded-lg px-4 py-3 h-32"></textarea>
+
+            </div>
+
+            <button
+                class="bg-green-600 text-white px-6 py-3 rounded-lg">
+
+                Guardar Departamento
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

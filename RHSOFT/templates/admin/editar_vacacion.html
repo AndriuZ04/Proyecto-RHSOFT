@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar Vacación
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-xl shadow">
+
+    <h1 class="text-3xl font-bold text-blue-900 mb-6">
+        Editar Vacación
+    </h1>
+
+    <form
+        action="/actualizar_vacacion/{{ vacacion[0] }}"
+        method="POST">
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Empleado
+            </label>
+
+            <select
+                name="id_empleado"
+                class="w-full border rounded p-3 mt-2">
+
+                {% for empleado in empleados %}
+
+                <option
+                    value="{{ empleado[0] }}"
+                    {% if empleado[0] == vacacion[1] %}
+                    selected
+                    {% endif %}>
+
+                    {{ empleado[1] }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Fecha Inicio
+            </label>
+
+            <input
+                type="date"
+                name="fecha_inicio"
+                value="{{ vacacion[2] }}"
+                class="w-full border rounded p-3 mt-2">
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Fecha Fin
+            </label>
+
+            <input
+                type="date"
+                name="fecha_fin"
+                value="{{ vacacion[3] }}"
+                class="w-full border rounded p-3 mt-2">
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Días
+            </label>
+
+            <input
+                type="number"
+                name="dias"
+                value="{{ vacacion[4] }}"
+                class="w-full border rounded p-3 mt-2">
+
+        </div>
+
+        <div class="mb-6">
+
+            <label class="font-bold">
+                Estado
+            </label>
+
+            <select
+                name="estado"
+                class="w-full border rounded p-3 mt-2">
+
+                <option value="PENDIENTE"
+                    {% if vacacion[5] == 'PENDIENTE' %}
+                    selected
+                    {% endif %}>
+                    PENDIENTE
+                </option>
+
+                <option value="APROBADA"
+                    {% if vacacion[5] == 'APROBADA' %}
+                    selected
+                    {% endif %}>
+                    APROBADA
+                </option>
+
+                <option value="RECHAZADA"
+                    {% if vacacion[5] == 'RECHAZADA' %}
+                    selected
+                    {% endif %}>
+                    RECHAZADA
+                </option>
+
+            </select>
+
+        </div>
+
+        <button
+            type="submit"
+            class="bg-green-600 text-white px-6 py-3 rounded">
+
+            Actualizar Vacación
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

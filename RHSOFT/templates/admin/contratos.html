@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Contratos
+{% endblock %}
+
+{% block content %}
+
+<div class="flex min-h-screen">
+
+    {% include 'partials/sidebar_admin.html' %}
+
+    <main class="flex-1 p-8">
+        
+        <div class="flex justify-between items-center mb-8">
+
+            <h1 class="text-3xl font-bold text-blue-900">
+                Gestión de Contratos
+            </h1>
+
+            <a
+                href="/nuevo_contrato"
+                class="bg-blue-900 text-white px-6 py-3 rounded-lg">
+
+                + Nuevo Contrato
+
+            </a>
+
+        </div>
+
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+
+            <table class="w-full">
+
+                <thead class="bg-blue-900 text-white">
+
+                    <tr>
+
+                        <th class="p-4">ID</th>
+                        <th class="p-4">Empleado</th>
+                        <th class="p-4">Tipo</th>
+                        <th class="p-4">Inicio</th>
+                        <th class="p-4">Fin</th>
+                        <th class="p-4">Estado</th>
+                        <th class="p-4">Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for contrato in contratos %}
+
+                <tr class="border-b">
+
+                    <td class="p-4">
+                        {{ contrato[0] }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ contrato[1] }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ contrato[2] }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ contrato[3] }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ contrato[4] }}
+                    </td>
+
+                    <td class="p-4">
+
+                        {% if contrato[5] == 'ACTIVO' %}
+
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                            ACTIVO
+                        </span>
+
+                        {% else %}
+
+                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full">
+                            FINALIZADO
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+                    <td class="p-4">
+
+    <a
+        href="/editar_contrato/{{ contrato[0] }}"
+        class="bg-yellow-500 text-white px-3 py-2 rounded">
+
+        Editar
+
+    </a>
+
+    <a
+        href="/eliminar_contrato/{{ contrato[0] }}"
+        class="bg-red-600 text-white px-3 py-2 rounded ml-2"
+        onclick="return confirm('¿Desea eliminar este contrato?')">
+
+        Eliminar
+
+    </a>
+
+</td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

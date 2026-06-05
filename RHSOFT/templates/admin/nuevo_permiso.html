@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Nuevo Permiso
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-xl shadow">
+
+    <h1 class="text-3xl font-bold text-blue-900 mb-6">
+        Nuevo Permiso
+    </h1>
+
+    <form action="/guardar_permiso" method="POST">
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Empleado
+            </label>
+
+            <select
+                name="id_empleado"
+                class="w-full border rounded p-3 mt-2">
+
+                {% for empleado in empleados %}
+
+                <option value="{{ empleado[0] }}">
+                    {{ empleado[1] }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Motivo
+            </label>
+
+            <input
+                type="text"
+                name="motivo"
+                required
+                class="w-full border rounded p-3 mt-2">
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Fecha Inicio
+            </label>
+
+            <input
+                type="date"
+                name="fecha_inicio"
+                required
+                class="w-full border rounded p-3 mt-2">
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Fecha Fin
+            </label>
+
+            <input
+                type="date"
+                name="fecha_fin"
+                required
+                class="w-full border rounded p-3 mt-2">
+
+        </div>
+
+        <div class="mb-6">
+
+            <label class="font-bold">
+                Estado
+            </label>
+
+            <select
+                name="estado"
+                class="w-full border rounded p-3 mt-2">
+
+                <option value="PENDIENTE">
+                    PENDIENTE
+                </option>
+
+                <option value="APROBADO">
+                    APROBADO
+                </option>
+
+                <option value="RECHAZADO">
+                    RECHAZADO
+                </option>
+
+            </select>
+
+        </div>
+
+        <button
+            type="submit"
+            class="bg-green-600 text-white px-6 py-3 rounded">
+
+            Guardar Permiso
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

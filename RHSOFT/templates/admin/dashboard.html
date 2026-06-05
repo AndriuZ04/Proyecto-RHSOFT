@@ -8,56 +8,12 @@ Dashboard Administrador
 
 <div class="flex min-h-screen">
 
-    <!-- SIDEBAR -->
+    {% include 'partials/sidebar_admin.html' %}
 
-    <aside class="w-64 bg-blue-900 text-white">
-
-        <div class="p-6 text-center border-b border-blue-800">
-
-            <img
-                src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
-                class="w-24 mx-auto mb-4">
-
-            <h2 class="font-bold text-xl">
-                RHSOFT
-            </h2>
-
-        </div>
-
-        <nav class="mt-6">
-
-            <a href="/admin"
-               class="block px-6 py-3 hover:bg-blue-800">
-               Dashboard
-            </a>
-
-            <a href="/empleados"
-               class="block px-6 py-3 hover:bg-blue-800">
-               Empleados
-            </a>
-
-            <a href="/cargos"
-               class="block px-6 py-3 hover:bg-blue-800">
-               Cargos
-            </a>
-
-            <a href="/registros"
-               class="block px-6 py-3 hover:bg-blue-800">
-               Registros
-            </a>
-
-            <a href="/"
-               class="block px-6 py-3 hover:bg-red-700">
-               Cerrar Sesión
-            </a>
-
-        </nav>
-
-    </aside>
+    <main class="flex-1 p-8">
 
     <!-- CONTENIDO -->
 
-    <main class="flex-1 p-8">
 
         <h1 class="text-4xl font-bold text-blue-900 mb-8">
             Panel de Administración
@@ -74,8 +30,8 @@ Dashboard Administrador
                 </h3>
 
                 <p class="text-4xl font-bold text-blue-900 mt-2">
-                    10
-                </p>
+    {{ total_empleados }}
+</p>
 
             </div>
 
@@ -86,8 +42,8 @@ Dashboard Administrador
                 </h3>
 
                 <p class="text-4xl font-bold text-blue-900 mt-2">
-                    10
-                </p>
+    {{ total_departamentos }}
+</p>
 
             </div>
 
@@ -98,8 +54,8 @@ Dashboard Administrador
                 </h3>
 
                 <p class="text-4xl font-bold text-blue-900 mt-2">
-                    10
-                </p>
+    {{ total_cargos }}
+</p>
 
             </div>
 
@@ -132,15 +88,52 @@ Dashboard Administrador
                     </h3>
 
                 </a>
+                <a href="/contratos"
+   class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+
+    <h3 class="font-bold text-blue-900">
+        Gestionar Contratos
+    </h3>
+
+</a>
 
                 <a href="/registros"
-                   class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+   class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
 
-                    <h3 class="font-bold text-blue-900">
-                        Ver Registros
-                    </h3>
+    <h3 class="font-bold text-blue-900">
+        Ver Registros
+    </h3>
 
-                </a>
+</a>
+
+<a href="/permisos"
+   class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+
+    <h3 class="font-bold text-blue-900">
+        Gestionar Permisos
+    </h3>
+
+</a>
+
+</a>
+                <a href="/vacaciones"
+   class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+
+    <h3 class="font-bold text-blue-900">
+        Gestionar Vacaciones
+    </h3>
+
+</a>
+
+       <a href="/departamentos"
+   class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+
+    <h3 class="font-bold text-blue-900">
+        Gestionar Departamentos
+    </h3>
+
+</a>
+
 
             </div>
 

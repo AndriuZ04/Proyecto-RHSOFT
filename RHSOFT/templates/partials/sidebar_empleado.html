@@ -1,0 +1,39 @@
+<aside class="w-64 bg-blue-900 text-white">
+
+    <div class="p-6 text-center border-b border-blue-800">
+
+        <img
+            src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
+            class="w-24 mx-auto mb-4">
+
+        <h2 class="font-bold text-xl">
+            RHSOFT
+        </h2>
+
+    </div>
+
+    <nav class="mt-6">
+
+        <a href="/empleado"
+           class="block px-6 py-3 hover:bg-blue-800">
+            Dashboard
+        </a>
+
+        <a href="/perfil"
+           class="block px-6 py-3 hover:bg-blue-800">
+            Mi Perfil
+        </a>
+
+        <a href="/asistencia"
+           class="block px-6 py-3 hover:bg-blue-800">
+            Mi Asistencia
+        </a>
+
+        <a href="/logout"
+           class="block px-6 py-3 hover:bg-red-700">
+            Cerrar Sesión
+        </a>
+
+    </nav>
+
+</aside>

@@ -8,52 +8,10 @@ Registros de Asistencia
 
 <div class="flex min-h-screen">
 
-    <!-- SIDEBAR -->
-
-    <aside class="w-64 bg-blue-900 text-white">
-
-        <div class="p-6 text-center border-b border-blue-800">
-
-            <img
-                src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
-                class="w-24 mx-auto mb-4">
-
-            <h2 class="font-bold text-xl">
-                RHSOFT
-            </h2>
-
-        </div>
-
-        <nav class="mt-6">
-
-            <a href="/admin"
-               class="block px-6 py-3 hover:bg-blue-800">
-                Dashboard
-            </a>
-
-            <a href="/empleados"
-               class="block px-6 py-3 hover:bg-blue-800">
-                Empleados
-            </a>
-
-            <a href="/cargos"
-               class="block px-6 py-3 hover:bg-blue-800">
-                Cargos
-            </a>
-
-            <a href="/registros"
-               class="block px-6 py-3 bg-blue-800">
-                Registros
-            </a>
-
-        </nav>
-
-    </aside>
-
-    <!-- CONTENIDO -->
+    {% include 'partials/sidebar_admin.html' %}
 
     <main class="flex-1 p-8">
-
+        
         <div class="flex justify-between items-center mb-8">
 
             <h1 class="text-3xl font-bold text-blue-900">
@@ -96,74 +54,53 @@ Registros de Asistencia
 
                 <tbody>
 
-                    <tr class="border-b">
+{% for registro in registros %}
 
-                        <td class="p-4">1</td>
+<tr class="border-b hover:bg-gray-50">
 
-                        <td class="p-4">
-                            Jerson Sarmiento
-                        </td>
+    <td class="p-4">
+        {{ loop.index }}
+    </td>
 
-                        <td class="p-4">
-                            01/06/2026
-                        </td>
+    <td class="p-4">
+        {{ registro[0] }}
+    </td>
 
-                        <td class="p-4">
-                            07:00 AM
-                        </td>
+    <td class="p-4">
+        {{ registro[1] }}
+    </td>
 
-                        <td class="p-4">
-                            05:00 PM
-                        </td>
+    <td class="p-4">
+        {{ registro[2] }}
+    </td>
 
-                        <td class="p-4">
+    <td class="p-4">
+        {{ registro[3] if registro[3] else '-' }}
+    </td>
 
-                            <span
-                                class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+    <td class="p-4">
 
-                                Completo
+        {% if registro[3] %}
 
-                            </span>
+            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                Completo
+            </span>
 
-                        </td>
+        {% else %}
 
-                    </tr>
+            <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+                Pendiente
+            </span>
 
-                    <tr>
+        {% endif %}
 
-                        <td class="p-4">2</td>
+    </td>
 
-                        <td class="p-4">
-                            Laura Gómez
-                        </td>
+</tr>
 
-                        <td class="p-4">
-                            01/06/2026
-                        </td>
+{% endfor %}
 
-                        <td class="p-4">
-                            07:15 AM
-                        </td>
-
-                        <td class="p-4">
-                            -
-                        </td>
-
-                        <td class="p-4">
-
-                            <span
-                                class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
-
-                                Pendiente
-
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
+</tbody>
             </table>
 
         </div>

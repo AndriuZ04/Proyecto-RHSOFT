@@ -8,52 +8,10 @@ Gestión de Cargos
 
 <div class="flex min-h-screen">
 
-    <!-- SIDEBAR -->
-
-    <aside class="w-64 bg-blue-900 text-white">
-
-        <div class="p-6 text-center border-b border-blue-800">
-
-            <img
-                src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
-                class="w-24 mx-auto mb-4">
-
-            <h2 class="font-bold text-xl">
-                RHSOFT
-            </h2>
-
-        </div>
-
-        <nav class="mt-6">
-
-            <a href="/admin"
-               class="block px-6 py-3 hover:bg-blue-800">
-                Dashboard
-            </a>
-
-            <a href="/empleados"
-               class="block px-6 py-3 hover:bg-blue-800">
-                Empleados
-            </a>
-
-            <a href="/cargos"
-               class="block px-6 py-3 bg-blue-800">
-                Cargos
-            </a>
-
-            <a href="/registros"
-               class="block px-6 py-3 hover:bg-blue-800">
-                Registros
-            </a>
-
-        </nav>
-
-    </aside>
-
-    <!-- CONTENIDO -->
+    {% include 'partials/sidebar_admin.html' %}
 
     <main class="flex-1 p-8">
-
+        
         <div class="flex justify-between items-center mb-8">
 
             <h1 class="text-3xl font-bold text-blue-900">

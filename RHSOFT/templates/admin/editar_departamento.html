@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar Departamento
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto mt-10">
+
+    <div class="bg-white p-8 rounded-xl shadow">
+
+        <h1 class="text-3xl font-bold text-blue-900 mb-6">
+            Editar Departamento
+        </h1>
+
+        <form action="/actualizar_departamento/{{ departamento[0] }}"
+              method="POST">
+
+            <div class="mb-4">
+
+                <label class="block mb-2 font-semibold">
+                    Nombre
+                </label>
+
+                <input
+                    type="text"
+                    name="nombre"
+                    value="{{ departamento[1] }}"
+                    required
+                    class="w-full border rounded-lg px-4 py-3">
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="block mb-2 font-semibold">
+                    Descripción
+                </label>
+
+                <textarea
+                    name="descripcion"
+                    class="w-full border rounded-lg px-4 py-3 h-32">{{ departamento[2] }}</textarea>
+
+            </div>
+
+            <button
+                class="bg-yellow-500 text-white px-6 py-3 rounded-lg">
+
+                Actualizar Departamento
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

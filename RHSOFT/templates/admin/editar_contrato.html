@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar Contrato
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-xl shadow">
+
+    <h1 class="text-3xl font-bold text-blue-900 mb-6">
+        Editar Contrato
+    </h1>
+
+    <form
+        action="/actualizar_contrato/{{ contrato[0] }}"
+        method="POST">
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Empleado
+            </label>
+
+            <select
+                name="id_empleado"
+                class="w-full border rounded p-3 mt-2">
+
+                {% for empleado in empleados %}
+
+                <option
+                    value="{{ empleado[0] }}"
+                    {% if empleado[0] == contrato[1] %}
+                    selected
+                    {% endif %}>
+
+                    {{ empleado[1] }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Tipo Contrato
+            </label>
+
+            <input
+                type="text"
+                name="tipo_contrato"
+                value="{{ contrato[2] }}"
+                class="w-full border rounded p-3 mt-2">
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Fecha Inicio
+            </label>
+
+            <input
+                type="date"
+                name="fecha_inicio"
+                value="{{ contrato[3] }}"
+                class="w-full border rounded p-3 mt-2">
+
+        </div>
+
+        <div class="mb-4">
+
+            <label class="font-bold">
+                Fecha Fin
+            </label>
+
+            <input
+                type="date"
+                name="fecha_fin"
+                value="{{ contrato[4] }}"
+                class="w-full border rounded p-3 mt-2">
+
+        </div>
+
+        <div class="mb-6">
+
+            <label class="font-bold">
+                Estado
+            </label>
+
+            <select
+                name="estado"
+                class="w-full border rounded p-3 mt-2">
+
+                <option
+                    value="ACTIVO"
+                    {% if contrato[5]=='ACTIVO' %}
+                    selected
+                    {% endif %}>
+                    ACTIVO
+                </option>
+
+                <option
+                    value="FINALIZADO"
+                    {% if contrato[5]=='FINALIZADO' %}
+                    selected
+                    {% endif %}>
+                    FINALIZADO
+                </option>
+
+            </select>
+
+        </div>
+
+        <button
+            type="submit"
+            class="bg-green-600 text-white px-6 py-3 rounded">
+
+            Actualizar Contrato
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
