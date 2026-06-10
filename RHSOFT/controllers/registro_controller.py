@@ -12,13 +12,40 @@ from config.db import mysql
 
 def ver_asistencia():
 
+    id_usuario = session["id_usuario"]
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""
+        SELECT id_empleado
+        FROM empleados
+        WHERE id_usuario = %s
+    """, (id_usuario,))
+
+    empleado = cursor.fetchone()
+
     registros = []
+
+    if empleado:
+
+        id_empleado = empleado[0]
+
+        cursor.execute("""
+            SELECT
+                fecha,
+                hora_entrada,
+                hora_salida
+            FROM registros
+            WHERE id_empleado = %s
+            ORDER BY fecha DESC
+        """, (id_empleado,))
+
+        registros = cursor.fetchall()
 
     return render_template(
         "empleado/asistencia.html",
         registros=registros
     )
-
 
 # ==========================
 # REGISTRAR ENTRADA
@@ -31,9 +58,13 @@ def marcar_entrada():
     cursor = mysql.connection.cursor()
 
     cursor.execute("""
-        SELECT id_empleado
-        FROM empleados
-        WHERE id_usuario=%s
+        SELECT
+            e.id_empleado,
+            p.nombres
+        FROM empleados e
+        INNER JOIN personas p
+            ON e.id_persona = p.id_persona
+        WHERE e.id_usuario=%s
     """, (id_usuario,))
 
     empleado = cursor.fetchone()
@@ -41,6 +72,7 @@ def marcar_entrada():
     if empleado:
 
         id_empleado = empleado[0]
+        nombre_empleado = empleado[1]
 
         cursor.execute("""
             SELECT id_registro
@@ -71,19 +103,18 @@ def marcar_entrada():
             mysql.connection.commit()
 
             flash(
-                "Entrada registrada correctamente",
+                f"👋 Hola {nombre_empleado}, tu entrada fue registrada correctamente. ¡Te deseamos una excelente jornada laboral!",
                 "success"
             )
 
         else:
 
             flash(
-                "Ya registraste tu entrada hoy",
+                f"⚠️ {nombre_empleado}, ya registraste tu entrada hoy.",
                 "warning"
             )
 
     return redirect("/asistencia")
-
 
 # ==========================
 # REGISTRAR SALIDA
@@ -96,50 +127,70 @@ def marcar_salida():
     cursor = mysql.connection.cursor()
 
     cursor.execute("""
-        SELECT id_empleado
-        FROM empleados
-        WHERE id_usuario=%s
+        SELECT
+            e.id_empleado,
+            p.nombres
+        FROM empleados e
+        INNER JOIN personas p
+            ON e.id_persona = p.id_persona
+        WHERE e.id_usuario=%s
     """, (id_usuario,))
 
     empleado = cursor.fetchone()
 
-    if empleado:
+    if not empleado:
 
-        id_empleado = empleado[0]
+        flash(
+            "Empleado no encontrado",
+            "warning"
+        )
+
+        return redirect('/asistencia')
+
+    id_empleado = empleado[0]
+    nombre_empleado = empleado[1]
+
+    cursor.execute("""
+        SELECT id_registro, hora_salida
+        FROM registros
+        WHERE id_empleado=%s
+        AND fecha=CURDATE()
+    """, (id_empleado,))
+
+    registro = cursor.fetchone()
+
+    if not registro:
+
+        flash(
+            f"⚠️ {nombre_empleado}, primero debes registrar tu entrada antes de registrar la salida.",
+            "warning"
+        )
+
+        return redirect('/asistencia')
+
+    if registro[1] is None:
 
         cursor.execute("""
-            SELECT id_registro, hora_salida
-            FROM registros
-            WHERE id_empleado=%s
-            AND fecha=CURDATE()
-        """, (id_empleado,))
+            UPDATE registros
+            SET hora_salida=CURTIME()
+            WHERE id_registro=%s
+        """, (registro[0],))
 
-        registro = cursor.fetchone()
+        mysql.connection.commit()
 
-        if registro:
+        flash(
+            f"🎉 Hasta luego {nombre_empleado}. Tu salida fue registrada correctamente. Gracias por tu trabajo de hoy.",
+            "success"
+        )
 
-            if registro[1] is None:
+    else:
 
-                cursor.execute("""
-                    UPDATE registros
-                    SET hora_salida=CURTIME()
-                    WHERE id_registro=%s
-                """, (registro[0],))
+        flash(
+            f"⚠️ {nombre_empleado}, ya registraste tu salida hoy.",
+            "warning"
+        )
 
-                mysql.connection.commit()
-
-                flash(
-                    "Salida registrada correctamente",
-                    "success"
-                )
-
-            else:
-
-                flash(
-                    "Ya registraste tu salida hoy",
-                    "warning"
-                )
-
+    return redirect('/asistencia')
 # ==========================
 # REGISTROS ADMIN
 # ==========================
@@ -253,5 +304,3 @@ def dashboard_empleado():
         "empleado/dashboard.html",
         empleado=empleado
     )
-
-    return redirect("/asistencia")

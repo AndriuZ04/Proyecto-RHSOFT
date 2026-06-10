@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-06-2026 a las 23:32:23
+-- Tiempo de generación: 10-06-2026 a las 01:58:25
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -211,25 +211,26 @@ CREATE TABLE `personas` (
   `correo` varchar(100) DEFAULT NULL,
   `direccion` varchar(200) DEFAULT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
-  `genero` enum('M','F') DEFAULT NULL
+  `genero` enum('M','F') DEFAULT NULL,
+  `foto` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `personas`
 --
 
-INSERT INTO `personas` (`id_persona`, `nombres`, `apellidos`, `documento`, `telefono`, `correo`, `direccion`, `fecha_nacimiento`, `genero`) VALUES
-(1, 'Jerson', 'ortiz', '1001', '3001111111', 'jerson@cobalsa.com', 'Calle 1', '2000-01-01', 'M'),
-(2, 'Cristian', 'Lopez', '1002', '3002222222', 'cristian@cobalsa.com', 'Calle 2', '1999-02-02', 'M'),
-(3, 'Andriu', 'Perez', '1003', '3003333333', 'andriu@cobalsa.com', 'Calle 3', '1998-03-03', 'M'),
-(4, 'Laura', 'Gomez', '1004', '3004444444', 'laura@cobalsa.com', 'Calle 4', '1997-04-04', 'F'),
-(5, 'Camila', 'Diaz', '1005', '3005555555', 'camila@cobalsa.com', 'Calle 5', '1996-05-05', 'F'),
-(6, 'Daniel', 'Rojas', '1006', '3006666666', 'daniel@cobalsa.com', 'Calle 6', '1995-06-06', 'M'),
-(7, 'Valentina', 'Ruiz', '1007', '3007777777', 'valentina@cobalsa.com', 'Calle 7', '1994-07-07', 'F'),
-(8, 'Miguel', 'Torres', '1008', '3008888888', 'miguel@cobalsa.com', 'Calle 8', '1993-08-08', 'M'),
-(9, 'Sofia', 'Moreno', '1009', '3009999999', 'sofia@cobalsa.com', 'Calle 9', '1992-09-09', 'F'),
-(10, 'Juan', 'Castro', '1010', '3001010101', 'juan@cobalsa.com', 'Calle 10', '1991-10-10', 'M'),
-(11, 'jack ', 'Sarmiento', '1121535125', '3132125130', 'jeperez098@gmail.com', 'Kr 97 # 128 B06', '2026-06-01', 'M');
+INSERT INTO `personas` (`id_persona`, `nombres`, `apellidos`, `documento`, `telefono`, `correo`, `direccion`, `fecha_nacimiento`, `genero`, `foto`) VALUES
+(1, 'Jerson', 'ortiz', '1001', '3001111111', 'jerson@cobalsa.com', 'Calle 1', '2000-01-01', 'M', NULL),
+(2, 'Cristian', 'Lopez', '1002', '3002222222', 'cristian@cobalsa.com', 'Calle 2', '1999-02-02', 'M', NULL),
+(3, 'Andriu', 'Perez', '1003', '3003333333', 'andriu@cobalsa.com', 'Calle 3', '1998-03-03', 'M', NULL),
+(4, 'Laura', 'Gomez', '1004', '3004444444', 'laura@cobalsa.com', 'Calle 4', '1997-04-04', 'F', NULL),
+(5, 'Camila', 'Diaz', '1005', '3005555555', 'camila@cobalsa.com', 'Calle 5', '1996-05-05', 'F', NULL),
+(6, 'Daniel', 'Rojas', '1006', '3006666666', 'daniel@cobalsa.com', 'Calle 6', '1995-06-06', 'M', NULL),
+(7, 'Valentina', 'Ruiz', '1007', '3007777777', 'valentina@cobalsa.com', 'Calle 7', '1994-07-07', 'F', NULL),
+(8, 'Miguel', 'Torres', '1008', '3008888888', 'miguel@cobalsa.com', 'Calle 8', '1993-08-08', 'M', NULL),
+(9, 'Sofia', 'Moreno', '1009', '3009999999', 'sofia@cobalsa.com', 'Calle 9', '1992-09-09', 'F', NULL),
+(10, 'Juan', 'Castro', '1010', '3001010101', 'juan@cobalsa.com', 'Calle 10', '1991-10-10', 'M', NULL),
+(11, 'jack ', 'Sarmiento', '1121535125', '3132125130', 'jeperez098@gmail.com', 'Kr 97 # 128 B06', '2026-06-01', 'M', NULL);
 
 -- --------------------------------------------------------
 
@@ -263,7 +264,12 @@ INSERT INTO `registros` (`id_registro`, `id_empleado`, `fecha`, `hora_entrada`, 
 (11, 11, '2026-06-03', '14:14:10', '14:27:05'),
 (12, 11, '2026-06-03', '14:20:32', '14:27:05'),
 (13, 11, '2026-06-03', '14:27:03', '14:27:05'),
-(14, 9, '2026-06-03', '15:02:44', '15:02:51');
+(14, 9, '2026-06-03', '15:02:44', '15:02:51'),
+(15, 11, '2026-06-09', '16:26:08', '16:26:11'),
+(16, 4, '2026-06-09', '16:31:31', '16:31:39'),
+(17, 9, '2026-06-09', '16:58:30', '16:58:37'),
+(18, 5, '2026-06-09', '17:15:58', '17:16:12'),
+(19, 6, '2026-06-09', '17:27:31', '17:28:21');
 
 -- --------------------------------------------------------
 
@@ -479,7 +485,7 @@ ALTER TABLE `personas`
 -- AUTO_INCREMENT de la tabla `registros`
 --
 ALTER TABLE `registros`
-  MODIFY `id_registro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_registro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `sst_accidentes`

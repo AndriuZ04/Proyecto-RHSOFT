@@ -31,6 +31,30 @@ def login():
             session["correo"] = usuario[1]
             session["rol"] = usuario[3]
 
+            if usuario[3] == "EMPLEADO":
+
+                cursor.execute("""
+                    SELECT
+                        CONCAT(p.nombres,' ',p.apellidos),
+                        c.nombre
+                    FROM empleados e
+
+                    INNER JOIN personas p
+                        ON e.id_persona = p.id_persona
+
+                    INNER JOIN cargos c
+                        ON e.id_cargo = c.id_cargo
+
+                    WHERE e.id_usuario=%s
+                """, (usuario[0],))
+
+                datos_empleado = cursor.fetchone()
+
+                if datos_empleado:
+
+                    session["nombre_empleado"] = datos_empleado[0]
+                    session["cargo_empleado"] = datos_empleado[1]
+
             if usuario[3] == "ADMIN":
                 return redirect("/admin")
 

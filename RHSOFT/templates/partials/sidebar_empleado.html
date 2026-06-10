@@ -1,38 +1,58 @@
-<aside class="w-64 bg-blue-900 text-white">
+<aside class="w-72 bg-gradient-to-b from-blue-950 via-blue-900 to-blue-800 text-white shadow-2xl rounded-r-3xl">
 
-    <div class="p-6 text-center border-b border-blue-800">
+    <div class="p-6 text-center border-b border-blue-700">
+
+    <img
+        src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
+        class="w-36 mx-auto mb-4 drop-shadow-xl">
+
+    <div class="flex justify-center">
 
         <img
-            src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
-            class="w-24 mx-auto mb-4">
-
-        <h2 class="font-bold text-xl">
-            RHSOFT
-        </h2>
+            src="https://ui-avatars.com/api/?name=Empleado&background=ffffff&color=1e3a8a&size=128"
+            class="w-24 h-24 rounded-full border-4 border-white shadow-xl">
 
     </div>
+
+    <h2 class="mt-4 font-bold text-xl">
+    {{ session["nombre_empleado"] }}
+</h2>
+
+<p class="text-blue-200 text-sm">
+    {{ session["cargo_empleado"] }}
+</p>    
+
+</div>
 
     <nav class="mt-6">
 
         <a href="/empleado"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Dashboard
-        </a>
+   class="mx-3 mb-2 flex items-center gap-3 px-5 py-3 rounded-xl bg-blue-800 shadow-lg hover:bg-blue-700 hover:translate-x-2 transition-all duration-300">
+
+    🏠 Dashboard
+
+</a>
 
         <a href="/perfil"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Mi Perfil
-        </a>
+   class="mx-3 mb-2 flex items-center gap-3 px-5 py-3 rounded-xl bg-blue-800 shadow-lg hover:bg-blue-700 hover:translate-x-2 transition-all duration-300">
+
+    👤 Mi Perfil
+
+</a>
 
         <a href="/asistencia"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Mi Asistencia
-        </a>
+   class="mx-3 mb-2 flex items-center gap-3 px-5 py-3 rounded-xl bg-blue-800 shadow-lg hover:bg-blue-700 hover:translate-x-2 transition-all duration-300">
+
+    ⏰ Mi Asistencia
+
+</a>
 
         <a href="/logout"
-           class="block px-6 py-3 hover:bg-red-700">
-            Cerrar Sesión
-        </a>
+   class="mx-3 mb-2 flex items-center gap-3 px-5 py-3 rounded-xl bg-blue-800 shadow-lg hover:bg-blue-700 hover:translate-x-2 transition-all duration-300">
+
+    🚪 Cerrar Sesión
+
+</a>
 
     </nav>
 
