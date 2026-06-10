@@ -14,26 +14,29 @@ def listar_empleados():
     cursor = mysql.connection.cursor()
 
     sql = """
-        SELECT
-            e.id_empleado,
-            CONCAT(p.nombres,' ',p.apellidos) AS nombre_completo,
-            c.nombre,
-            d.nombre,
-            e.estado
+    SELECT
+        e.id_empleado,
+        CONCAT(p.nombres,' ',p.apellidos) AS nombre_completo,
+        c.nombre,
+        d.nombre,
+        con.estado
 
-        FROM empleados e
+    FROM empleados e
 
-        INNER JOIN personas p
-            ON e.id_persona = p.id_persona
+    INNER JOIN personas p
+        ON e.id_persona = p.id_persona
 
-        INNER JOIN cargos c
-            ON e.id_cargo = c.id_cargo
+    INNER JOIN cargos c
+        ON e.id_cargo = c.id_cargo
 
-        INNER JOIN departamentos d
-            ON e.id_departamento = d.id_departamento
+    INNER JOIN departamentos d
+        ON e.id_departamento = d.id_departamento
 
-        ORDER BY e.id_empleado
-    """
+    INNER JOIN contratos con
+        ON e.id_empleado = con.id_empleado
+
+    ORDER BY e.id_empleado
+"""
 
     cursor.execute(sql)
 
