@@ -107,22 +107,24 @@ Gestión de Cargos
 
     <td class="p-4">
 
-        <button
-            class="bg-yellow-500 text-white px-3 py-2 rounded">
+    <!-- Editar: enlace a la ruta de edición -->
+    <a href="/editar_cargo/{{ cargo[0] }}"
+       class="bg-yellow-500 text-white px-3 py-2 rounded inline-block">
+        Editar
+    </a>
 
-            Editar
-
-        </button>
-
-        <button
-            class="bg-red-600 text-white px-3 py-2 rounded">
-
+    <!-- Eliminar: formulario POST -->
+    <form action="/eliminar_cargo/{{ cargo[0] }}"
+          method="POST"
+          style="display:inline"
+          onsubmit="return confirm('¿Eliminar este cargo?')">
+        <button type="submit"
+                class="bg-red-600 text-white px-3 py-2 rounded">
             Eliminar
-
         </button>
+    </form>
 
-    </td>
-
+</td>
 </tr>
 
 {% endfor %}

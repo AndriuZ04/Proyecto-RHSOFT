@@ -17,7 +17,10 @@ from controllers.empleado_controller import (
 from controllers.cargo_controller import (
     listar_cargos,
     nuevo_cargo,
-    guardar_cargo
+    guardar_cargo,
+    editar_cargo,
+    actualizar_cargo,
+    eliminar_cargo
 )
 from controllers.departamento_controller import (
     listar_departamentos,
@@ -172,12 +175,45 @@ app.add_url_rule(
     'nuevo_cargo',
     nuevo_cargo
 )
-
 app.add_url_rule(
     '/guardar_cargo',
     'guardar_cargo',
     guardar_cargo,
     methods=['POST']
+)
+app.add_url_rule(
+    '/editar_cargo/<int:id_cargo>',
+    'editar_cargo',
+    editar_cargo
+)
+app.add_url_rule(
+    '/actualizar_cargo/<int:id_cargo>',
+    'actualizar_cargo',
+    actualizar_cargo,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/eliminar_cargo/<int:id_cargo>',
+    'eliminar_cargo',
+    eliminar_cargo
+)
+
+# 👇 ESTAS 3 RUTAS TE FALTAN
+app.add_url_rule(
+    '/editar_cargo/<int:id_cargo>',
+    'editar_cargo',
+    editar_cargo
+)
+app.add_url_rule(
+    '/actualizar_cargo/<int:id_cargo>',
+    'actualizar_cargo',
+    actualizar_cargo,
+    methods=['POST']
+)
+app.add_url_rule(
+    '/eliminar_cargo/<int:id_cargo>',
+    'eliminar_cargo',
+    eliminar_cargo
 )
 # ==========================
 # DEPARTAMENTO

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Cargo{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen">
+
+    {% include 'partials/sidebar_admin.html' %}
+
+    <main class="flex-1 p-8">
+
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-900">Editar Cargo</h1>
+            <a href="/cargos" class="bg-gray-500 text-white px-6 py-3 rounded-lg">
+                ← Volver
+            </a>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow max-w-2xl">
+
+            <form action="/actualizar_cargo/{{ cargo[0] }}" method="POST">
+
+                <div class="grid md:grid-cols-2 gap-4">
+
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            Nombre del cargo
+                        </label>
+                        <input
+                            type="text"
+                            name="nombre"
+                            value="{{ cargo[1] }}"
+                            class="border rounded-lg px-4 py-3 w-full">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            Salario de referencia
+                        </label>
+                        <input
+                            type="number"
+                            name="salario"
+                            value="{{ cargo[2] }}"
+                            class="border rounded-lg px-4 py-3 w-full">
+                    </div>
+
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        Descripción
+                    </label>
+                    <textarea
+                        name="descripcion"
+                        class="border rounded-lg px-4 py-3 w-full h-28">{{ cargo[3] }}</textarea>
+                </div>
+
+                <button
+                    type="submit"
+                    class="mt-6 bg-blue-900 text-white px-6 py-3 rounded-lg w-full">
+                    Actualizar Cargo
+                </button>
+
+            </form>
+
+        </div>
+
+    </main>
+</div>
+{% endblock %}
