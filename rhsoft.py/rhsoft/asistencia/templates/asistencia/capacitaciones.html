@@ -1,0 +1,389 @@
+{% extends "asistencia/base.html" %}
+{% block title %}Capacitaciones — RHSOFT{% endblock %}
+
+{% block extra_head %}
+<style>
+  .sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:var(--azul-oscuro); padding:32px 24px; display:flex; flex-direction:column; z-index:100; }
+  .sidebar-logo { display:flex; align-items:center; gap:12px; margin-bottom:40px; }
+  .sidebar-logo .icon { width:40px; height:40px; background:rgba(255,255,255,.15); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .sidebar-logo .icon svg { width:20px; fill:white; }
+  .sidebar-logo span { font-family:'DM Serif Display',serif; color:white; font-size:1.05rem; line-height:1.2; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; color:rgba(255,255,255,.7); text-decoration:none; font-size:.92rem; transition:all .2s; margin-bottom:4px; }
+  .nav-item svg { width:18px; fill:currentColor; flex-shrink:0; }
+  .nav-item:hover { background:rgba(255,255,255,.1); color:white; }
+  .nav-item.active { background:rgba(255,255,255,.18); color:white; font-weight:600; }
+  .nav-section { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.3); margin:16px 0 6px 14px; }
+  .sidebar-footer { margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); }
+  .user-chip { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(255,255,255,.1); border-radius:12px; margin-bottom:10px; }
+  .user-avatar { width:36px; height:36px; background:var(--azul-medio); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:.9rem; }
+  .user-info .uname { color:white; font-size:.88rem; font-weight:500; display:block; }
+  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; text-transform:capitalize; display:block; }
+  .logout-btn { display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:none; border:1.5px solid rgba(255,255,255,.15); border-radius:10px; color:rgba(255,255,255,.6); font-family:'DM Sans',sans-serif; font-size:.88rem; cursor:pointer; transition:all .2s; text-decoration:none; }
+  .logout-btn:hover { border-color:rgba(255,255,255,.4); color:white; }
+
+  .main { margin-left:260px; padding:36px 40px; min-height:100vh; }
+  .page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px; }
+  .page-header h1 { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--texto); }
+  .page-header p { color:var(--azul-oscuro); opacity:.6; font-size:.92rem; margin-top:4px; }
+  .btn-new { display:flex; align-items:center; gap:8px; padding:11px 20px; background:var(--azul-oscuro); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-new:hover { background:#2a4860; transform:translateY(-1px); }
+
+  /* Cards de capacitaciones */
+  .caps-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px; margin-bottom:36px; align-items:start; }
+  .cap-card { background:white; border-radius:16px; box-shadow:var(--sombra); overflow:hidden; transition:transform .2s; }
+  .cap-card:hover { transform:translateY(-2px); }
+  .cap-header { padding:20px 24px 16px; border-bottom:1px solid rgba(53,88,114,.08); }
+  .cap-tipo { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.72rem; font-weight:700; margin-bottom:8px; }
+  .t-Presencial { background:rgba(39,174,96,.12);  color:#1a6344; }
+  .t-Virtual    { background:rgba(122,170,206,.2); color:#2a4860; }
+  .t-Mixta      { background:rgba(142,68,173,.1);  color:#6c3483; }
+  .cap-titulo { font-family:'DM Serif Display',serif; font-size:1.1rem; color:var(--texto); margin-bottom:4px; }
+  .cap-fecha { font-size:.8rem; color:var(--azul-oscuro); opacity:.6; }
+  .cap-body { padding:16px 24px; }
+  .cap-desc { font-size:.87rem; color:var(--texto); opacity:.75; line-height:1.5; margin-bottom:12px; }
+  .cap-lugar { font-size:.82rem; color:var(--azul-oscuro); opacity:.6; display:flex; align-items:center; gap:6px; }
+  .cap-preview { overflow:hidden; border-top:1px solid rgba(53,88,114,.08); }
+  .cap-pdf-preview { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:24px; background:rgba(53,88,114,.04); text-decoration:none; color:var(--azul-oscuro); font-size:.85rem; font-weight:600; }
+  .cap-pdf-preview:hover { background:rgba(53,88,114,.08); }
+  .cap-footer { padding:12px 24px; background:rgba(53,88,114,.03); display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .cap-material { display:flex; align-items:center; gap:6px; font-size:.82rem; color:var(--azul-oscuro); font-weight:600; text-decoration:none; }
+  .cap-material:hover { color:var(--azul-medio); }
+  .cap-actions { display:flex; gap:6px; }
+
+  .action-btn { display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:.78rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-edit { background:rgba(122,170,206,.15); color:var(--azul-oscuro); }
+  .btn-edit:hover { background:rgba(122,170,206,.3); }
+  .btn-del { background:rgba(192,57,43,.08); color:#7d1e13; }
+  .btn-del:hover { background:rgba(192,57,43,.18); }
+  .btn-asig { background:rgba(53,88,114,.08); color:var(--azul-oscuro); }
+  .btn-asig:hover { background:rgba(53,88,114,.18); }
+
+  /* Estado empleado */
+  .badge { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.73rem; font-weight:700; }
+  .b-Pendiente  { background:rgba(230,126,34,.12); color:#a05010; }
+  .b-En\ curso  { background:rgba(122,170,206,.2); color:#2a4860; }
+  .b-Completada { background:rgba(39,174,96,.12);  color:#1a6344; }
+
+  /* Tabla asignaciones */
+  .section-title { font-family:'DM Serif Display',serif; font-size:1.3rem; color:var(--texto); margin-bottom:16px; }
+  .table-wrap { background:white; border-radius:16px; box-shadow:var(--sombra); overflow:hidden; margin-bottom:32px; }
+  table { width:100%; border-collapse:collapse; }
+  th { background:rgba(53,88,114,.06); padding:12px 16px; text-align:left; font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-oscuro); font-weight:600; }
+  td { padding:12px 16px; font-size:.88rem; border-top:1px solid rgba(53,88,114,.07); vertical-align:middle; }
+  .empty-state { text-align:center; padding:40px; opacity:.4; }
+
+  /* Modal */
+  .modal-overlay { position:fixed; inset:0; background:rgba(30,51,68,.5); backdrop-filter:blur(3px); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:white; border-radius:20px; padding:32px; width:min(540px,100%); max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(30,51,68,.25); }
+  .modal-title { font-family:'DM Serif Display',serif; font-size:1.4rem; color:var(--texto); margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+  .modal-close { background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--azul-oscuro); opacity:.5; }
+  .modal-close:hover { opacity:1; }
+  .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .modal-field label { display:block; font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--azul-oscuro); margin-bottom:6px; }
+  .modal-field input, .modal-field select, .modal-field textarea { width:100%; padding:10px 13px; border:2px solid rgba(53,88,114,.18); border-radius:9px; font-family:'DM Sans',sans-serif; font-size:.88rem; color:var(--texto); outline:none; transition:border-color .2s; }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus { border-color:var(--azul-medio); }
+  .modal-field textarea { resize:vertical; min-height:80px; }
+  .modal-field.full { grid-column:1/-1; }
+  .file-note { font-size:.75rem; color:var(--azul-oscuro); opacity:.5; margin-top:4px; }
+  .modal-actions { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
+  .btn-primary { padding:10px 22px; background:var(--azul-oscuro); color:white; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; }
+  .btn-secondary { padding:10px 22px; background:white; color:var(--azul-oscuro); border:1.5px solid rgba(53,88,114,.25); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; cursor:pointer; }
+
+  .toast { position:fixed; bottom:24px; right:24px; background:#1e3344; color:white; padding:14px 20px; border-radius:12px; font-size:.9rem; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; z-index:999; }
+  .toast.show { opacity:1; transform:translateY(0); }
+  .toast.success { background:#27ae60; }
+  .toast.error   { background:#c0392b; }
+  .mi-estado { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:8px; font-size:.8rem; font-weight:600; }
+</style>
+{% endblock %}
+
+{% block body %}
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+    <span>Gestión<br>Empresarial</span>
+  </div>
+  <div class="nav-section">Módulos</div>
+  <a href="{% url 'registro' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+    Registro de asistencia
+  </a>
+  {% if rol == 'admin' %}
+  <a href="{% url 'admin_panel' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    Gestión de empleados
+    <span class="admin-badge">Admin</span>
+  </a>
+  {% endif %}
+  <a href="{% url 'perfil' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+    Mi Perfil
+  </a>
+  {% if rol == 'admin' %}
+  <a href="{% url 'seleccion' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+    Proceso de Selección
+  </a>
+  {% endif %}
+  <a href="{% url 'evaluaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Evaluaciones
+  </a>
+  <a href="{% url 'capacitaciones' %}" class="nav-item active">
+    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+    Capacitaciones
+  </a>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">{{ nombre|slice:":2"|upper }}</div>
+      <div class="user-info">
+        <span class="uname">{{ nombre }}</span>
+        <span class="urole">{% if rol == 'admin' %}Administrador{% else %}Empleado{% endif %}</span>
+      </div>
+    </div>
+    <a href="{% url 'login' %}?logout=1" class="logout-btn">
+      <svg viewBox="0 0 24 24" width="16" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Cerrar sesión
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <div>
+      <h1>Capacitaciones</h1>
+      <p>{% if rol == 'admin' %}Publica y gestiona eventos de capacitación para todos los empleados{% else %}Consulta las capacitaciones disponibles y tu estado en cada una{% endif %}</p>
+    </div>
+    {% if rol == 'admin' %}
+    <button class="btn-new" onclick="abrirModal()">
+      <svg width="16" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      Nueva capacitación
+    </button>
+    {% endif %}
+  </div>
+
+  <!-- Cards de capacitaciones -->
+  {% if not capacitaciones %}
+  <div style="text-align:center;padding:60px;opacity:.4;">No hay capacitaciones publicadas aún</div>
+  {% else %}
+  <div class="caps-grid">
+    {% for cap in capacitaciones %}
+
+    <div class="cap-card">
+      <div class="cap-header">
+        <span class="cap-tipo t-{{ cap.Tipo }}">{{ cap.Tipo }}</span>
+        <div class="cap-titulo">{{ cap.Titulo }}</div>
+        {% if cap.Fecha_Evento %}
+        <div class="cap-fecha">📅 {{ cap.Fecha_Evento|date:"d/m/Y" }}</div>
+        {% endif %}
+      </div>
+      <div class="cap-body">
+        {% if cap.Descripcion %}
+        <div class="cap-desc">{{ cap.Descripcion }}</div>
+        {% endif %}
+        {% if cap.Lugar %}
+        <div class="cap-lugar">
+          <svg width="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          {{ cap.Lugar }}
+        </div>
+        {% endif %}
+      </div>
+      {% if cap.Material %}
+      <div class="cap-preview">
+        {% with ext=cap.Material.name|lower %}
+        {% if ".jpg" in ext or ".jpeg" in ext or ".png" in ext or ".webp" in ext %}
+        <a href="{{ cap.Material.url }}" target="_blank">
+          <img src="{{ cap.Material.url }}" alt="{{ cap.Titulo }}" style="width:100%;height:auto;max-height:420px;object-fit:contain;display:block;background:rgba(53,88,114,.04);">
+        </a>
+        {% else %}
+        <a href="{{ cap.Material.url }}" target="_blank" class="cap-pdf-preview">
+          <svg width="32" viewBox="0 0 24 24" fill="currentColor" style="opacity:.4;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+          <span>Ver material (PDF)</span>
+        </a>
+        {% endif %}
+        {% endwith %}
+      </div>
+      {% endif %}
+      <div class="cap-footer">
+        {% if not cap.Material %}
+        <span style="font-size:.78rem;opacity:.4;">Sin material adjunto</span>
+        {% endif %}
+
+        {% if rol == 'admin' %}
+        <div class="cap-actions">
+          <button class="action-btn btn-edit" onclick='editarCap({{ cap.ID_Capacitacion }}, "{{ cap.Titulo|escapejs }}", "{{ cap.Descripcion|default:""|escapejs }}", "{{ cap.Tipo }}", "{{ cap.Fecha_Evento|default:"" }}", "{{ cap.Lugar|default:""|escapejs }}")'>Editar</button>
+          <button class="action-btn btn-del" onclick="eliminarCap({{ cap.ID_Capacitacion }})">Eliminar</button>
+        </div>
+        {% else %}
+        {% for asig in asignaciones %}{% if asig.ID_Capacitacion.ID_Capacitacion == cap.ID_Capacitacion %}
+        <span class="badge b-{{ asig.Estado }}">{{ asig.Estado }}</span>
+        {% endif %}{% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Tabla de asignaciones (solo admin) -->
+  {% if rol == 'admin' and asignaciones %}
+  <div class="section-title">Estado por empleado</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Empleado</th><th>Capacitación</th><th>Estado</th><th>Completado</th><th>Acción</th></tr>
+      </thead>
+      <tbody>
+        {% for asig in asignaciones %}
+        <tr>
+          <td>{{ asig.ID_Empleado.ID_Persona.Nombres }} {{ asig.ID_Empleado.ID_Persona.Apellidos }}</td>
+          <td>{{ asig.ID_Capacitacion.Titulo }}</td>
+          <td><span class="badge b-{{ asig.Estado }}">{{ asig.Estado }}</span></td>
+          <td>{{ asig.Fecha_Completado|date:"d/m/Y"|default:"—" }}</td>
+          <td>
+            <select style="padding:5px 8px;border:1.5px solid rgba(53,88,114,.2);border-radius:7px;font-size:.8rem;" onchange="actualizarEstado({{ asig.ID_Empleado.ID_Empleado }}, {{ asig.ID_Capacitacion.ID_Capacitacion }}, this.value)">
+              <option {% if asig.Estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+              <option {% if asig.Estado == 'En curso' %}selected{% endif %}>En curso</option>
+              <option {% if asig.Estado == 'Completada' %}selected{% endif %}>Completada</option>
+            </select>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</main>
+
+{% if rol == 'admin' %}
+<div class="modal-overlay" id="modalCap">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modalTitulo">Nueva capacitación</span>
+      <button class="modal-close" onclick="cerrarModal()">✕</button>
+    </div>
+    <input type="hidden" id="capId">
+    <div class="modal-grid">
+      <div class="modal-field full">
+        <label>Título *</label>
+        <input type="text" id="cTitulo" placeholder="Ej: Primeros auxilios, Habilidades blandas...">
+      </div>
+      <div class="modal-field full">
+        <label>Descripción</label>
+        <textarea id="cDesc" placeholder="Detalles de la capacitación..."></textarea>
+      </div>
+      <div class="modal-field">
+        <label>Tipo *</label>
+        <select id="cTipo">
+          <option value="Presencial">Presencial</option>
+          <option value="Virtual">Virtual</option>
+          <option value="Mixta">Mixta</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Fecha del evento</label>
+        <input type="date" id="cFecha">
+      </div>
+      <div class="modal-field full">
+        <label>Lugar</label>
+        <input type="text" id="cLugar" placeholder="Ej: Sala de capacitaciones, piso 3">
+      </div>
+      <div class="modal-field full">
+        <label>Material (PDF, imagen, etc.)</label>
+        <input type="file" id="cMaterial" accept=".pdf,.jpg,.jpeg,.png,.pptx">
+        <div class="file-note">Opcional — afiche, manual o presentación de la capacitación</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-primary" onclick="guardarCap()">Publicar capacitación</button>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function abrirModal() {
+    document.getElementById('modalTitulo').textContent = 'Nueva capacitación';
+    document.getElementById('capId').value   = '';
+    document.getElementById('cTitulo').value = '';
+    document.getElementById('cDesc').value   = '';
+    document.getElementById('cTipo').value   = 'Presencial';
+    document.getElementById('cFecha').value  = '';
+    document.getElementById('cLugar').value  = '';
+    document.getElementById('cMaterial').value = '';
+    document.getElementById('modalCap').classList.add('open');
+  }
+
+  function editarCap(id, titulo, desc, tipo, fecha, lugar) {
+    document.getElementById('modalTitulo').textContent = 'Editar capacitación';
+    document.getElementById('capId').value   = id;
+    document.getElementById('cTitulo').value = titulo;
+    document.getElementById('cDesc').value   = desc;
+    document.getElementById('cTipo').value   = tipo;
+    document.getElementById('cFecha').value  = fecha;
+    document.getElementById('cLugar').value  = lugar;
+    document.getElementById('modalCap').classList.add('open');
+  }
+
+  function cerrarModal() {
+    document.getElementById('modalCap').classList.remove('open');
+  }
+
+  async function guardarCap() {
+    const fd = new FormData();
+    fd.append('accion', 'guardar_capacitacion');
+    fd.append('ID_Capacitacion', document.getElementById('capId').value);
+    fd.append('Titulo',       document.getElementById('cTitulo').value);
+    fd.append('Descripcion',  document.getElementById('cDesc').value);
+    fd.append('Tipo',         document.getElementById('cTipo').value);
+    fd.append('Fecha_Evento', document.getElementById('cFecha').value);
+    fd.append('Lugar',        document.getElementById('cLugar').value);
+    const mat = document.getElementById('cMaterial').files[0];
+    if (mat) fd.append('Material', mat);
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    const res  = await fetch('{% url "capacitaciones" %}', {method:'POST', body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) { cerrarModal(); setTimeout(() => location.reload(), 1200); }
+  }
+
+  async function eliminarCap(id) {
+    if (!confirm('¿Eliminar esta capacitación? Se eliminará también para todos los empleados.')) return;
+    const fd = new FormData();
+    fd.append('accion', 'eliminar_capacitacion');
+    fd.append('ID_Capacitacion', id);
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    const res  = await fetch('{% url "capacitaciones" %}', {method:'POST', body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) setTimeout(() => location.reload(), 1200);
+  }
+
+  async function actualizarEstado(empId, capId, estado) {
+    const fd = new FormData();
+    fd.append('accion', 'actualizar_estado_cap');
+    fd.append('ID_Empleado', empId);
+    fd.append('ID_Capacitacion', capId);
+    fd.append('Estado', estado);
+    if (estado === 'Completada') {
+      fd.append('Fecha_Completado', new Date().toISOString().split('T')[0]);
+    }
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    const res  = await fetch('{% url "capacitaciones" %}', {method:'POST', body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+  }
+
+  function showToast(msg, tipo='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + tipo + ' show';
+    setTimeout(() => t.className = 'toast', 4500);
+  }
+</script>
+{% endblock %}

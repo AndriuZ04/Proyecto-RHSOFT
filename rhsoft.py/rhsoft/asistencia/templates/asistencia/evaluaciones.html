@@ -1,0 +1,309 @@
+{% extends "asistencia/base.html" %}
+{% block title %}Evaluaciones — RHSOFT{% endblock %}
+
+{% block extra_head %}
+<style>
+  .sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:var(--azul-oscuro); padding:32px 24px; display:flex; flex-direction:column; z-index:100; }
+  .sidebar-logo { display:flex; align-items:center; gap:12px; margin-bottom:40px; }
+  .sidebar-logo .icon { width:40px; height:40px; background:rgba(255,255,255,.15); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .sidebar-logo .icon svg { width:20px; fill:white; }
+  .sidebar-logo span { font-family:'DM Serif Display',serif; color:white; font-size:1.05rem; line-height:1.2; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; color:rgba(255,255,255,.7); text-decoration:none; font-size:.92rem; transition:all .2s; margin-bottom:4px; }
+  .nav-item svg { width:18px; fill:currentColor; flex-shrink:0; }
+  .nav-item:hover { background:rgba(255,255,255,.1); color:white; }
+  .nav-item.active { background:rgba(255,255,255,.18); color:white; font-weight:600; }
+  .nav-section { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.3); margin:16px 0 6px 14px; }
+  .sidebar-footer { margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); }
+  .user-chip { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(255,255,255,.1); border-radius:12px; margin-bottom:10px; }
+  .user-avatar { width:36px; height:36px; background:var(--azul-medio); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:.9rem; }
+  .user-info .uname { color:white; font-size:.88rem; font-weight:500; display:block; }
+  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; text-transform:capitalize; display:block; }
+  .logout-btn { display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:none; border:1.5px solid rgba(255,255,255,.15); border-radius:10px; color:rgba(255,255,255,.6); font-family:'DM Sans',sans-serif; font-size:.88rem; cursor:pointer; transition:all .2s; text-decoration:none; }
+  .logout-btn:hover { border-color:rgba(255,255,255,.4); color:white; }
+
+  .main { margin-left:260px; padding:36px 40px; min-height:100vh; }
+  .page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px; }
+  .page-header h1 { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--texto); }
+  .page-header p { color:var(--azul-oscuro); opacity:.6; font-size:.92rem; margin-top:4px; }
+  .btn-new { display:flex; align-items:center; gap:8px; padding:11px 20px; background:var(--azul-oscuro); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-new:hover { background:#2a4860; transform:translateY(-1px); }
+
+  .table-wrap { background:white; border-radius:16px; box-shadow:var(--sombra); overflow:hidden; }
+  table { width:100%; border-collapse:collapse; }
+  th { background:rgba(53,88,114,.06); padding:12px 16px; text-align:left; font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-oscuro); font-weight:600; }
+  td { padding:12px 16px; font-size:.88rem; border-top:1px solid rgba(53,88,114,.07); vertical-align:middle; }
+  .empty-state { text-align:center; padding:40px; opacity:.4; }
+
+  .badge { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.73rem; font-weight:700; }
+  .b-Excelente  { background:rgba(39,174,96,.12);  color:#1a6344; }
+  .b-Bueno      { background:rgba(122,170,206,.2); color:#2a4860; }
+  .b-Regular    { background:rgba(230,126,34,.12); color:#a05010; }
+  .b-Deficiente { background:rgba(192,57,43,.1);   color:#7d1e13; }
+
+  .action-btn { display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:.78rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-edit { background:rgba(122,170,206,.15); color:var(--azul-oscuro); }
+  .btn-edit:hover { background:rgba(122,170,206,.3); }
+  .btn-del { background:rgba(192,57,43,.08); color:#7d1e13; }
+  .btn-del:hover { background:rgba(192,57,43,.18); }
+
+  /* Modal */
+  .modal-overlay { position:fixed; inset:0; background:rgba(30,51,68,.5); backdrop-filter:blur(3px); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:white; border-radius:20px; padding:32px; width:min(500px,100%); box-shadow:0 20px 60px rgba(30,51,68,.25); }
+  .modal-title { font-family:'DM Serif Display',serif; font-size:1.4rem; color:var(--texto); margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+  .modal-close { background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--azul-oscuro); opacity:.5; }
+  .modal-close:hover { opacity:1; }
+  .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .modal-field label { display:block; font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--azul-oscuro); margin-bottom:6px; }
+  .modal-field input, .modal-field select, .modal-field textarea { width:100%; padding:10px 13px; border:2px solid rgba(53,88,114,.18); border-radius:9px; font-family:'DM Sans',sans-serif; font-size:.88rem; color:var(--texto); outline:none; transition:border-color .2s; }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus { border-color:var(--azul-medio); }
+  .modal-field textarea { resize:vertical; min-height:80px; }
+  .modal-field.full { grid-column:1/-1; }
+  .modal-actions { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
+  .btn-primary { padding:10px 22px; background:var(--azul-oscuro); color:white; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; }
+  .btn-secondary { padding:10px 22px; background:white; color:var(--azul-oscuro); border:1.5px solid rgba(53,88,114,.25); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; cursor:pointer; }
+
+  .toast { position:fixed; bottom:24px; right:24px; background:#1e3344; color:white; padding:14px 20px; border-radius:12px; font-size:.9rem; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; z-index:999; }
+  .toast.show { opacity:1; transform:translateY(0); }
+  .toast.success { background:#27ae60; }
+  .toast.error   { background:#c0392b; }
+
+  .emp-only-msg { background:rgba(122,170,206,.1); border:1.5px solid rgba(122,170,206,.3); border-radius:12px; padding:16px 20px; font-size:.9rem; color:var(--azul-oscuro); margin-bottom:24px; }
+</style>
+{% endblock %}
+
+{% block body %}
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+    <span>Gestión<br>Empresarial</span>
+  </div>
+  <div class="nav-section">Módulos</div>
+  <a href="{% url 'registro' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+    Registro de asistencia
+  </a>
+  {% if rol == 'admin' %}
+  <a href="{% url 'admin_panel' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    Gestión de empleados
+    <span class="admin-badge">Admin</span>
+  </a>
+  {% endif %}
+  <a href="{% url 'perfil' %}" class="nav-item">
+  <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+  Mi Perfil
+</a>
+{% if rol == 'admin' %}
+  <a href="{% url 'seleccion' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+    Proceso de Selección
+  </a>
+  {% endif %}
+  <a href="{% url 'evaluaciones' %}" class="nav-item active">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Evaluaciones
+  </a>
+  <a href="{% url 'capacitaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+    Capacitaciones
+  </a>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">{{ nombre|slice:":2"|upper }}</div>
+      <div class="user-info">
+        <span class="uname">{{ nombre }}</span>
+        <span class="urole">{% if rol == 'admin' %}Administrador{% else %}Empleado{% endif %}</span>
+      </div>
+    </div>
+    <a href="{% url 'login' %}?logout=1" class="logout-btn">
+      <svg viewBox="0 0 24 24" width="16" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Cerrar sesión
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <div>
+      <h1>Evaluaciones de Desempeño</h1>
+      <p>{% if rol == 'admin' %}Registra y gestiona las evaluaciones de todos los empleados{% else %}Consulta tus evaluaciones de desempeño{% endif %}</p>
+    </div>
+    {% if rol == 'admin' %}
+    <button class="btn-new" onclick="abrirModal()">
+      <svg width="16" viewBox="0 0 24 24" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      Nueva evaluación
+    </button>
+    {% endif %}
+  </div>
+
+  {% if rol != 'admin' %}
+  <div class="emp-only-msg">
+    Aquí puedes consultar todas las evaluaciones de desempeño que el administrador ha registrado sobre tu trabajo.
+  </div>
+  {% endif %}
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          {% if rol == 'admin' %}<th>Empleado</th><th>Cargo</th>{% endif %}
+          <th>Fecha</th><th>Período</th><th>Resultado</th><th>Evaluador</th><th>Observaciones</th>
+          {% if rol == 'admin' %}<th>Acciones</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% if not evaluaciones %}
+        <tr><td colspan="8"><div class="empty-state">No hay evaluaciones registradas</div></td></tr>
+        {% else %}
+        {% for ev in evaluaciones %}
+        <tr>
+          {% if rol == 'admin' %}
+          <td><strong>{{ ev.ID_Empleado.ID_Persona.Nombres }} {{ ev.ID_Empleado.ID_Persona.Apellidos }}</strong></td>
+          <td>{{ ev.ID_Empleado.ID_Cargo.Nombre_Cargo }}</td>
+          {% endif %}
+          <td>{{ ev.Fecha|date:"d/m/Y" }}</td>
+          <td>{{ ev.Periodo }}</td>
+          <td><span class="badge b-{{ ev.Resultado }}">{{ ev.Resultado }}</span></td>
+          <td>{{ ev.Evaluador|default:"—" }}</td>
+          <td style="max-width:200px;font-size:.82rem;">{{ ev.Observaciones|default:"—"|truncatechars:60 }}</td>
+          {% if rol == 'admin' %}
+          <td style="display:flex;gap:6px;">
+            <button class="action-btn btn-edit" onclick='editarEval({{ ev.ID_Evaluacion }}, {{ ev.ID_Empleado.ID_Empleado }}, "{{ ev.Fecha }}", "{{ ev.Periodo }}", "{{ ev.Resultado }}", "{{ ev.Evaluador|default:"" }}", "{{ ev.Observaciones|default:""|escapejs }}")'>Editar</button>
+            <button class="action-btn btn-del" onclick="eliminarEval({{ ev.ID_Evaluacion }})">Eliminar</button>
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+{% if rol == 'admin' %}
+<div class="modal-overlay" id="modalEval">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modalTitulo">Nueva evaluación</span>
+      <button class="modal-close" onclick="cerrarModal()">✕</button>
+    </div>
+    <input type="hidden" id="evalId">
+    <div class="modal-grid">
+      <div class="modal-field full">
+        <label>Empleado *</label>
+        <select id="eEmpleado">
+          <option value="">Selecciona...</option>
+          {% for emp in empleados %}
+          <option value="{{ emp.ID_Empleado }}">{{ emp.ID_Persona.Nombres }} {{ emp.ID_Persona.Apellidos }} — {{ emp.ID_Cargo.Nombre_Cargo }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Fecha *</label>
+        <input type="date" id="eFecha">
+      </div>
+      <div class="modal-field">
+        <label>Período *</label>
+        <select id="ePeriodo">
+          <option value="Mensual">Mensual</option>
+          <option value="Trimestral">Trimestral</option>
+          <option value="Semestral">Semestral</option>
+          <option value="Anual">Anual</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Resultado *</label>
+        <select id="eResultado">
+          <option value="Excelente">Excelente</option>
+          <option value="Bueno">Bueno</option>
+          <option value="Regular">Regular</option>
+          <option value="Deficiente">Deficiente</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Evaluador</label>
+        <input type="text" id="eEvaluador" placeholder="Nombre del evaluador">
+      </div>
+      <div class="modal-field full">
+        <label>Observaciones</label>
+        <textarea id="eObs" placeholder="Comentarios sobre el desempeño..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-primary" onclick="guardarEval()">Guardar</button>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function abrirModal() {
+    document.getElementById('modalTitulo').textContent = 'Nueva evaluación';
+    document.getElementById('evalId').value = '';
+    document.getElementById('eEmpleado').value = '';
+    document.getElementById('eFecha').value = new Date().toISOString().split('T')[0];
+    document.getElementById('ePeriodo').value = 'Mensual';
+    document.getElementById('eResultado').value = 'Bueno';
+    document.getElementById('eEvaluador').value = '';
+    document.getElementById('eObs').value = '';
+    document.getElementById('modalEval').classList.add('open');
+  }
+
+  function editarEval(id, empId, fecha, periodo, resultado, evaluador, obs) {
+    document.getElementById('modalTitulo').textContent = 'Editar evaluación';
+    document.getElementById('evalId').value    = id;
+    document.getElementById('eEmpleado').value = empId;
+    document.getElementById('eFecha').value    = fecha;
+    document.getElementById('ePeriodo').value  = periodo;
+    document.getElementById('eResultado').value = resultado;
+    document.getElementById('eEvaluador').value = evaluador;
+    document.getElementById('eObs').value       = obs;
+    document.getElementById('modalEval').classList.add('open');
+  }
+
+  function cerrarModal() {
+    document.getElementById('modalEval').classList.remove('open');
+  }
+
+  async function guardarEval() {
+    const fd = new FormData();
+    fd.append('accion', 'guardar_evaluacion');
+    fd.append('ID_Evaluacion', document.getElementById('evalId').value);
+    fd.append('ID_Empleado',   document.getElementById('eEmpleado').value);
+    fd.append('Fecha',         document.getElementById('eFecha').value);
+    fd.append('Periodo',       document.getElementById('ePeriodo').value);
+    fd.append('Resultado',     document.getElementById('eResultado').value);
+    fd.append('Evaluador',     document.getElementById('eEvaluador').value);
+    fd.append('Observaciones', document.getElementById('eObs').value);
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    const res  = await fetch('{% url "evaluaciones" %}', {method:'POST', body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) { cerrarModal(); setTimeout(() => location.reload(), 1200); }
+  }
+
+  async function eliminarEval(id) {
+    if (!confirm('¿Eliminar esta evaluación?')) return;
+    const fd = new FormData();
+    fd.append('accion', 'eliminar_evaluacion');
+    fd.append('ID_Evaluacion', id);
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    const res  = await fetch('{% url "evaluaciones" %}', {method:'POST', body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) setTimeout(() => location.reload(), 1200);
+  }
+
+  function showToast(msg, tipo='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + tipo + ' show';
+    setTimeout(() => t.className = 'toast', 4500);
+  }
+</script>
+{% endblock %}

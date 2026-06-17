@@ -1,0 +1,751 @@
+{% extends "asistencia/base.html" %}
+{% block title %}Administración — RHSOFT{% endblock %}
+
+{% block extra_head %}
+<style>
+  .sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:var(--azul-oscuro); padding:32px 24px; display:flex; flex-direction:column; z-index:100; }
+  .sidebar-logo { display:flex; align-items:center; gap:12px; margin-bottom:40px; }
+  .sidebar-logo .icon { width:40px; height:40px; background:rgba(255,255,255,.15); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .sidebar-logo .icon svg { width:20px; fill:white; }
+  .sidebar-logo span { font-family:'DM Serif Display',serif; color:white; font-size:1.05rem; line-height:1.2; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; color:rgba(255,255,255,.7); text-decoration:none; font-size:.92rem; transition:all .2s; margin-bottom:4px; }
+  .nav-item svg { width:18px; fill:currentColor; flex-shrink:0; }
+  .nav-item:hover { background:rgba(255,255,255,.1); color:white; }
+  .nav-item.active { background:rgba(255,255,255,.18); color:white; font-weight:600; }
+  .nav-section { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.3); margin:16px 0 6px 14px; }
+  .sidebar-footer { margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); }
+  .user-chip { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(255,255,255,.1); border-radius:12px; margin-bottom:10px; }
+  .user-avatar { width:36px; height:36px; background:var(--azul-medio); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:.9rem; }
+  .user-info .uname { color:white; font-size:.88rem; font-weight:500; display:block; }
+  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; text-transform:capitalize; display:block; }
+  .logout-btn { display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:none; border:1.5px solid rgba(255,255,255,.15); border-radius:10px; color:rgba(255,255,255,.6); font-family:'DM Sans',sans-serif; font-size:.88rem; cursor:pointer; transition:all .2s; text-decoration:none; }
+  .logout-btn:hover { border-color:rgba(255,255,255,.4); color:white; }
+
+  .main { margin-left:260px; padding:36px 40px; min-height:100vh; }
+  .page-header { margin-bottom:28px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .page-header h1 { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--texto); }
+  .btn-new { display:flex; align-items:center; gap:8px; padding:13px 22px; background:var(--azul-oscuro); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:.92rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-new:hover { background:#2a4860; transform:translateY(-1px); }
+
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+  .kpi-card { background:white; border-radius:16px; padding:20px 24px; box-shadow:var(--sombra); }
+  .kpi-label { font-size:.75rem; color:var(--azul-oscuro); opacity:.6; text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+  .kpi-value { font-family:'DM Serif Display',serif; font-size:2.4rem; color:var(--texto); line-height:1; }
+  .kpi-sub   { font-size:.78rem; color:var(--azul-oscuro); opacity:.45; margin-top:4px; }
+
+  .tabs { display:flex; gap:4px; background:rgba(53,88,114,.08); border-radius:12px; padding:4px; margin-bottom:24px; width:fit-content; }
+  .tab-btn { padding:9px 20px; border:none; border-radius:9px; background:transparent; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:500; color:var(--azul-oscuro); cursor:pointer; transition:all .2s; opacity:.6; }
+  .tab-btn.active { background:white; color:var(--texto); font-weight:600; box-shadow:0 2px 8px rgba(53,88,114,.12); opacity:1; }
+
+  .filter-bar { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+  .search-box { display:flex; align-items:center; gap:8px; background:white; border:2px solid rgba(53,88,114,.15); border-radius:12px; padding:0 16px; flex:1; min-width:200px; }
+  .search-box svg { width:18px; fill:var(--azul-oscuro); opacity:.4; flex-shrink:0; }
+  .search-box input { border:none; outline:none; font-family:'DM Sans',sans-serif; font-size:.92rem; color:var(--texto); padding:11px 0; width:100%; background:transparent; }
+  .filter-select { padding:11px 16px; border:2px solid rgba(53,88,114,.15); border-radius:12px; background:white; font-family:'DM Sans',sans-serif; font-size:.9rem; color:var(--texto); outline:none; }
+
+  .table-wrap { background:white; border-radius:16px; box-shadow:var(--sombra); overflow:hidden; }
+  table { width:100%; border-collapse:collapse; }
+  thead th { padding:14px 18px; text-align:left; font-size:.73rem; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--azul-oscuro); opacity:.5; background:rgba(53,88,114,.04); border-bottom:1px solid rgba(53,88,114,.08); white-space:nowrap; }
+  tbody td { padding:14px 18px; font-size:.88rem; border-bottom:1px solid rgba(53,88,114,.06); vertical-align:middle; }
+  tbody tr:last-child td { border-bottom:none; }
+  tbody tr:hover { background:rgba(53,88,114,.03); }
+  .emp-name { font-weight:600; }
+  .emp-doc  { font-size:.78rem; color:var(--azul-oscuro); opacity:.55; }
+
+  .badge { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.73rem; font-weight:600; }
+  .badge-activo    { background:rgba(39,174,96,.12);  color:#1a6344; }
+  .badge-inactivo  { background:rgba(192,57,43,.1);   color:#7d1e13; }
+  .badge-admin     { background:rgba(53,88,114,.15);  color:var(--azul-oscuro); }
+  .badge-vigente   { background:rgba(39,174,96,.12);  color:#1a6344; }
+  .badge-terminado { background:rgba(127,140,141,.12);color:#4a5254; }
+  .badge-suspendido{ background:rgba(155,89,182,.12); color:#5b2d8e; }
+  .badge-tipo-sst  { background:rgba(230,126,34,.12); color:#7d4a00; }
+
+  .pin-code { font-family:monospace; font-size:.85rem; background:rgba(53,88,114,.08); padding:2px 8px; border-radius:6px; color:var(--azul-oscuro); letter-spacing:.1em; }
+  .actions-cell { display:flex; gap:8px; }
+  .icon-btn { width:34px; height:34px; border:none; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; }
+  .icon-btn svg { width:16px; }
+  .icon-btn.edit    { background:rgba(122,170,206,.15); color:var(--azul-oscuro); }
+  .icon-btn.edit:hover    { background:var(--azul-medio); color:white; }
+  .icon-btn.view    { background:rgba(39,174,96,.1);  color:#1a6344; }
+  .icon-btn.view:hover    { background:#27ae60; color:white; }
+  .icon-btn.contrato{ background:rgba(53,88,114,.1);  color:var(--azul-oscuro); }
+  .icon-btn.contrato:hover{ background:var(--azul-oscuro); color:white; }
+  .icon-btn.sst     { background:rgba(230,126,34,.1); color:#7d4a00; }
+  .icon-btn.sst:hover     { background:var(--naranja); color:white; }
+  .icon-btn.danger  { background:rgba(192,57,43,.1);  color:var(--rojo); }
+  .icon-btn.danger:hover  { background:var(--rojo); color:white; }
+
+  .modal-overlay { position:fixed; inset:0; background:rgba(30,51,68,.55); backdrop-filter:blur(4px); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--blanco-roto); border-radius:20px; width:min(700px,100%); max-height:90vh; overflow-y:auto; animation:slideUp .35s cubic-bezier(.22,1,.36,1); }
+  @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  .modal-header { padding:28px 32px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(53,88,114,.1); }
+  .modal-header h2 { font-family:'DM Serif Display',serif; font-size:1.4rem; color:var(--texto); }
+  .modal-close { width:36px; height:36px; border:none; background:rgba(53,88,114,.1); border-radius:8px; cursor:pointer; font-size:1.1rem; transition:background .2s; }
+  .modal-close:hover { background:rgba(53,88,114,.2); }
+  .modal-body { padding:24px 32px 32px; }
+
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .form-grid .full { grid-column:1/-1; }
+  .form-section-title { font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--azul-oscuro); opacity:.5; margin:20px 0 12px; padding-bottom:6px; border-bottom:1px solid rgba(53,88,114,.1); }
+  .field label { display:block; font-size:.78rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--azul-oscuro); margin-bottom:8px; }
+  .field input, .field select, .field textarea { width:100%; padding:11px 14px; border:2px solid rgba(53,88,114,.18); border-radius:10px; background:white; font-family:'DM Sans',sans-serif; font-size:.9rem; color:var(--texto); outline:none; transition:border-color .2s; }
+  .field input:focus, .field select:focus { border-color:var(--azul-medio); box-shadow:0 0 0 3px rgba(122,170,206,.15); }
+  .field textarea { resize:vertical; min-height:80px; }
+  .modal-footer { display:flex; gap:12px; justify-content:flex-end; padding-top:20px; border-top:1px solid rgba(53,88,114,.1); margin-top:8px; }
+  .btn-secondary { padding:11px 22px; border:2px solid rgba(53,88,114,.2); border-radius:10px; background:transparent; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; color:var(--azul-oscuro); cursor:pointer; }
+  .btn-save { padding:11px 28px; background:var(--azul-oscuro); color:white; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; }
+  .btn-save:hover { background:#2a4860; }
+  .btn-danger-full { padding:11px 22px; background:var(--rojo); color:white; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; }
+
+  .hist-table { width:100%; border-collapse:collapse; }
+  .hist-table th { padding:10px 14px; text-align:left; font-size:.72rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--azul-oscuro); opacity:.5; border-bottom:1px solid rgba(53,88,114,.1); }
+  .hist-table td { padding:10px 14px; font-size:.85rem; border-bottom:1px solid rgba(53,88,114,.06); }
+
+  .alert-r13 { background:rgba(192,57,43,.07); border:1.5px solid rgba(192,57,43,.2); border-radius:10px; padding:10px 14px; font-size:.84rem; color:#7d1e13; display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+
+  .toast { position:fixed; bottom:32px; right:32px; background:var(--texto); color:white; padding:14px 20px; border-radius:14px; font-size:.92rem; font-weight:500; box-shadow:0 8px 32px rgba(0,0,0,.2); transform:translateY(80px); opacity:0; transition:all .35s cubic-bezier(.22,1,.36,1); z-index:999; max-width:320px; }
+  .toast.show { transform:translateY(0); opacity:1; }
+  .toast.success { background:#1a6344; }
+  .toast.error   { background:var(--rojo); }
+  .empty-state { text-align:center; padding:48px; color:var(--azul-oscuro); opacity:.4; }
+</style>
+{% endblock %}
+
+{% block body %}
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+    <span>Gestión<br>Empresarial</span>
+  </div>
+  <div class="nav-section">Módulos</div>
+  <a href="{% url 'registro' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+    Registro de asistencia
+  </a>
+  <a href="{% url 'admin_panel' %}" class="nav-item active">
+    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    Gestión de empleados
+    <span class="admin-badge">Admin</span>
+  </a>
+  <a href="{% url 'perfil' %}" class="nav-item">
+  <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+  Mi Perfil
+</a>
+<a href="{% url 'seleccion' %}" class="nav-item">
+  <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+  Proceso de Selección
+</a>
+  <a href="{% url 'evaluaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Evaluaciones
+  </a>
+  <a href="{% url 'capacitaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+    Capacitaciones
+  </a>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">{{ nombre|slice:":2"|upper }}</div>
+      <div class="user-info">
+        <span class="uname">{{ nombre }}</span>
+        <span class="urole">Administrador</span>
+      </div>
+    </div>
+    <a href="{% url 'login' %}?logout=1" class="logout-btn">
+      <svg viewBox="0 0 24 24" width="16" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Cerrar sesión
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <h1>Panel de administración</h1>
+    <button class="btn-new" onclick="abrirModal(null)">
+      <svg width="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      Nuevo empleado
+    </button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total empleados</div>
+      <div class="kpi-value">{{ empleados|length }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Activos</div>
+      <div class="kpi-value">{{ total_activos }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Presentes hoy</div>
+      <div class="kpi-value">{{ presentes_hoy }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Accidentes este mes</div>
+      <div class="kpi-value">{{ accidentes_mes }}</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('empleados', this)">Empleados</button>
+    <button class="tab-btn" onclick="switchTab('contratos', this)">Contratos</button>
+    <button class="tab-btn" onclick="switchTab('sst', this)">SST</button>  
+  </div>
+
+  <!-- Tab: Empleados -->
+  <div id="tab-empleados" class="tab-content active">
+    <div class="filter-bar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="text" id="searchInput" placeholder="Buscar por nombre, documento, cargo..." oninput="filtrarTabla()">
+      </div>
+      <select class="filter-select" id="filtroEstado" onchange="filtrarTabla()">
+        <option value="">Todos los estados</option>
+        <option value="Activo">Activo</option>
+        <option value="Inactivo">Inactivo</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table id="tablaEmpleados">
+        <thead>
+          <tr>
+            <th>Empleado</th><th>Cargo / Departamento</th><th>PIN</th>
+            <th>Rol</th><th>Estado</th><th>Ingreso</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for emp in empleados %}
+          <tr data-nombre="{{ emp.ID_Persona.Nombres|lower }} {{ emp.ID_Persona.Apellidos|lower }}"
+              data-doc="{{ emp.ID_Persona.Numero_Documento }}"
+              data-cargo="{{ emp.ID_Cargo.Nombre_Cargo|lower }}"
+              data-estado="{{ emp.Estado_Empleado }}">
+            <td>
+              <div class="emp-name">{{ emp.ID_Persona.Nombres }} {{ emp.ID_Persona.Apellidos }}</div>
+              <div class="emp-doc">{{ emp.ID_Persona.Numero_Documento }}</div>
+            </td>
+            <td>
+              <div>{{ emp.ID_Cargo.Nombre_Cargo }}</div>
+              <div style="font-size:.78rem;opacity:.55;">{{ emp.ID_Cargo.ID_Departamento.Nombre_Departamento }}</div>
+            </td>
+            <td><span class="pin-code">{{ emp.PIN }}</span></td>
+            <td>
+              {% if emp.Rol == 'admin' %}
+                <span class="badge badge-admin">Admin</span>
+              {% else %}
+                <span style="font-size:.85rem;opacity:.6;">Empleado</span>
+              {% endif %}
+            </td>
+            <td>
+              <span class="badge badge-{{ emp.Estado_Empleado|lower }}">{{ emp.Estado_Empleado }}</span>
+            </td>
+            <td style="font-size:.85rem;">{{ emp.Fecha_Ingreso|date:"d/m/Y"|default:"—" }}</td>
+            <td>
+              <div class="actions-cell">
+                <button class="icon-btn edit" title="Editar" onclick="editarEmpleado({{ emp.ID_Empleado }})">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                </button>
+                <button class="icon-btn view" title="Asistencia" onclick="verRegistros({{ emp.ID_Empleado }}, '{{ emp.ID_Persona.Nombres }} {{ emp.ID_Persona.Apellidos }}')">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+                </button>
+                <button class="icon-btn contrato" title="Contratos" onclick="verContratos({{ emp.ID_Empleado }}, {{ emp.ID_Cargo.ID_Cargo }}, '{{ emp.ID_Persona.Nombres }} {{ emp.ID_Persona.Apellidos }}')">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                </button>
+                <button class="icon-btn sst" title="SST" onclick="abrirSST({{ emp.ID_Empleado }}, '{{ emp.ID_Persona.Nombres }} {{ emp.ID_Persona.Apellidos }}')">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v2h-2V7zm0 4h2v6h-2v-6z"/></svg>
+                </button>
+                {% if emp.Estado_Empleado == 'Activo' %}
+                <button class="icon-btn danger" title="Dar de baja" onclick="darDeBaja({{ emp.ID_Empleado }}, '{{ emp.ID_Persona.Nombres }} {{ emp.ID_Persona.Apellidos }}')">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                </button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7"><div class="empty-state">No hay empleados registrados</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab: Contratos -->
+  <div id="tab-contratos" class="tab-content">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Empleado</th><th>Cargo</th><th>Tipo</th><th>Salario</th><th>Inicio</th><th>Fin</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          {% for ct in contratos %}
+          <tr>
+            <td>{{ ct.ID_Empleado.ID_Persona.Nombres }} {{ ct.ID_Empleado.ID_Persona.Apellidos }}</td>
+            <td>{{ ct.ID_Cargo.Nombre_Cargo }}</td>
+            <td>{{ ct.Tipo_Contrato|default:"—" }}</td>
+            <td>{% if ct.Salario_Pactado %}$ {{ ct.Salario_Pactado|floatformat:0 }}{% else %}—{% endif %}</td>
+            <td>{{ ct.Fecha_Inicio|date:"d/m/Y"|default:"—" }}</td>
+            <td>{{ ct.Fecha_Fin|date:"d/m/Y"|default:"Indefinido" }}</td>
+            <td><span class="badge badge-{{ ct.Estado_Contrato|lower }}">{{ ct.Estado_Contrato }}</span></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7"><div class="empty-state">No hay contratos registrados</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab: Seguridad Laboral -->
+  <div id="tab-sst" class="tab-content">
+    <div style="margin-bottom:16px;">
+      <button class="btn-new" onclick="abrirSSTNuevo()">
+        <svg width="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        Registrar accidente
+      </button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Empleado</th><th>Cargo</th><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Acción inmediata</th></tr>
+        </thead>
+        <tbody>
+          {% for ac in accidentes %}
+          <tr>
+            <td>{{ ac.ID_Empleado.ID_Persona.Nombres }} {{ ac.ID_Empleado.ID_Persona.Apellidos }}</td>
+            <td>{{ ac.ID_Empleado.ID_Cargo.Nombre_Cargo }}</td>
+            <td>{{ ac.Fecha_Accidente|date:"d/m/Y"|default:"—" }}</td>
+            <td><span class="badge badge-tipo-sst">{{ ac.Tipo_Accidente|default:"—" }}</span></td>
+            <td style="max-width:200px;">{{ ac.Descripcion|default:"—"|truncatechars:60 }}</td>
+            <td>{{ ac.Accion_Inmediata|default:"—" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6"><div class="empty-state">No hay accidentes registrados</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- Modal: Empleado -->
+<div class="modal-overlay" id="modalEmp">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalEmpTitle">Nuevo empleado</h2>
+      <button class="modal-close" onclick="cerrarModal('modalEmp')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="formEmp">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="guardar_empleado">
+        <input type="hidden" name="ID_Empleado" id="f_emp_id" value="">
+        <input type="hidden" name="ID_Persona"  id="f_persona_id" value="">
+
+        <div class="form-section-title">Datos personales</div>
+        <div class="form-grid">
+          <div class="field"><label>Nombres</label><input type="text" name="Nombres" id="f_nombres" required></div>
+          <div class="field"><label>Apellidos</label><input type="text" name="Apellidos" id="f_apellidos" required></div>
+          <div class="field"><label>N° Documento</label><input type="text" name="Numero_Documento" id="f_doc" required></div>
+          <div class="field"><label>Fecha de nacimiento</label><input type="date" name="Fecha_Nacimiento" id="f_nacimiento"></div>
+          <div class="field"><label>Email</label><input type="email" name="Email" id="f_email"></div>
+          <div class="field"><label>Teléfono</label><input type="text" name="Telefono" id="f_tel"></div>
+        </div>
+
+        <div class="form-section-title">Datos laborales</div>
+        <div class="form-grid">
+          <div class="field"><label>Cargo</label>
+            <select name="ID_Cargo" id="f_cargo" required>
+              <option value="">Selecciona cargo...</option>
+              {% for cargo in cargos %}
+                <option value="{{ cargo.ID_Cargo }}">{{ cargo.Nombre_Cargo }} — {{ cargo.ID_Departamento.Nombre_Departamento }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field"><label>PIN (6 dígitos)</label><input type="text" name="PIN" id="f_pin" maxlength="6" pattern="\d{6}" required></div>
+          <div class="field"><label>Rol</label>
+            <select name="Rol" id="f_rol">
+              <option value="empleado">Empleado</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+          <div class="field"><label>Estado</label>
+            <select name="Estado_Empleado" id="f_estado">
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+          <div class="field"><label>Fecha ingreso</label><input type="date" name="Fecha_Ingreso" id="f_ingreso"></div>
+          <div class="field"><label>Fecha retiro</label><input type="date" name="Fecha_Retiro" id="f_retiro"></div>
+        </div>
+
+        <div id="seccionContrato">
+          <div class="form-section-title">Contrato inicial</div>
+          <div class="form-grid">
+            <div class="field"><label>Tipo contrato</label>
+              <select name="Tipo_Contrato" id="f_tipo_ct">
+                <option value="">Sin contrato por ahora</option>
+                <option value="Indefinido">Indefinido</option>
+                <option value="Temporal">Temporal</option>
+                <option value="Prácticas">Prácticas</option>
+              </select>
+            </div>
+            <div class="field"><label>Salario pactado</label><input type="text" name="Salario_Pactado" id="f_salario_ct" class="salary-input" placeholder="1,900,000" autocomplete="off"></div>
+            <div class="field"><label>Fecha inicio contrato</label><input type="date" name="Fecha_Inicio_Contrato" id="f_inicio_ct"></div>
+            <div class="field"><label>Fecha fin (vacío=indefinido)</label><input type="date" name="Fecha_Fin_Contrato" id="f_fin_ct"></div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="cerrarModal('modalEmp')">Cancelar</button>
+          <button type="submit" class="btn-save">
+            <svg width="16" viewBox="0 0 24 24" fill="white"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            Guardar empleado
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Historial asistencia -->
+<div class="modal-overlay" id="modalHist">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="histTitle">Asistencia</h2>
+      <button class="modal-close" onclick="cerrarModal('modalHist')">✕</button>
+    </div>
+    <div class="modal-body" id="histContent">Cargando...</div>
+  </div>
+</div>
+
+<!-- Modal: Contratos -->
+<div class="modal-overlay" id="modalContratos">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="contratosTitle">Contratos</h2>
+      <button class="modal-close" onclick="cerrarModal('modalContratos')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="contratosListado" style="margin-bottom:24px;">Cargando...</div>
+      <div class="form-section-title">Agregar nuevo contrato</div>
+      <form id="formContrato">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="guardar_contrato">
+        <input type="hidden" name="ID_Empleado" id="fc_emp">
+        <input type="hidden" name="ID_Cargo"    id="fc_cargo">
+        <div class="form-grid">
+          <div class="field"><label>Tipo</label>
+            <select name="Tipo_Contrato">
+              <option value="Indefinido">Indefinido</option>
+              <option value="Temporal">Temporal</option>
+              <option value="Prácticas">Prácticas</option>
+            </select>
+          </div>
+          <div class="field"><label>Salario pactado</label><input type="text" name="Salario_Pactado" class="salary-input" placeholder="1,900,000" autocomplete="off"></div>
+          <div class="field"><label>Fecha inicio</label><input type="date" name="Fecha_Inicio" required></div>
+          <div class="field"><label>Fecha fin</label><input type="date" name="Fecha_Fin"></div>
+          <div class="field full"><label>Estado</label>
+            <select name="Estado_Contrato">
+              <option value="Vigente">Vigente</option>
+              <option value="Terminado">Terminado</option>
+              <option value="Suspendido">Suspendido</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="cerrarModal('modalContratos')">Cerrar</button>
+          <button type="submit" class="btn-save">Guardar contrato</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: SST -->
+<div class="modal-overlay" id="modalSST">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="sstTitle">Registrar Accidente SST</h2>
+      <button class="modal-close" onclick="cerrarModal('modalSST')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="formSST">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="guardar_sst">
+        <input type="hidden" name="ID_Empleado_SST" id="fsst_emp">
+        <div class="form-grid">
+          <div class="field full" id="fsst_emp_select_wrap" style="display:none;">
+            <label>Empleado</label>
+            <select id="fsst_emp_select">
+              {% for emp in empleados %}
+                <option value="{{ emp.ID_Empleado }}">{{ emp.ID_Persona.Nombres }} {{ emp.ID_Persona.Apellidos }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field"><label>Fecha accidente</label><input type="date" name="Fecha_Accidente" required></div>
+          <div class="field"><label>Tipo</label>
+            <select name="Tipo_Accidente">
+              <option>Caída</option><option>Corte</option><option>Golpe</option>
+              <option>Quemadura</option><option>Intoxicación</option><option>Otro</option>
+            </select>
+          </div>
+          <div class="field full"><label>Descripción</label><textarea name="Descripcion" required></textarea></div>
+          <div class="field"><label>Acción inmediata</label><input type="text" name="Accion_Inmediata"></div>
+          <div class="field"><label>Fecha reporte</label><input type="date" name="Fecha_Reporte"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="cerrarModal('modalSST')">Cancelar</button>
+          <button type="submit" class="btn-save">Registrar accidente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_URL = "{% url 'admin_panel' %}";
+const CSRF     = "{{ csrf_token }}";
+
+// ── Tabs ─────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Filtro tabla empleados ───────────────────────────────────
+function filtrarTabla() {
+  const q      = document.getElementById('searchInput').value.toLowerCase();
+  const estado = document.getElementById('filtroEstado').value.toLowerCase();
+  document.querySelectorAll('#tablaEmpleados tbody tr').forEach(tr => {
+    const nombre = tr.dataset.nombre || '';
+    const doc    = tr.dataset.doc    || '';
+    const cargo  = tr.dataset.cargo  || '';
+    const est    = tr.dataset.estado || '';
+    const matchQ = !q || nombre.includes(q) || doc.includes(q) || cargo.includes(q);
+    const matchE = !estado || est.toLowerCase() === estado;
+    tr.style.display = (matchQ && matchE) ? '' : 'none';
+  });
+}
+
+// ── Modales ──────────────────────────────────────────────────
+function cerrarModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) cerrarModal(m.id); });
+});
+
+function abrirModal(data) {
+  const esNuevo = !data;
+  document.getElementById('modalEmpTitle').textContent = esNuevo ? 'Nuevo empleado' : 'Editar empleado';
+  document.getElementById('seccionContrato').style.display = esNuevo ? '' : 'none';
+
+  ['f_emp_id','f_persona_id','f_nombres','f_apellidos','f_doc','f_nacimiento',
+   'f_email','f_tel','f_cargo','f_pin','f_rol','f_estado','f_ingreso','f_retiro'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const key = {
+      f_emp_id:'ID_Empleado', f_persona_id:'ID_Persona', f_nombres:'Nombres',
+      f_apellidos:'Apellidos', f_doc:'Numero_Documento', f_nacimiento:'Fecha_Nacimiento',
+      f_email:'Email', f_tel:'Telefono', f_cargo:'ID_Cargo', f_pin:'PIN',
+      f_rol:'Rol', f_estado:'Estado_Empleado', f_ingreso:'Fecha_Ingreso', f_retiro:'Fecha_Retiro'
+    }[id];
+    el.value = data ? (data[key] || '') : '';
+  });
+  document.getElementById('modalEmp').classList.add('open');
+}
+
+async function editarEmpleado(id) {
+  const fd = new FormData();
+  fd.append('accion', 'get_empleado');
+  fd.append('ID_Empleado', id);
+  fd.append('csrfmiddlewaretoken', CSRF);
+  const res  = await fetch(ADMIN_URL, {method:'POST', body:fd});
+  const data = await res.json();
+  abrirModal(data);
+}
+
+// ── Historial asistencia ─────────────────────────────────────
+async function verRegistros(id, nombre) {
+  document.getElementById('histTitle').textContent = `Asistencia — ${nombre}`;
+  document.getElementById('histContent').innerHTML = '<p style="text-align:center;padding:32px;opacity:.5">Cargando...</p>';
+  document.getElementById('modalHist').classList.add('open');
+  const fd = new FormData();
+  fd.append('accion','get_registros'); fd.append('ID_Empleado',id); fd.append('csrfmiddlewaretoken',CSRF);
+  const res  = await fetch(ADMIN_URL,{method:'POST',body:fd});
+  const rows = await res.json();
+  if (!rows.length) { document.getElementById('histContent').innerHTML = '<p style="text-align:center;padding:32px;opacity:.4">Sin registros de asistencia</p>'; return; }
+  let html = '<table class="hist-table"><thead><tr><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Tipo</th><th>Duración</th></tr></thead><tbody>';
+  rows.forEach(r => {
+    let dur = '—';
+    if (r.Hora_Entrada && r.Hora_Salida) {
+      const [h1,m1] = r.Hora_Entrada.split(':').map(Number);
+      const [h2,m2] = r.Hora_Salida.split(':').map(Number);
+      const mins = (h2*60+m2) - (h1*60+m1);
+      dur = `${Math.floor(mins/60)}h ${mins%60}m`;
+    }
+    html += `<tr><td>${r.Fecha}</td><td>${r.Hora_Entrada?r.Hora_Entrada.slice(0,5):'—'}</td><td>${r.Hora_Salida?r.Hora_Salida.slice(0,5):'—'}</td><td>${r.Tipo||'Normal'}</td><td>${dur}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('histContent').innerHTML = html;
+}
+
+// ── Contratos ─────────────────────────────────────────────
+async function verContratos(empId, cargoId, nombre) {
+  document.getElementById('contratosTitle').textContent = `Contratos — ${nombre}`;
+  document.getElementById('fc_emp').value   = empId;
+  document.getElementById('fc_cargo').value = cargoId;
+  document.getElementById('contratosListado').innerHTML = '<p style="opacity:.5">Cargando...</p>';
+  document.getElementById('modalContratos').classList.add('open');
+  const fd = new FormData();
+  fd.append('accion','get_contratos'); fd.append('ID_Empleado',empId); fd.append('csrfmiddlewaretoken',CSRF);
+  const res  = await fetch(ADMIN_URL,{method:'POST',body:fd});
+  const rows = await res.json();
+  if (!rows.length) { document.getElementById('contratosListado').innerHTML = '<div class="alert-r13">Este empleado no tiene contratos. Añade uno abajo.</div>'; return; }
+  let html = '<table class="hist-table"><thead><tr><th>Tipo</th><th>Salario</th><th>Inicio</th><th>Fin</th><th>Estado</th></tr></thead><tbody>';
+  rows.forEach(r => {
+    const badge = r.Estado_Contrato === 'Vigente' ? 'badge-vigente' : r.Estado_Contrato === 'Terminado' ? 'badge-terminado' : 'badge-suspendido';
+    html += `<tr><td>${r.Tipo_Contrato||'—'}</td><td>${r.Salario_Pactado?'$ '+Number(r.Salario_Pactado).toLocaleString('es-CO'):'—'}</td><td>${r.Fecha_Inicio||'—'}</td><td>${r.Fecha_Fin||'Indefinido'}</td><td><span class="badge ${badge}">${r.Estado_Contrato}</span></td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('contratosListado').innerHTML = html;
+}
+
+document.getElementById('formContrato').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  fd.append('csrfmiddlewaretoken', CSRF);
+  const btn = e.target.querySelector('[type=submit]');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  try {
+    const res  = await fetch(ADMIN_URL,{method:'POST',body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) { cerrarModal('modalContratos'); setTimeout(()=>location.reload(),1200); }
+  } finally { btn.disabled=false; btn.textContent='Guardar contrato'; }
+});
+
+// ── SST ───────────────────────────────────────────────────
+function abrirSST(empId, nombre) {
+  document.getElementById('sstTitle').textContent = `SST — ${nombre}`;
+  document.getElementById('fsst_emp').value = empId;
+  document.getElementById('fsst_emp_select_wrap').style.display = 'none';
+  document.getElementById('formSST').reset();
+  document.getElementById('fsst_emp').value = empId;
+  document.getElementById('modalSST').classList.add('open');
+}
+function abrirSSTNuevo() {
+  document.getElementById('sstTitle').textContent = 'Registrar Accidente SST';
+  document.getElementById('fsst_emp_select_wrap').style.display = '';
+  document.getElementById('formSST').reset();
+  document.getElementById('modalSST').classList.add('open');
+}
+document.getElementById('formSST').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  fd.append('csrfmiddlewaretoken', CSRF);
+  const empSel = document.getElementById('fsst_emp_select');
+  if (empSel && empSel.value && document.getElementById('fsst_emp_select_wrap').style.display !== 'none') {
+    fd.set('ID_Empleado_SST', empSel.value);
+  }
+  const btn = e.target.querySelector('[type=submit]');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  try {
+    const res  = await fetch(ADMIN_URL,{method:'POST',body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) { cerrarModal('modalSST'); setTimeout(()=>location.reload(),1200); }
+  } finally { btn.disabled=false; btn.textContent='Registrar accidente'; }
+});
+
+// ── Dar de baja ───────────────────────────────────────────
+async function darDeBaja(id, nombre) {
+  if (!confirm(`¿Dar de baja a ${nombre}?\nSe marcará como Inactivo y se cerrarán sus contratos vigentes.`)) return;
+  const fd = new FormData();
+  fd.append('accion','eliminar_empleado'); fd.append('ID_Empleado',id); fd.append('csrfmiddlewaretoken',CSRF);
+  const res  = await fetch(ADMIN_URL,{method:'POST',body:fd});
+  const data = await res.json();
+  showToast(data.msg, data.ok ? 'success' : 'error');
+  if (data.ok) setTimeout(() => location.reload(), 1500);
+}
+
+// ── Formulario empleado ───────────────────────────────────────
+document.getElementById('formEmp').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  fd.append('csrfmiddlewaretoken', CSRF);
+  const btn = e.target.querySelector('[type=submit]');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  try {
+    const res  = await fetch(ADMIN_URL,{method:'POST',body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) { cerrarModal('modalEmp'); setTimeout(()=>location.reload(),1200); }
+  } finally { btn.disabled=false; btn.textContent='Guardar empleado'; }
+});
+
+// ── Toast ─────────────────────────────────────────────────────
+function showToast(msg, tipo='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + tipo + ' show';
+  setTimeout(() => t.className='toast', 4000);
+}
+
+// ── PIN solo dígitos ──────────────────────────────────────────
+document.getElementById('f_pin').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g,'').slice(0,6);
+});
+
+
+// ── Salario con formato de comas ─────────────────────────────
+function formatSalary(input) {
+  // Guardamos la posición del cursor
+  const selStart = input.selectionStart;
+  const prevLen  = input.value.length;
+
+  // Solo dígitos
+  let raw = input.value.replace(/[^0-9]/g, '');
+
+  // Formatear con comas
+  if (raw === '') { input.value = ''; return; }
+  const formatted = Number(raw).toLocaleString('en-US');
+  input.value = formatted;
+
+  // Ajustar cursor
+  const diff = formatted.length - prevLen;
+  input.setSelectionRange(selStart + diff, selStart + diff);
+}
+
+function getSalaryRaw(input) {
+  // Devuelve el número sin comas para enviar al servidor
+  return input.value.replace(/,/g, '');
+}
+
+document.querySelectorAll('.salary-input').forEach(inp => {
+  inp.addEventListener('input', () => formatSalary(inp));
+
+  // Antes de enviar el form padre, limpiar las comas
+  inp.closest('form')?.addEventListener('submit', () => {
+    inp.value = getSalaryRaw(inp);
+  }, { capture: true });
+});
+
+// ── Contratos - cargar tab desde URL ─────────────────────────
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('tab') === 'contratos') switchTab('contratos', document.querySelectorAll('.tab-btn')[1]);
+if (urlParams.get('tab') === 'sst')       switchTab('sst',       document.querySelectorAll('.tab-btn')[2]);
+</script>
+{% endblock %}

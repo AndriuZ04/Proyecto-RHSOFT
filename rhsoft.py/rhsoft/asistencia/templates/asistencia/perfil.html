@@ -1,0 +1,248 @@
+{% extends "asistencia/base.html" %}
+{% block title %}Mi Perfil — RHSOFT{% endblock %}
+
+{% block extra_head %}
+<style>
+  .sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:var(--azul-oscuro); padding:32px 24px; display:flex; flex-direction:column; z-index:100; }
+  .sidebar-logo { display:flex; align-items:center; gap:12px; margin-bottom:40px; }
+  .sidebar-logo .icon { width:40px; height:40px; background:rgba(255,255,255,.15); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .sidebar-logo .icon svg { width:20px; fill:white; }
+  .sidebar-logo span { font-family:'DM Serif Display',serif; color:white; font-size:1.05rem; line-height:1.2; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; color:rgba(255,255,255,.7); text-decoration:none; font-size:.92rem; transition:all .2s; margin-bottom:4px; }
+  .nav-item svg { width:18px; fill:currentColor; flex-shrink:0; }
+  .nav-item:hover { background:rgba(255,255,255,.1); color:white; }
+  .nav-item.active { background:rgba(255,255,255,.18); color:white; font-weight:600; }
+  .nav-section { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.3); margin:16px 0 6px 14px; }
+  .sidebar-footer { margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); }
+  .user-chip { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(255,255,255,.1); border-radius:12px; margin-bottom:10px; }
+  .user-avatar { width:36px; height:36px; background:var(--azul-medio); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:.9rem; }
+  .user-info .uname { color:white; font-size:.88rem; font-weight:500; display:block; }
+  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; text-transform:capitalize; display:block; }
+  .logout-btn { display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:none; border:1.5px solid rgba(255,255,255,.15); border-radius:10px; color:rgba(255,255,255,.6); font-family:'DM Sans',sans-serif; font-size:.88rem; cursor:pointer; transition:all .2s; text-decoration:none; }
+  .logout-btn:hover { border-color:rgba(255,255,255,.4); color:white; }
+
+  .main { margin-left:260px; padding:36px 40px; min-height:100vh; }
+  .page-header { margin-bottom:28px; }
+  .page-header h1 { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--texto); }
+  .page-header p { color:var(--azul-oscuro); opacity:.6; font-size:.92rem; margin-top:4px; }
+
+  .profile-grid { display:grid; grid-template-columns:320px 1fr; gap:24px; }
+
+  /* Tarjeta izquierda */
+  .profile-card { background:white; border-radius:20px; padding:32px 24px; box-shadow:var(--sombra); text-align:center; }
+  .avatar-big { width:90px; height:90px; background:var(--azul-oscuro); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'DM Serif Display',serif; font-size:2rem; color:white; margin:0 auto 16px; }
+  .profile-name { font-family:'DM Serif Display',serif; font-size:1.4rem; color:var(--texto); }
+  .profile-role { font-size:.82rem; color:var(--azul-oscuro); opacity:.6; margin-top:4px; text-transform:capitalize; }
+  .divider { height:1px; background:rgba(53,88,114,.1); margin:20px 0; }
+  .info-row { display:flex; align-items:center; gap:10px; padding:8px 0; font-size:.88rem; color:var(--texto); }
+  .info-row svg { width:16px; fill:var(--azul-oscuro); opacity:.5; flex-shrink:0; }
+  .info-row span { opacity:.7; }
+  .badge-estado { display:inline-block; padding:4px 14px; border-radius:20px; font-size:.75rem; font-weight:600; background:rgba(39,174,96,.12); color:#1a6344; margin-top:8px; }
+
+  /* Formulario derecha */
+  .form-card { background:white; border-radius:20px; padding:32px; box-shadow:var(--sombra); }
+  .section-title { font-family:'DM Serif Display',serif; font-size:1.2rem; color:var(--texto); margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid rgba(53,88,114,.1); }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+  .field label { display:block; font-size:.78rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--azul-oscuro); margin-bottom:8px; }
+  .field input { width:100%; padding:11px 14px; border:2px solid rgba(53,88,114,.18); border-radius:10px; background:white; font-family:'DM Sans',sans-serif; font-size:.9rem; color:var(--texto); outline:none; transition:border-color .2s; }
+  .field input:focus { border-color:var(--azul-medio); box-shadow:0 0 0 3px rgba(122,170,206,.15); }
+  .field input:disabled { background:rgba(53,88,114,.05); color:rgba(53,88,114,.5); cursor:not-allowed; }
+  .readonly-note { font-size:.75rem; color:var(--azul-oscuro); opacity:.45; margin-top:4px; }
+
+  .info-box { background:rgba(53,88,114,.04); border-radius:14px; padding:20px 24px; margin-bottom:24px; }
+  .info-box-title { font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--azul-oscuro); opacity:.5; margin-bottom:12px; }
+  .info-box-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .info-item .il { font-size:.72rem; color:var(--azul-oscuro); opacity:.5; text-transform:uppercase; }
+  .info-item .iv { font-size:.95rem; font-weight:600; color:var(--texto); margin-top:2px; }
+
+  .btn-save { display:flex; align-items:center; gap:8px; padding:12px 28px; background:var(--azul-oscuro); color:white; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-save:hover { background:#2a4860; transform:translateY(-1px); }
+
+  .alert { border-radius:10px; padding:12px 16px; font-size:.87rem; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
+  .alert-ok    { background:rgba(39,174,96,.1);  border:1.5px solid rgba(39,174,96,.25);  color:#1a6344; }
+  .alert-error { background:rgba(192,57,43,.07); border:1.5px solid rgba(192,57,43,.2);   color:#7d1e13; }
+</style>
+{% endblock %}
+
+{% block body %}
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+    <span>Gestión<br>Empresarial</span>
+  </div>
+  <div class="nav-section">Módulos</div>
+  <a href="{% url 'registro' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+    Registro de asistencia
+  </a>
+  {% if rol == 'admin' %}
+  <a href="{% url 'admin_panel' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    Gestión de empleados
+    <span class="admin-badge">Admin</span>
+  </a>
+  {% endif %}
+  <a href="{% url 'perfil' %}" class="nav-item active">
+  <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+  Mi Perfil
+</a>
+  {% if rol == 'admin' %}
+  <a href="{% url 'seleccion' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+    Proceso de Selección
+  </a>
+  {% endif %}
+  <a href="{% url 'evaluaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Evaluaciones
+  </a>
+  <a href="{% url 'capacitaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+    Capacitaciones
+  </a>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">{{ nombre|slice:":2"|upper }}</div>
+      <div class="user-info">
+        <span class="uname">{{ nombre }}</span>
+        <span class="urole">{% if rol == 'admin' %}Administrador{% else %}Empleado{% endif %}</span>
+      </div>
+    </div>
+    <a href="{% url 'login' %}?logout=1" class="logout-btn">
+      <svg viewBox="0 0 24 24" width="16" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Cerrar sesión
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <h1>Mi Perfil</h1>
+    <p>Consulta y actualiza tu información personal</p>
+  </div>
+
+  {% if ok_msg %}
+  <div class="alert alert-ok">✓ {{ ok_msg }}</div>
+  {% endif %}
+  {% if error %}
+  <div class="alert alert-error">⚠ {{ error }}</div>
+  {% endif %}
+
+  <div class="profile-grid">
+
+    <!-- Tarjeta izquierda: resumen -->
+    <div class="profile-card">
+      <div class="avatar-big">{{ persona.Nombres|slice:":1" }}{{ persona.Apellidos|slice:":1" }}</div>
+      <div class="profile-name">{{ persona.Nombres }} {{ persona.Apellidos }}</div>
+      <div class="profile-role">{{ rol }}</div>
+      <span class="badge-estado">{{ emp.Estado_Empleado }}</span>
+
+      <div class="divider"></div>
+
+      <div class="info-row">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+        <span>Doc: {{ persona.Numero_Documento }}</span>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        <span>{{ persona.Email|default:"Sin email" }}</span>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C9.61 21 3 14.39 3 6c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57-.11.35-.02.74-.25 1.02l-2.2 2.2z"/></svg>
+        <span>{{ persona.Telefono|default:"Sin teléfono" }}</span>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+        <span>{{ cargo.Nombre_Cargo }}</span>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z"/></svg>
+        <span>{{ departamento.Nombre_Departamento }}</span>
+      </div>
+
+      {% if contrato_vigente %}
+      <div class="divider"></div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+        <span>$ {{ contrato_vigente.Salario_Pactado|floatformat:0 }} / mes</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Formulario derecha -->
+    <div class="form-card">
+      <div class="section-title">Información editable</div>
+
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-grid">
+          <div class="field">
+            <label>Nombres</label>
+            <input type="text" value="{{ persona.Nombres }}" disabled>
+            <div class="readonly-note">Solo el administrador puede modificar este campo</div>
+          </div>
+          <div class="field">
+            <label>Apellidos</label>
+            <input type="text" value="{{ persona.Apellidos }}" disabled>
+          </div>
+          <div class="field">
+            <label>N° Documento</label>
+            <input type="text" value="{{ persona.Numero_Documento }}" disabled>
+          </div>
+          <div class="field">
+            <label>Fecha de nacimiento</label>
+            <input type="text" value="{{ persona.Fecha_Nacimiento|date:'d/m/Y'|default:'—' }}" disabled>
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input type="email" name="Email" value="{{ persona.Email|default:'' }}" placeholder="tucorreo@ejemplo.com">
+          </div>
+          <div class="field">
+            <label>Teléfono</label>
+            <input type="text" name="Telefono" value="{{ persona.Telefono|default:'' }}" placeholder="3001234567">
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-box-title">Información laboral (solo lectura)</div>
+          <div class="info-box-grid">
+            <div class="info-item">
+              <div class="il">Cargo</div>
+              <div class="iv">{{ cargo.Nombre_Cargo }}</div>
+            </div>
+            <div class="info-item">
+              <div class="il">Departamento</div>
+              <div class="iv">{{ departamento.Nombre_Departamento }}</div>
+            </div>
+            <div class="info-item">
+              <div class="il">Fecha ingreso</div>
+              <div class="iv">{{ emp.Fecha_Ingreso|date:"d/m/Y"|default:"—" }}</div>
+            </div>
+            {% if contrato_vigente %}
+            <div class="info-item">
+              <div class="il">Tipo contrato</div>
+              <div class="iv">{{ contrato_vigente.Tipo_Contrato|default:"—" }}</div>
+            </div>
+            <div class="info-item">
+              <div class="il">Salario</div>
+              <div class="iv">$ {{ contrato_vigente.Salario_Pactado|floatformat:0 }}</div>
+            </div>
+            <div class="info-item">
+              <div class="il">Estado contrato</div>
+              <div class="iv">{{ contrato_vigente.Estado_Contrato }}</div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end;">
+          <button type="submit" class="btn-save">
+            <svg width="16" viewBox="0 0 24 24" fill="white"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+{% endblock %}
