@@ -1,0 +1,454 @@
+{% extends "asistencia/base.html" %}
+{% block title %}Proceso de Selección — RHSOFT{% endblock %}
+
+{% block extra_head %}
+<style>
+  .sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:var(--azul-oscuro); padding:32px 24px; display:flex; flex-direction:column; z-index:100; }
+  .sidebar-logo { display:flex; align-items:center; gap:12px; margin-bottom:40px; }
+  .sidebar-logo .icon { width:40px; height:40px; background:rgba(255,255,255,.15); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .sidebar-logo .icon svg { width:20px; fill:white; }
+  .sidebar-logo span { font-family:'DM Serif Display',serif; color:white; font-size:1.05rem; line-height:1.2; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; color:rgba(255,255,255,.7); text-decoration:none; font-size:.92rem; transition:all .2s; margin-bottom:4px; }
+  .nav-item svg { width:18px; fill:currentColor; flex-shrink:0; }
+  .nav-item:hover { background:rgba(255,255,255,.1); color:white; }
+  .nav-item.active { background:rgba(255,255,255,.18); color:white; font-weight:600; }
+  .nav-section { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.3); margin:16px 0 6px 14px; }
+  .sidebar-footer { margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); }
+  .user-chip { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(255,255,255,.1); border-radius:12px; margin-bottom:10px; }
+  .user-avatar { width:36px; height:36px; background:var(--azul-medio); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:.9rem; }
+  .user-info .uname { color:white; font-size:.88rem; font-weight:500; display:block; }
+  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; text-transform:capitalize; display:block; }
+  .logout-btn { display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:none; border:1.5px solid rgba(255,255,255,.15); border-radius:10px; color:rgba(255,255,255,.6); font-family:'DM Sans',sans-serif; font-size:.88rem; cursor:pointer; transition:all .2s; text-decoration:none; }
+  .logout-btn:hover { border-color:rgba(255,255,255,.4); color:white; }
+
+  .main { margin-left:260px; padding:36px 40px; min-height:100vh; }
+  .page-header { margin-bottom:28px; }
+  .page-header h1 { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--texto); }
+  .page-header p { color:var(--azul-oscuro); opacity:.6; font-size:.92rem; margin-top:4px; }
+
+  .stats-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:28px; }
+  .stat-card { background:white; border-radius:14px; padding:18px 20px; box-shadow:var(--sombra); }
+  .stat-label { font-size:.72rem; color:var(--azul-oscuro); opacity:.55; text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+  .stat-value { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--texto); line-height:1; }
+
+  .filters { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+  .filter-btn { padding:8px 18px; border-radius:20px; border:1.5px solid rgba(53,88,114,.2); background:white; font-family:'DM Sans',sans-serif; font-size:.85rem; color:var(--azul-oscuro); cursor:pointer; transition:all .2s; }
+  .filter-btn:hover, .filter-btn.active { background:var(--azul-oscuro); color:white; border-color:var(--azul-oscuro); }
+
+  .table-wrap { background:white; border-radius:16px; box-shadow:var(--sombra); overflow:hidden; }
+  table { width:100%; border-collapse:collapse; }
+  th { background:rgba(53,88,114,.06); padding:12px 16px; text-align:left; font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-oscuro); font-weight:600; }
+  td { padding:12px 16px; font-size:.88rem; border-top:1px solid rgba(53,88,114,.07); vertical-align:middle; }
+  .empty-state { text-align:center; padding:40px; opacity:.4; }
+
+  .badge { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.73rem; font-weight:700; }
+  .b-Pendiente  { background:rgba(230,126,34,.12); color:#a05010; }
+  .b-Aceptado   { background:rgba(122,170,206,.18); color:#2a4860; }
+  .b-Entrevista { background:rgba(142,68,173,.12);  color:#6c3483; }
+  .b-Rechazado  { background:rgba(192,57,43,.1);    color:#7d1e13; }
+  .b-Contratado { background:rgba(39,174,96,.12);   color:#1a6344; }
+
+  .action-btn { display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:.78rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-ver  { background:rgba(122,170,206,.15); color:var(--azul-oscuro); }
+  .btn-ver:hover { background:rgba(122,170,206,.3); }
+  .btn-contratar { background:rgba(39,174,96,.12); color:#1a6344; }
+  .btn-contratar:hover { background:rgba(39,174,96,.25); }
+
+  /* Modal */
+  .modal-overlay { position:fixed; inset:0; background:rgba(30,51,68,.5); backdrop-filter:blur(3px); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:white; border-radius:20px; padding:32px; width:min(520px,100%); max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(30,51,68,.25); }
+  .modal-title { font-family:'DM Serif Display',serif; font-size:1.4rem; color:var(--texto); margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+  .modal-close { background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--azul-oscuro); opacity:.5; }
+  .modal-close:hover { opacity:1; }
+  .modal-section { font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--azul-oscuro); opacity:.45; margin:18px 0 10px; }
+  .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .modal-field label { display:block; font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--azul-oscuro); margin-bottom:6px; }
+  .modal-field input, .modal-field select, .modal-field textarea { width:100%; padding:10px 13px; border:2px solid rgba(53,88,114,.18); border-radius:9px; font-family:'DM Sans',sans-serif; font-size:.88rem; color:var(--texto); outline:none; transition:border-color .2s; }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus { border-color:var(--azul-medio); }
+  .modal-field textarea { resize:vertical; min-height:70px; }
+  .modal-field.full { grid-column:1/-1; }
+  .modal-actions { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
+  .btn-primary { padding:10px 22px; background:var(--azul-oscuro); color:white; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-primary:hover { background:#2a4860; }
+  .btn-secondary { padding:10px 22px; background:white; color:var(--azul-oscuro); border:1.5px solid rgba(53,88,114,.25); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; cursor:pointer; }
+  .btn-green { padding:10px 22px; background:#27ae60; color:white; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; }
+  .btn-green:hover { background:#219150; }
+
+  .info-pair { display:flex; flex-direction:column; margin-bottom:10px; }
+  .info-pair .lbl { font-size:.72rem; color:var(--azul-oscuro); opacity:.5; text-transform:uppercase; }
+  .info-pair .val { font-size:.92rem; font-weight:500; color:var(--texto); }
+
+  .toast { position:fixed; bottom:24px; right:24px; background:#1e3344; color:white; padding:14px 20px; border-radius:12px; font-size:.9rem; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; z-index:999; }
+  .toast.show { opacity:1; transform:translateY(0); }
+  .toast.success { background:#27ae60; }
+  .toast.error   { background:#c0392b; }
+</style>
+{% endblock %}
+
+{% block body %}
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+    <span>Gestión<br>Empresarial</span>
+  </div>
+  <div class="nav-section">Módulos</div>
+  <a href="{% url 'registro' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+    Registro de asistencia
+  </a>
+  <a href="{% url 'admin_panel' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    Gestión de empleados
+    <span class="admin-badge">Admin</span>
+  </a>
+  <a href="{% url 'perfil' %}" class="nav-item">
+  <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+  Mi Perfil
+</a>
+<a href="{% url 'seleccion' %}" class="nav-item active">
+  <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+  Proceso de Selección
+</a>
+  <a href="{% url 'evaluaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Evaluaciones
+  </a>
+  <a href="{% url 'capacitaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+    Capacitaciones
+  </a>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">{{ nombre|slice:":2"|upper }}</div>
+      <div class="user-info">
+        <span class="uname">{{ nombre }}</span>
+        <span class="urole">Administrador</span>
+      </div>
+    </div>
+    <a href="{% url 'login' %}?logout=1" class="logout-btn">
+      <svg viewBox="0 0 24 24" width="16" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Cerrar sesión
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <h1>Proceso de Selección</h1>
+    <p>Gestiona las postulaciones y contrata nuevos empleados</p>
+  </div>
+
+  <!-- Estadísticas -->
+  <!-- Estadísticas -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value">{{ postulaciones|length }}</div></div>
+    <div class="stat-card"><div class="stat-label">Pendientes</div><div class="stat-value">{{ total_pendientes }}</div></div>
+    <div class="stat-card"><div class="stat-label">Aceptados</div><div class="stat-value">{{ total_aceptados }}</div></div>
+    <div class="stat-card"><div class="stat-label">Contratados</div><div class="stat-value">{{ total_contratados }}</div></div>
+    <div class="stat-card"><div class="stat-label">Rechazados</div><div class="stat-value">{{ total_rechazados }}</div></div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters">
+    <button class="filter-btn active" onclick="filtrar('todos', this)">Todos</button>
+    <button class="filter-btn" onclick="filtrar('Pendiente', this)">Pendientes</button>
+    <button class="filter-btn" onclick="filtrar('Aceptado', this)">Aceptados</button>
+    <button class="filter-btn" onclick="filtrar('Entrevista', this)">En entrevista</button>
+    <button class="filter-btn" onclick="filtrar('Rechazado', this)">Rechazados</button>
+    <button class="filter-btn" onclick="filtrar('Contratado', this)">Contratados</button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Postulante</th>
+          <th>Documento</th>
+          <th>Cargo aspirado</th>
+          <th>Departamento</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaBody">
+        {% if not postulaciones %}
+        <tr><td colspan="7"><div class="empty-state">No hay postulaciones registradas aún</div></td></tr>
+        {% else %}
+        {% for p in postulaciones %}
+        <tr data-estado="{{ p.Estado }}">
+          <td><strong>{{ p.ID_Persona.Nombres }} {{ p.ID_Persona.Apellidos }}</strong></td>
+          <td>{{ p.ID_Persona.Numero_Documento }}</td>
+          <td>{{ p.Cargo_Aspirado.Nombre_Cargo }}</td>
+          <td>{{ p.Cargo_Aspirado.ID_Departamento.Nombre_Departamento }}</td>
+          <td>{{ p.Fecha_Postulacion|date:"d/m/Y" }}</td>
+          <td><span class="badge b-{{ p.Estado }}">{{ p.get_Estado_display }}</span></td>
+          <td style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="action-btn btn-ver" onclick='abrirDetalle({{ p.ID_Postulacion }}, "{{ p.ID_Persona.Nombres }} {{ p.ID_Persona.Apellidos }}", "{{ p.ID_Persona.Numero_Documento }}", "{{ p.ID_Persona.Email|default:"" }}", "{{ p.ID_Persona.Telefono|default:"" }}", "{{ p.Cargo_Aspirado.Nombre_Cargo }}", "{{ p.Estado }}", "{{ p.Observacion|default:"" }}", "{{ p.Hoja_Vida.url }}")'>
+              Ver
+            </button>
+            {% if p.Estado != 'Rechazado' and p.Estado != 'Contratado' %}
+            <button class="action-btn" style="background:rgba(142,68,173,.1);color:#6c3483;" onclick="evaluarIA({{ p.ID_Postulacion }}, '{{ p.ID_Persona.Nombres }} {{ p.ID_Persona.Apellidos }}')" title="Evaluar CV con IA">
+              🤖 IA
+            </button>
+            {% endif %}
+            {% if p.Estado != 'Contratado' and p.Estado != 'Rechazado' %}
+            <button class="action-btn" style="background:rgba(192,57,43,.1);color:#7d1e13;" onclick="rechazarDirecto({{ p.ID_Postulacion }}, '{{ p.ID_Persona.Nombres }} {{ p.ID_Persona.Apellidos }}')">Rechazar</button>
+            <button class="action-btn btn-contratar" onclick="abrirContratar({{ p.ID_Postulacion }}, '{{ p.ID_Persona.Nombres }} {{ p.ID_Persona.Apellidos }}', '{{ p.Cargo_Aspirado.Nombre_Cargo }}')">
+              Contratar
+            </button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Modal Detalle / Cambiar Estado -->
+<div class="modal-overlay" id="modalDetalle">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="mNombre">Postulante</span>
+      <button class="modal-close" onclick="cerrarModal('modalDetalle')">✕</button>
+    </div>
+    <div class="modal-section">Datos personales</div>
+    <div class="modal-grid">
+      <div class="info-pair"><span class="lbl">Documento</span><span class="val" id="mDoc">—</span></div>
+      <div class="info-pair"><span class="lbl">Email</span><span class="val" id="mEmail">—</span></div>
+      <div class="info-pair"><span class="lbl">Teléfono</span><span class="val" id="mTel">—</span></div>
+      <div class="info-pair"><span class="lbl">Cargo aspirado</span><span class="val" id="mCargo">—</span></div>
+    </div>
+    <div class="modal-section">Hoja de vida</div>
+    <a id="mHvLink" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:6px;color:var(--azul-oscuro);font-size:.88rem;font-weight:600;">
+      <svg width="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+      Ver hoja de vida (PDF)
+    </a>
+    <div class="modal-section">Actualizar estado</div>
+    <div class="modal-grid">
+      <div class="modal-field">
+        <label>Estado</label>
+        <select id="mEstado">
+          <option value="Pendiente">Pendiente</option>
+          <option value="Aceptado">Aceptado</option>
+          <option value="Entrevista">En entrevista</option>
+          <option value="Rechazado">Rechazado</option>
+        </select>
+      </div>
+      <div class="modal-field full">
+        <label>Observación</label>
+        <textarea id="mObs" placeholder="Notas sobre el candidato..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="cerrarModal('modalDetalle')">Cancelar</button>
+      <button class="btn-primary" onclick="guardarEstado()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Contratar -->
+<div class="modal-overlay" id="modalContratar">
+  <div class="modal">
+    <div class="modal-title">
+      <span>Contratar empleado</span>
+      <button class="modal-close" onclick="cerrarModal('modalContratar')">✕</button>
+    </div>
+    <p style="font-size:.88rem;color:var(--azul-oscuro);opacity:.7;margin-bottom:16px;">
+      Vas a contratar a <strong id="cNombre"></strong> para el cargo de <strong id="cCargo"></strong>.
+    </p>
+    <div class="modal-grid">
+      <div class="modal-field">
+        <label>PIN (6 dígitos) *</label>
+        <input type="text" id="cPin" maxlength="6" placeholder="123456">
+      </div>
+      <div class="modal-field">
+        <label>Fecha de ingreso</label>
+        <input type="date" id="cFecha">
+      </div>
+      <div class="modal-field">
+        <label>Tipo de contrato *</label>
+        <select id="cTipo">
+          <option value="Indefinido">Indefinido</option>
+          <option value="Temporal">Temporal</option>
+          <option value="Prácticas">Prácticas</option>
+          <option value="Prestación de servicios">Prestación de servicios</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Salario pactado *</label>
+        <input type="text" id="cSalario" class="salary-input" placeholder="1,900,000">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="cerrarModal('modalContratar')">Cancelar</button>
+      <button class="btn-green" onclick="contratar()">Confirmar contratación</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalIA">
+  <div class="modal">
+    <div class="modal-title">
+      Evaluación IA — <span id="iaNombre"></span>
+      <button class="modal-close" onclick="cerrarModal('modalIA')">✕</button>
+    </div>
+
+    <div id="iaLoading" style="text-align:center; padding:32px; color:var(--azul-oscuro); opacity:.6;">
+      Analizando hoja de vida...
+    </div>
+
+    <div id="iaResultado" style="display:none;">
+      <div style="font-size:2.5rem; font-family:'DM Serif Display',serif; text-align:center; margin:16px 0;" id="iaPuntaje"></div>
+      <div class="modal-section">Recomendación</div>
+      <p id="iaRecomendacion" style="font-size:.9rem; color:var(--texto);"></p>
+      <div class="modal-section">Fortalezas</div>
+      <p id="iaFortalezas" style="font-size:.9rem; color:var(--texto);"></p>
+      <div class="modal-section">Debilidades</div>
+      <p id="iaDebilidades" style="font-size:.9rem; color:var(--texto);"></p>
+    </div>
+
+    <div id="iaError" style="display:none; color:#7d1e13; background:rgba(192,57,43,.07); border-radius:10px; padding:12px 16px; font-size:.87rem;"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let postActual = null;
+
+  function filtrar(estado, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#tablaBody tr[data-estado]').forEach(tr => {
+      tr.style.display = (estado === 'todos' || tr.dataset.estado === estado) ? '' : 'none';
+    });
+  }
+
+  function abrirDetalle(id, nombre, doc, email, tel, cargo, estado, obs, hvUrl) {
+    postActual = id;
+    document.getElementById('mNombre').textContent  = nombre;
+    document.getElementById('mDoc').textContent     = doc;
+    document.getElementById('mEmail').textContent   = email || '—';
+    document.getElementById('mTel').textContent     = tel  || '—';
+    document.getElementById('mCargo').textContent   = cargo;
+    document.getElementById('mEstado').value        = estado;
+    document.getElementById('mObs').value           = obs;
+    document.getElementById('mHvLink').href         = hvUrl;
+    document.getElementById('modalDetalle').classList.add('open');
+  }
+
+  function abrirContratar(id, nombre, cargo) {
+    postActual = id;
+    document.getElementById('cNombre').textContent = nombre;
+    document.getElementById('cCargo').textContent  = cargo;
+    document.getElementById('cPin').value    = '';
+    document.getElementById('cFecha').value  = new Date().toISOString().split('T')[0];
+    document.getElementById('cSalario').value = '';
+    document.getElementById('modalContratar').classList.add('open');
+  }
+
+  function cerrarModal(id) {
+    document.getElementById(id).classList.remove('open');
+    postActual = null;
+  }
+
+  async function guardarEstado() {
+    const fd = new FormData();
+    fd.append('accion', 'cambiar_estado_postulacion');
+    fd.append('ID_Postulacion', postActual);
+    fd.append('Estado', document.getElementById('mEstado').value);
+    fd.append('Observacion', document.getElementById('mObs').value);
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    const res  = await fetch('{% url "seleccion" %}', {method:'POST', body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) { cerrarModal('modalDetalle'); setTimeout(() => location.reload(), 1200); }
+  }
+
+  async function contratar() {
+    const fd = new FormData();
+    fd.append('accion', 'contratar');
+    fd.append('ID_Postulacion', postActual);
+    fd.append('PIN', document.getElementById('cPin').value);
+    fd.append('Fecha_Ingreso', document.getElementById('cFecha').value);
+    fd.append('Tipo_Contrato', document.getElementById('cTipo').value);
+    fd.append('Salario_Pactado', document.getElementById('cSalario').value.replace(/,/g,''));
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    const res  = await fetch('{% url "seleccion" %}', {method:'POST', body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) { cerrarModal('modalContratar'); setTimeout(() => location.reload(), 1800); }
+  }
+
+  // Salario con comas
+  document.querySelectorAll('.salary-input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const raw = inp.value.replace(/[^0-9]/g,'');
+      inp.value = raw ? Number(raw).toLocaleString('en-US') : '';
+    });
+  });
+
+
+  async function evaluarIA(id, nombre) {
+    document.getElementById('iaNombre').textContent = nombre;
+    document.getElementById('iaLoading').style.display  = 'block';
+    document.getElementById('iaResultado').style.display = 'none';
+    document.getElementById('iaError').style.display    = 'none';
+    document.getElementById('modalIA').classList.add('open');
+
+    const fd = new FormData();
+    fd.append('ID_Postulacion', id);
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    try {
+      const res  = await fetch('{% url "evaluar_cv" %}', {method:'POST', body:fd});
+      const data = await res.json();
+
+      document.getElementById('iaLoading').style.display = 'none';
+
+      if (data.ok) {
+        const r = data.resultado;
+        document.getElementById('iaPuntaje').textContent     = r.puntaje + '/100';
+        document.getElementById('iaRecomendacion').textContent = r.recomendacion;
+        document.getElementById('iaFortalezas').textContent  = r.fortalezas;
+        document.getElementById('iaDebilidades').textContent = r.debilidades;
+        document.getElementById('iaResultado').style.display = 'block';
+      } else {
+        document.getElementById('iaError').textContent      = data.msg;
+        document.getElementById('iaError').style.display   = 'block';
+      }
+    } catch(e) {
+      document.getElementById('iaLoading').style.display = 'none';
+      document.getElementById('iaError').textContent     = 'Error de comunicación con el servidor.';
+      document.getElementById('iaError').style.display   = 'block';
+    }
+  }
+
+  function showToast(msg, tipo='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + tipo + ' show';
+    setTimeout(() => t.className = 'toast', 4500);
+  }
+
+  async function rechazarDirecto(id, nombre) {
+    if (!confirm(`¿Rechazar la postulación de ${nombre}?`)) return;
+    const fd = new FormData();
+    fd.append('accion', 'cambiar_estado_postulacion');
+    fd.append('ID_Postulacion', id);
+    fd.append('Estado', 'Rechazado');
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    const res  = await fetch('{% url "seleccion" %}', {method:'POST', body:fd});
+    const data = await res.json();
+    showToast(data.msg, data.ok ? 'success' : 'error');
+    if (data.ok) setTimeout(() => location.reload(), 1200);
+  }
+</script>
+{% endblock %}

@@ -8,17 +8,16 @@
   .sidebar-logo .icon { width:40px; height:40px; background:rgba(255,255,255,.15); border-radius:10px; display:flex; align-items:center; justify-content:center; }
   .sidebar-logo .icon svg { width:20px; fill:white; }
   .sidebar-logo span { font-family:'DM Serif Display',serif; color:white; font-size:1.05rem; line-height:1.2; }
-  .nav-section { font-size:.72rem; color:rgba(255,255,255,.4); letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px; margin-top:24px; }
   .nav-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; color:rgba(255,255,255,.7); text-decoration:none; font-size:.92rem; transition:all .2s; margin-bottom:4px; }
   .nav-item svg { width:18px; fill:currentColor; flex-shrink:0; }
   .nav-item:hover { background:rgba(255,255,255,.1); color:white; }
   .nav-item.active { background:rgba(255,255,255,.18); color:white; font-weight:600; }
-  .admin-badge { background:var(--azul-claro); color:var(--texto); font-size:.65rem; font-weight:700; padding:2px 7px; border-radius:6px; margin-left:auto; }
+  .nav-section { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.3); margin:16px 0 6px 14px; }
   .sidebar-footer { margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); }
   .user-chip { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(255,255,255,.1); border-radius:12px; margin-bottom:10px; }
   .user-avatar { width:36px; height:36px; background:var(--azul-medio); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:.9rem; }
   .user-info .uname { color:white; font-size:.88rem; font-weight:500; display:block; }
-  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; display:block; }
+  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; text-transform:capitalize; display:block; }
   .logout-btn { display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:none; border:1.5px solid rgba(255,255,255,.15); border-radius:10px; color:rgba(255,255,255,.6); font-family:'DM Sans',sans-serif; font-size:.88rem; cursor:pointer; transition:all .2s; text-decoration:none; }
   .logout-btn:hover { border-color:rgba(255,255,255,.4); color:white; }
 
@@ -133,6 +132,22 @@
     Gestión de empleados
     <span class="admin-badge">Admin</span>
   </a>
+  <a href="{% url 'perfil' %}" class="nav-item">
+  <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+  Mi Perfil
+</a>
+<a href="{% url 'seleccion' %}" class="nav-item">
+  <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+  Proceso de Selección
+</a>
+  <a href="{% url 'evaluaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Evaluaciones
+  </a>
+  <a href="{% url 'capacitaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+    Capacitaciones
+  </a>
   <div class="sidebar-footer">
     <div class="user-chip">
       <div class="user-avatar">{{ nombre|slice:":2"|upper }}</div>
@@ -180,8 +195,8 @@
   <!-- Tabs -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('empleados', this)">Empleados</button>
-    <button class="tab-btn" onclick="switchTab('contratos', this)">Contratos (R13)</button>
-    <button class="tab-btn" onclick="switchTab('sst', this)">SST (R14)</button>
+    <button class="tab-btn" onclick="switchTab('contratos', this)">Contratos</button>
+    <button class="tab-btn" onclick="switchTab('sst', this)">SST</button>  
   </div>
 
   <!-- Tab: Empleados -->
@@ -262,7 +277,7 @@
     </div>
   </div>
 
-  <!-- Tab: Contratos R13 -->
+  <!-- Tab: Contratos -->
   <div id="tab-contratos" class="tab-content">
     <div class="table-wrap">
       <table>
@@ -288,7 +303,7 @@
     </div>
   </div>
 
-  <!-- Tab: SST R14 -->
+  <!-- Tab: Seguridad Laboral -->
   <div id="tab-sst" class="tab-content">
     <div style="margin-bottom:16px;">
       <button class="btn-new" onclick="abrirSSTNuevo()">
@@ -372,7 +387,7 @@
         </div>
 
         <div id="seccionContrato">
-          <div class="form-section-title">Contrato inicial (R13)</div>
+          <div class="form-section-title">Contrato inicial</div>
           <div class="form-grid">
             <div class="field"><label>Tipo contrato</label>
               <select name="Tipo_Contrato" id="f_tipo_ct">
@@ -382,7 +397,7 @@
                 <option value="Prácticas">Prácticas</option>
               </select>
             </div>
-            <div class="field"><label>Salario pactado</label><input type="number" name="Salario_Pactado" id="f_salario_ct" step="0.01"></div>
+            <div class="field"><label>Salario pactado</label><input type="text" name="Salario_Pactado" id="f_salario_ct" class="salary-input" placeholder="1,900,000" autocomplete="off"></div>
             <div class="field"><label>Fecha inicio contrato</label><input type="date" name="Fecha_Inicio_Contrato" id="f_inicio_ct"></div>
             <div class="field"><label>Fecha fin (vacío=indefinido)</label><input type="date" name="Fecha_Fin_Contrato" id="f_fin_ct"></div>
           </div>
@@ -411,7 +426,7 @@
   </div>
 </div>
 
-<!-- Modal: Contratos R13 -->
+<!-- Modal: Contratos -->
 <div class="modal-overlay" id="modalContratos">
   <div class="modal">
     <div class="modal-header">
@@ -434,7 +449,7 @@
               <option value="Prácticas">Prácticas</option>
             </select>
           </div>
-          <div class="field"><label>Salario pactado</label><input type="number" name="Salario_Pactado" step="0.01"></div>
+          <div class="field"><label>Salario pactado</label><input type="text" name="Salario_Pactado" class="salary-input" placeholder="1,900,000" autocomplete="off"></div>
           <div class="field"><label>Fecha inicio</label><input type="date" name="Fecha_Inicio" required></div>
           <div class="field"><label>Fecha fin</label><input type="date" name="Fecha_Fin"></div>
           <div class="field full"><label>Estado</label>
@@ -454,7 +469,7 @@
   </div>
 </div>
 
-<!-- Modal: SST R14 -->
+<!-- Modal: SST -->
 <div class="modal-overlay" id="modalSST">
   <div class="modal">
     <div class="modal-header">
@@ -587,7 +602,7 @@ async function verRegistros(id, nombre) {
   document.getElementById('histContent').innerHTML = html;
 }
 
-// ── Contratos R13 ─────────────────────────────────────────────
+// ── Contratos ─────────────────────────────────────────────
 async function verContratos(empId, cargoId, nombre) {
   document.getElementById('contratosTitle').textContent = `Contratos — ${nombre}`;
   document.getElementById('fc_emp').value   = empId;
@@ -622,7 +637,7 @@ document.getElementById('formContrato').addEventListener('submit', async e => {
   } finally { btn.disabled=false; btn.textContent='Guardar contrato'; }
 });
 
-// ── SST R14 ───────────────────────────────────────────────────
+// ── SST ───────────────────────────────────────────────────
 function abrirSST(empId, nombre) {
   document.getElementById('sstTitle').textContent = `SST — ${nombre}`;
   document.getElementById('fsst_emp').value = empId;
@@ -655,7 +670,7 @@ document.getElementById('formSST').addEventListener('submit', async e => {
   } finally { btn.disabled=false; btn.textContent='Registrar accidente'; }
 });
 
-// ── Dar de baja R12 ───────────────────────────────────────────
+// ── Dar de baja ───────────────────────────────────────────
 async function darDeBaja(id, nombre) {
   if (!confirm(`¿Dar de baja a ${nombre}?\nSe marcará como Inactivo y se cerrarán sus contratos vigentes.`)) return;
   const fd = new FormData();
@@ -692,6 +707,40 @@ function showToast(msg, tipo='') {
 // ── PIN solo dígitos ──────────────────────────────────────────
 document.getElementById('f_pin').addEventListener('input', function() {
   this.value = this.value.replace(/\D/g,'').slice(0,6);
+});
+
+
+// ── Salario con formato de comas ─────────────────────────────
+function formatSalary(input) {
+  // Guardamos la posición del cursor
+  const selStart = input.selectionStart;
+  const prevLen  = input.value.length;
+
+  // Solo dígitos
+  let raw = input.value.replace(/[^0-9]/g, '');
+
+  // Formatear con comas
+  if (raw === '') { input.value = ''; return; }
+  const formatted = Number(raw).toLocaleString('en-US');
+  input.value = formatted;
+
+  // Ajustar cursor
+  const diff = formatted.length - prevLen;
+  input.setSelectionRange(selStart + diff, selStart + diff);
+}
+
+function getSalaryRaw(input) {
+  // Devuelve el número sin comas para enviar al servidor
+  return input.value.replace(/,/g, '');
+}
+
+document.querySelectorAll('.salary-input').forEach(inp => {
+  inp.addEventListener('input', () => formatSalary(inp));
+
+  // Antes de enviar el form padre, limpiar las comas
+  inp.closest('form')?.addEventListener('submit', () => {
+    inp.value = getSalaryRaw(inp);
+  }, { capture: true });
 });
 
 // ── Contratos - cargar tab desde URL ─────────────────────────

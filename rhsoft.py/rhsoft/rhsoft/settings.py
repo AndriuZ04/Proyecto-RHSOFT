@@ -1,4 +1,6 @@
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -15,9 +17,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     # Módulos del proyecto
     'asistencia',
-    # Agrega aquí los módulos de tus compañeros, ej:
-    # 'nomina',
-    # 'sst',
 ]
 
 MIDDLEWARE = [
@@ -47,12 +46,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'rhsoft.wsgi.application'
 
-# ── Base de datos MySQL (misma que en PHP) ──────────────────────
+# ── Base de datos MySQL ─────────────────────────────────────────
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gestion_empleados',
-        'USER': 'root',
+        'USER': 'andriuz',
         'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '3306',
@@ -67,9 +66,13 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 STATIC_URL = '/static/'
 
+# ── Archivos subidos por usuarios (hojas de vida, etc.) ────────
+MEDIA_URL  = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LANGUAGE_CODE = 'es-co'
 TIME_ZONE = 'America/Bogota'
 USE_I18N = True
-USE_TZ = False   # False para que las horas no se conviertan a UTC
+USE_TZ = False

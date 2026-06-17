@@ -34,6 +34,7 @@ class Cargo(models.Model):
                                               db_column='ID_Departamento')
     Nombre_Cargo          = models.CharField(max_length=150)
     Descripcion_Funciones = models.CharField(max_length=500, null=True, blank=True)
+    Requisitos            = models.TextField(null=True, blank=True)  # R2/R3: para evaluación IA
     Salario_Base          = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
     Hora_Inicio_Jornada   = models.TimeField(null=True, blank=True)
     Hora_Fin_Jornada      = models.TimeField(null=True, blank=True)
@@ -57,7 +58,13 @@ class CargoDia(models.Model):
 
 class Empleado(models.Model):
     ROL_CHOICES = [('admin', 'Administrador'), ('empleado', 'Empleado')]
-    ESTADO_CHOICES = [('Activo', 'Activo'), ('Inactivo', 'Inactivo')]
+    ESTADO_CHOICES = [
+        ('Activo',     'Activo'),
+        ('Inactivo',   'Inactivo'),
+        ('Licencia',   'En licencia'),
+        ('Suspension', 'Suspendido'),
+        ('Retirado',   'Retirado'),
+    ]
 
     ID_Empleado     = models.AutoField(primary_key=True)
     ID_Persona      = models.ForeignKey(Persona, on_delete=models.PROTECT,
@@ -100,10 +107,10 @@ class Contrato(models.Model):
 
 
 class Registro(models.Model):
-    ID_Registro = models.AutoField(primary_key=True)
-    ID_Empleado = models.ForeignKey(Empleado, on_delete=models.PROTECT,
-                                    db_column='ID_Empleado')
-    Fecha       = models.DateField()
+    ID_Registro  = models.AutoField(primary_key=True)
+    ID_Empleado  = models.ForeignKey(Empleado, on_delete=models.PROTECT,
+                                     db_column='ID_Empleado')
+    Fecha        = models.DateField()
     Hora_Entrada = models.TimeField()
     Hora_Salida  = models.TimeField(null=True, blank=True)
     Tipo         = models.CharField(max_length=80, default='Normal')
@@ -125,3 +132,106 @@ class SstAccidente(models.Model):
 
     class Meta:
         db_table = 'sst_accidentes'
+
+
+class Postulacion(models.Model):
+    ESTADO_CHOICES = [
+        ('Pendiente',  'Pendiente'),
+        ('Aceptado',   'Aceptado'),
+        ('Entrevista', 'En entrevista'),
+        ('Rechazado',  'Rechazado'),
+        ('Contratado', 'Contratado'),
+    ]
+
+    ID_Postulacion    = models.AutoField(primary_key=True)
+    ID_Persona        = models.ForeignKey(Persona, on_delete=models.PROTECT,
+                                          db_column='ID_Persona')
+    Cargo_Aspirado    = models.ForeignKey(Cargo, on_delete=models.PROTECT,
+                                          db_column='Cargo_Aspirado')
+    Hoja_Vida         = models.FileField(upload_to='hojas_de_vida/')
+    Estado            = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='Pendiente')
+    Fecha_Postulacion = models.DateField(auto_now_add=True)
+    Observacion       = models.CharField(max_length=500, null=True, blank=True)
+    # R2/R3: resultado de evaluación IA
+    Resultado_IA      = models.TextField(null=True, blank=True)
+    Puntaje_IA        = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'postulaciones'
+
+    def __str__(self):
+        return f'{self.ID_Persona} → {self.Cargo_Aspirado}'
+
+
+# ── R7: Evaluaciones de desempeño ─────────────────────────────────
+class Evaluacion(models.Model):
+    PERIODO_CHOICES = [
+        ('Mensual',    'Mensual'),
+        ('Trimestral', 'Trimestral'),
+        ('Semestral',  'Semestral'),
+        ('Anual',      'Anual'),
+    ]
+    RESULTADO_CHOICES = [
+        ('Excelente',  'Excelente'),
+        ('Bueno',      'Bueno'),
+        ('Regular',    'Regular'),
+        ('Deficiente', 'Deficiente'),
+    ]
+
+    ID_Evaluacion  = models.AutoField(primary_key=True)
+    ID_Empleado    = models.ForeignKey(Empleado, on_delete=models.PROTECT,
+                                       db_column='ID_Empleado')
+    Fecha          = models.DateField()
+    Periodo        = models.CharField(max_length=20, choices=PERIODO_CHOICES)
+    Resultado      = models.CharField(max_length=20, choices=RESULTADO_CHOICES)
+    Observaciones  = models.TextField(null=True, blank=True)
+    Evaluador      = models.CharField(max_length=150, null=True, blank=True)
+
+    class Meta:
+        db_table = 'evaluaciones'
+
+    def __str__(self):
+        return f'Evaluación {self.ID_Empleado} — {self.Fecha}'
+
+
+# ── R20: Capacitaciones ───────────────────────────────────────────
+class Capacitacion(models.Model):
+    TIPO_CHOICES = [
+        ('Presencial', 'Presencial'),
+        ('Virtual',    'Virtual'),
+        ('Mixta',      'Mixta'),
+    ]
+
+    ID_Capacitacion = models.AutoField(primary_key=True)
+    Titulo          = models.CharField(max_length=200)
+    Descripcion     = models.TextField(null=True, blank=True)
+    Tipo            = models.CharField(max_length=20, choices=TIPO_CHOICES, default='Presencial')
+    Fecha_Evento    = models.DateField(null=True, blank=True)
+    Lugar           = models.CharField(max_length=200, null=True, blank=True)
+    Material        = models.FileField(upload_to='capacitaciones/', null=True, blank=True)
+    Fecha_Publicacion = models.DateField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'capacitaciones'
+
+    def __str__(self):
+        return self.Titulo
+
+
+class EmpleadoCapacitacion(models.Model):
+    ESTADO_CHOICES = [
+        ('Pendiente',   'Pendiente'),
+        ('En curso',    'En curso'),
+        ('Completada',  'Completada'),
+    ]
+
+    ID_Empleado      = models.ForeignKey(Empleado, on_delete=models.CASCADE,
+                                         db_column='ID_Empleado')
+    ID_Capacitacion  = models.ForeignKey(Capacitacion, on_delete=models.CASCADE,
+                                         db_column='ID_Capacitacion')
+    Estado           = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='Pendiente')
+    Fecha_Completado = models.DateField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'empleado_capacitaciones'
+        unique_together = [('ID_Empleado', 'ID_Capacitacion')]

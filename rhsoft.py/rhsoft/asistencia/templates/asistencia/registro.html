@@ -12,19 +12,15 @@
   .nav-item svg { width:18px; fill:currentColor; flex-shrink:0; }
   .nav-item:hover { background:rgba(255,255,255,.1); color:white; }
   .nav-item.active { background:rgba(255,255,255,.18); color:white; font-weight:600; }
+  .nav-section { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.3); margin:16px 0 6px 14px; }
   .sidebar-footer { margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); }
   .user-chip { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(255,255,255,.1); border-radius:12px; margin-bottom:10px; }
   .user-avatar { width:36px; height:36px; background:var(--azul-medio); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:.9rem; }
-  .user-info .uname { color:white; font-size:.88rem; font-weight:500; }
-  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; text-transform:capitalize; }
+  .user-info .uname { color:white; font-size:.88rem; font-weight:500; display:block; }
+  .user-info .urole { color:rgba(255,255,255,.5); font-size:.75rem; text-transform:capitalize; display:block; }
   .logout-btn { display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:none; border:1.5px solid rgba(255,255,255,.15); border-radius:10px; color:rgba(255,255,255,.6); font-family:'DM Sans',sans-serif; font-size:.88rem; cursor:pointer; transition:all .2s; text-decoration:none; }
   .logout-btn:hover { border-color:rgba(255,255,255,.4); color:white; }
-  .info-card { background:rgba(255,255,255,.08); border-radius:12px; padding:14px; margin-top:16px; }
-  .info-card .ic-title { font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:8px; }
-  .info-card .ic-row { display:flex; align-items:center; gap:8px; color:rgba(255,255,255,.75); font-size:.82rem; margin-bottom:5px; }
-  .dias-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
-  .dia-chip { padding:2px 8px; border-radius:5px; font-size:.7rem; font-weight:600; background:rgba(156,213,255,.15); color:var(--azul-claro); }
-
+  
   .main { margin-left:260px; padding:36px 40px; min-height:100vh; }
   .page-header { margin-bottom:28px; }
   .page-header h1 { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--texto); margin-bottom:4px; }
@@ -89,52 +85,43 @@
     <span>Gestión<br>Empresarial</span>
   </div>
 
+  <div class="nav-section">Módulos</div>
   <a href="{% url 'registro' %}" class="nav-item active">
     <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-    Mi Asistencia
+    Registro de asistencia      
   </a>
   {% if rol == 'admin' %}
   <a href="{% url 'admin_panel' %}" class="nav-item">
     <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-    Panel Admin
+    Gestión de empleados
+    <span class="admin-badge">Admin</span>
   </a>
   {% endif %}
-
-  <!-- Info del empleado en sidebar -->
-  <div class="info-card">
-    <div class="ic-title">Mi cargo</div>
-    <div class="ic-row">{{ cargo.Nombre_Cargo }}</div>
-    <div class="ic-row" style="font-size:.78rem;opacity:.7;">{{ departamento.Nombre_Departamento }}</div>
-    {% if cargo.Hora_Inicio_Jornada %}
-    <div class="ic-row" style="margin-top:6px;">
-      🕐 {{ cargo.Hora_Inicio_Jornada|time:"H:i" }} – {{ cargo.Hora_Fin_Jornada|time:"H:i" }}
-    </div>
-    {% endif %}
-    {% if dias_laborales %}
-    <div class="dias-chips" style="margin-top:8px;">
-      {% for dia in dias_laborales %}
-        <span class="dia-chip">{{ dia|slice:":3" }}</span>
-      {% endfor %}
-    </div>
-    {% endif %}
-  </div>
-
-  {% if contrato_vigente %}
-  <div class="info-card" style="margin-top:10px;">
-    <div class="ic-title">Contrato vigente</div>
-    <div class="ic-row">{{ contrato_vigente.Tipo_Contrato }}</div>
-    {% if contrato_vigente.Salario_Pactado %}
-    <div class="ic-row">$ {{ contrato_vigente.Salario_Pactado|floatformat:0 }}</div>
-    {% endif %}
-  </div>
+  <a href="{% url 'perfil' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+    Mi Perfil
+  </a>
+  {% if rol == 'admin' %}
+  <a href="{% url 'seleccion' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+    Proceso de Selección
+  </a>
   {% endif %}
+  <a href="{% url 'evaluaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Evaluaciones
+  </a>
+  <a href="{% url 'capacitaciones' %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+    Capacitaciones
+  </a>
 
   <div class="sidebar-footer">
     <div class="user-chip">
-      <div class="user-avatar">{{ nombre|slice:":1" }}</div>
+      <div class="user-avatar">{{ nombre|slice:":2"|upper }}</div>
       <div class="user-info">
         <span class="uname">{{ nombre }}</span>
-        <span class="urole">{{ rol }}</span>
+        <span class="urole">{% if rol == 'admin' %}Administrador{% else %}Empleado{% endif %}</span>
       </div>
     </div>
     <a href="{% url 'login' %}?logout=1" class="logout-btn">
@@ -303,3 +290,4 @@
   }
 </script>
 {% endblock %}
+

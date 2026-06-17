@@ -1,344 +1,258 @@
-# Documentación del Proyecto RHSOFT
-## Sistema de Gestión de Asistencia y Empleados
-### Migrado de PHP a Python/Django por Andriu David Zambrano Velasco — SENA 2026
+# RHSOFT — Documentación del Proyecto
+
+Sistema de gestión de empleados y asistencia desarrollado en Python/Django con MySQL 8.0.
 
 ---
 
-## Estructura general del proyecto
+## Estructura del proyecto
 
 ```
-rhsoft.py/                          ← Carpeta raíz del proyecto
-├── manage.py                       ← Punto de entrada de Django (equivale a index.php en PHP)
-├── requirements.txt                ← Lista de librerías necesarias (django, mysqlclient)
-├── README.md                       ← Instrucciones de instalación
-├── DOCUMENTACION.md                ← Este archivo
-│
-├── rhsoft/                         ← Configuración del proyecto Django
-│   ├── settings.py                 ← Configuración general (BD, apps instaladas, etc.)
-│   ├── urls.py                     ← Rutas principales del proyecto
-│   ├── wsgi.py                     ← Punto de entrada para servidores de producción
-│   └── __init__.py                 ← Archivo vacío que marca la carpeta como módulo Python
-│
-└── asistencia/                     ← Módulo principal (equivale a los .php originales)
-    ├── models.py                   ← Tablas de la BD representadas como clases Python
-    ├── views.py                    ← Lógica del sistema (login, registro, admin)
-    ├── urls.py                     ← Rutas del módulo asistencia
-    ├── __init__.py                 ← Archivo vacío que marca la carpeta como módulo Python
-    │
+rhsoft/
+├── manage.py
+├── requirements.txt
+├── media/                        ← Archivos subidos (hojas de vida)
+│   └── hojas_de_vida/
+├── rhsoft/                       ← Configuración del proyecto
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+└── asistencia/                   ← Módulo principal
+    ├── models.py
+    ├── views.py
+    ├── urls.py
+    ├── migrations/
+    │   ├── 0001_initial.py
+    │   └── 0002_postulacion.py
     ├── fixtures/
-    │   └── initial_data.json       ← Datos de ejemplo para cargar con loaddata
-    │
-    ├── migrations/                 ← Historial de cambios de la base de datos
-    │   ├── __init__.py
-    │   └── 0001_initial.py         ← Primera migración: crea todas las tablas
-    │
+    │   └── initial_data.json
     └── templates/
-        └── asistencia/             ← Archivos HTML del sistema
-            ├── base.html           ← Template base con estilos globales
-            ├── login.html          ← Pantalla de ingreso con PIN
-            ├── registro.html       ← Pantalla de marcación de asistencia
-            └── admin.html          ← Panel de administración
+        └── asistencia/
+            ├── base.html
+            ├── login.html
+            ├── registro.html
+            ├── admin.html
+            ├── perfil.html
+            ├── postulacion.html
+            └── seleccion.html
 ```
 
 ---
 
-## Archivos generados automáticamente (no editar)
+## Módulos y responsables
 
-| Archivo/Carpeta | Qué es |
-|---|---|
-| `__pycache__/` | Python compila los `.py` a bytecode para que corran más rápido. Se regenera sola. |
-| `*.cpython-314.pyc` | El bytecode compilado. No se edita, se regenera automáticamente. |
-| `migrations/0001_initial.py` | Generado por `makemigrations`. Describe cómo crear las tablas en la BD. |
-
----
-
-## Archivo: `rhsoft/settings.py`
-### Configuración central del proyecto
-
-```python
-SECRET_KEY        # Clave secreta para seguridad. Cambiar en producción.
-DEBUG = True      # Muestra errores detallados. Cambiar a False en producción.
-ALLOWED_HOSTS     # Dominios permitidos. En desarrollo: localhost y 127.0.0.1.
-
-INSTALLED_APPS    # Lista de módulos activos. Aquí se agregan los módulos de compañeros.
-                  # Ejemplo: 'nomina', 'sst_externo'
-
-DATABASES         # Configuración de conexión a MySQL 8:
-                  #   NAME     → nombre de la BD (gestion_empleados)
-                  #   USER     → usuario (root)
-                  #   PASSWORD → contraseña (root)
-                  #   HOST     → servidor (localhost)
-                  #   PORT     → puerto (3306)
-
-SESSION_ENGINE    # Guarda las sesiones en la BD (equivale a $_SESSION en PHP)
-TIME_ZONE         # Zona horaria Colombia: 'America/Bogota'
-USE_TZ = False    # False para que las horas no se conviertan a UTC automáticamente
-```
+| Módulo | Responsable | Descripción |
+|---|---|---|
+| Login + registro de asistencia | Andriu | Autenticación por PIN, marcado de entrada/salida |
+| Gestión de empleados | Andriu | Panel admin: empleados, contratos, SST |
+| Perfil del empleado | Jerson | Ver y editar datos personales |
+| Proceso de selección | Jerson | Postulaciones y contratación |
+| Menú empleado | Cristian | Cubierto por el módulo de asistencia de Andriu |
 
 ---
 
-## Archivo: `rhsoft/urls.py`
-### Rutas principales del proyecto
+## Modelo de datos
 
-```python
-path('', include('asistencia.urls'))
-# Delega todas las rutas al módulo asistencia.
-# Para agregar módulos de compañeros:
-# path('nomina/', include('nomina.urls'))
-```
+### `personas`
+Datos personales de cualquier individuo en el sistema (empleados y postulantes).
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| ID_Persona | INT (PK) | Identificador único |
+| Numero_Documento | VARCHAR(50) | Cédula o pasaporte — único en el sistema |
+| Nombres | VARCHAR(150) | Nombres completos |
+| Apellidos | VARCHAR(150) | Apellidos |
+| Email | VARCHAR(150) | Correo electrónico (opcional) |
+| Telefono | VARCHAR(30) | Teléfono (opcional) |
+| Fecha_Nacimiento | DATE | Fecha de nacimiento (opcional) |
+
+### `departamentos`
+Áreas de la empresa.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| ID_Departamento | INT (PK) | Identificador único |
+| Nombre_Departamento | VARCHAR(150) | Nombre del área |
+
+### `cargos`
+Posiciones disponibles dentro de cada departamento.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| ID_Cargo | INT (PK) | Identificador único |
+| ID_Departamento | FK → departamentos | Área a la que pertenece |
+| Nombre_Cargo | VARCHAR(150) | Nombre del cargo |
+| Descripcion_Funciones | VARCHAR(500) | Funciones del cargo |
+| Salario_Base | DECIMAL(15,2) | Salario base del cargo |
+| Hora_Inicio_Jornada | TIME | Hora de inicio de la jornada |
+| Hora_Fin_Jornada | TIME | Hora de fin de la jornada |
+
+### `cargo_dias`
+Días laborales de cada cargo (ej: Lunes, Martes...).
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| ID_Cargo | FK → cargos | Cargo al que aplica |
+| Dia_Semana | VARCHAR(20) | Nombre del día (ej: "Lunes") |
+
+### `empleados`
+Personas vinculadas laboralmente a la empresa.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| ID_Empleado | INT (PK) | Identificador único |
+| ID_Persona | FK → personas | Datos personales |
+| ID_Cargo | FK → cargos | Cargo actual |
+| PIN | VARCHAR(6) | Código de acceso al sistema — único |
+| Rol | ENUM | `admin` o `empleado` |
+| Fecha_Ingreso | DATE | Fecha de vinculación |
+| Fecha_Retiro | DATE | Fecha de retiro (nullable) |
+| Estado_Empleado | ENUM | `Activo` o `Inactivo` |
+
+### `contratos`
+Historial contractual de cada empleado.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| ID_Contrato | INT (PK) | Identificador único |
+| ID_Empleado | FK → empleados | Empleado vinculado |
+| ID_Cargo | FK → cargos | Cargo del contrato |
+| Tipo_Contrato | VARCHAR(100) | Indefinido, Temporal, Prácticas, etc. |
+| Salario_Pactado | DECIMAL(15,2) | Salario acordado |
+| Fecha_Inicio | DATE | Inicio de vigencia |
+| Fecha_Fin | DATE | Fin de vigencia (nullable = indefinido) |
+| Estado_Contrato | ENUM | `Vigente`, `Terminado` o `Suspendido` |
+
+### `registros`
+Marcaciones de asistencia diarias.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| ID_Registro | INT (PK) | Identificador único |
+| ID_Empleado | FK → empleados | Empleado que marcó |
+| Fecha | DATE | Fecha del registro |
+| Hora_Entrada | TIME | Hora de entrada |
+| Hora_Salida | TIME | Hora de salida (nullable) |
+| Tipo | VARCHAR(80) | Tipo de jornada (Normal, etc.) |
+| Observacion | VARCHAR(300) | Nota adicional (opcional) |
+
+### `sst_accidentes`
+Registro de accidentes laborales.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| ID_Accidente | INT (PK) | Identificador único |
+| ID_Empleado | FK → empleados | Empleado involucrado |
+| Fecha_Accidente | DATE | Fecha del accidente |
+| Tipo_Accidente | VARCHAR(100) | Caída, Corte, Golpe, Otro... |
+| Descripcion | VARCHAR(500) | Descripción del evento |
+| Accion_Inmediata | VARCHAR(500) | Qué se hizo al momento |
+| Fecha_Reporte | DATE | Fecha en que se reportó |
+
+### `postulaciones`
+Registro de candidatos en el proceso de selección.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| ID_Postulacion | INT (PK) | Identificador único |
+| ID_Persona | FK → personas | Datos del postulante |
+| Cargo_Aspirado | FK → cargos | Cargo al que aplica |
+| Hoja_Vida | FILE | Archivo PDF subido |
+| Estado | ENUM | `Pendiente`, `Aceptado`, `Entrevista`, `Rechazado`, `Contratado` |
+| Fecha_Postulacion | DATE | Fecha en que se postuló (automática) |
+| Observacion | VARCHAR(500) | Notas del admin sobre el candidato |
 
 ---
 
-## Archivo: `asistencia/urls.py`
-### Rutas del módulo de asistencia
+## URLs del sistema
 
-| URL | Vista | Nombre | Equivalente PHP |
+| URL | Vista | Acceso | Descripción |
 |---|---|---|---|
-| `/` | `login_view` | `login` | `index.php` |
-| `/registro/` | `registro_view` | `registro` | `registro.php` |
-| `/admin-panel/` | `admin_view` | `admin_panel` | `admin.php` |
+| `/` | `login_view` | Público | Pantalla de login con PIN |
+| `/registro/` | `registro_view` | Empleado | Marcar entrada/salida del día |
+| `/perfil/` | `perfil_view` | Empleado | Ver y editar datos personales |
+| `/admin-panel/` | `admin_view` | Admin | Panel de gestión de empleados |
+| `/seleccion/` | `seleccion_view` | Admin | Gestión del proceso de selección |
+| `/postulacion/` | `postulacion_view` | Público | Formulario de postulación |
 
 ---
 
-## Archivo: `asistencia/models.py`
-### Tablas de la base de datos como clases Python
+## Reglas de negocio implementadas
 
-Cada clase = una tabla en MySQL. Los campos son los equivalentes a las columnas.
-
-### `Persona`
-Guarda los datos personales de cualquier persona del sistema.
-```
-ID_Persona       → Clave primaria, se genera automáticamente
-Numero_Documento → Cédula o documento. Único en la BD (no puede repetirse)
-Nombres          → Nombres de la persona
-Apellidos        → Apellidos de la persona
-Email            → Correo electrónico (opcional)
-Telefono         → Teléfono (opcional)
-Fecha_Nacimiento → Fecha de nacimiento (opcional)
-```
-> `db_table = 'personas'` → le dice a Django que use la tabla `personas` en MySQL
-
-### `Departamento`
-Lista de departamentos de la empresa.
-```
-ID_Departamento     → Clave primaria
-Nombre_Departamento → Nombre del departamento (ej: "Producción")
-```
-
-### `Cargo`
-Cargos disponibles, cada uno pertenece a un departamento.
-```
-ID_Cargo              → Clave primaria
-ID_Departamento       → ForeignKey a Departamento (relación muchos a uno)
-Nombre_Cargo          → Nombre del cargo (ej: "Operario")
-Descripcion_Funciones → Descripción de las funciones del cargo (opcional)
-Salario_Base          → Salario base del cargo (opcional)
-Hora_Inicio_Jornada   → Hora de inicio de la jornada laboral (opcional)
-Hora_Fin_Jornada      → Hora de fin de la jornada laboral (opcional)
-```
-> `ForeignKey` con `on_delete=PROTECT` → no deja borrar un departamento si tiene cargos
-
-### `CargoDia`
-Días laborales de cada cargo (relación R17 del diagrama).
-```
-ID_Cargo   → ForeignKey a Cargo
-Dia_Semana → Nombre del día (ej: "Lunes", "Martes")
-```
-> `unique_together` → no permite repetir el mismo día para el mismo cargo
-
-### `Empleado`
-Vincula una Persona con un Cargo y agrega datos laborales.
-```
-ID_Empleado     → Clave primaria
-ID_Persona      → ForeignKey a Persona
-ID_Cargo        → ForeignKey a Cargo
-PIN             → Código de 6 dígitos para iniciar sesión. Único en la BD.
-Rol             → 'admin' o 'empleado'
-Fecha_Ingreso   → Fecha de ingreso a la empresa (opcional)
-Fecha_Retiro    → Fecha de retiro. Null si sigue activo.
-Estado_Empleado → 'Activo' o 'Inactivo'
-```
-> `nombre_completo` → propiedad que devuelve "Nombres Apellidos" sin consultar de nuevo
-
-### `Contrato`
-Contratos laborales de cada empleado (relación R13 del diagrama).
-```
-ID_Contrato     → Clave primaria
-ID_Empleado     → ForeignKey a Empleado
-ID_Cargo        → ForeignKey a Cargo (el cargo en el momento del contrato)
-Tipo_Contrato   → 'Indefinido', 'Temporal' o 'Prácticas'
-Salario_Pactado → Salario acordado en el contrato
-Fecha_Inicio    → Inicio de vigencia del contrato
-Fecha_Fin       → Fin del contrato. Null si es indefinido.
-Estado_Contrato → 'Vigente', 'Terminado' o 'Suspendido'
-```
-
-### `Registro`
-Marcaciones de entrada y salida de asistencia.
-```
-ID_Registro  → Clave primaria
-ID_Empleado  → ForeignKey a Empleado
-Fecha        → Fecha del registro
-Hora_Entrada → Hora de entrada (obligatoria)
-Hora_Salida  → Hora de salida (opcional, null si aún está en jornada)
-Tipo         → 'Normal', 'Tarde', 'Salida anticipada', etc.
-Observacion  → Nota adicional (opcional)
-```
-
-### `SstAccidente`
-Registro de accidentes laborales (relación R14 del diagrama).
-```
-ID_Accidente     → Clave primaria
-ID_Empleado      → ForeignKey a Empleado
-Fecha_Accidente  → Fecha en que ocurrió el accidente
-Tipo_Accidente   → 'Caída', 'Corte', 'Golpe', 'Quemadura', etc.
-Descripcion      → Descripción detallada del accidente
-Accion_Inmediata → Acción tomada en el momento (primeros auxilios, etc.)
-Fecha_Reporte    → Fecha en que se reportó formalmente
-```
+| Regla | Descripción | Dónde se valida |
+|---|---|---|
+| R10 | No se puede postular quien ya es empleado activo. No se puede postular dos veces al mismo cargo activamente. | `postulacion_view` |
+| R13 | Un empleado activo siempre debe tener al menos un contrato vigente. | `admin_view` → `guardar_empleado`, `guardar_contrato` |
+| R16 | El salario pactado no puede ser inferior al salario mínimo legal vigente ($ 1,750,905 para 2026). | `admin_view` → `guardar_cargo`, `guardar_empleado`, `seleccion_view` → `contratar` |
+| R17 | Solo se puede registrar asistencia en los días laborales configurados para el cargo. | `registro_view` |
 
 ---
 
-## Archivo: `asistencia/views.py`
-### Lógica del sistema
+## Instalación y configuración
 
-Equivale a los tres archivos PHP originales: `index.php`, `registro.php` y `admin.php`.
+### Requisitos
+- Python 3.10 o superior
+- MySQL 8.0 standalone
+- pip
 
-### Helpers (funciones de apoyo)
-
-**`get_empleado_sesion(request)`**
-Retorna el objeto Empleado de la sesión activa, o None si no hay sesión.
-Equivale a leer `$_SESSION['empleado_id']` y hacer el SELECT en PHP.
-
-**`login_required_view`**
-Decorador que protege vistas: si no hay sesión, redirige al login.
-Equivale al `if (!isset($_SESSION['empleado_id'])) header('Location: index.php')` de PHP.
-
-**`admin_required_view`**
-Decorador que protege vistas de admin: si el rol no es 'admin', redirige al login.
-
-### `login_view` (equivale a `index.php`)
-Maneja la pantalla de login con PIN.
-- **GET** → muestra el formulario
-- **GET con `?logout`** → destruye la sesión y redirige al login
-- **POST con `pin`** → busca el empleado por PIN, crea la sesión y redirige según rol
-
-### `registro_view` (equivale a `registro.php`)
-Pantalla de marcación de asistencia del empleado.
-- **GET** → muestra la pantalla con el reloj, historial y estadísticas del mes
-- **POST AJAX con `accion=entrada`** → crea un registro de entrada (valida que no haya una activa)
-- **POST AJAX con `accion=salida`** → completa el registro con la hora de salida
-
-### `admin_view` (equivale a `admin.php`)
-Panel de administración con gestión de empleados, contratos y SST.
-- **GET** → renderiza el panel con la lista de empleados y KPIs
-- **POST AJAX** → maneja múltiples acciones según el campo `accion`:
-
-| Acción | Qué hace |
-|---|---|
-| `guardar_empleado` | Crea o actualiza un empleado y su persona asociada |
-| `guardar_contrato` | Crea o actualiza un contrato (R13) |
-| `guardar_sst` | Registra un accidente SST (R14) |
-| `get_empleado` | Retorna datos de un empleado en JSON para el formulario de edición |
-| `get_contratos` | Retorna los contratos de un empleado en JSON |
-| `get_registros` | Retorna el historial de asistencia de un empleado en JSON |
-| `get_sst` | Retorna los accidentes SST de un empleado en JSON |
-| `cambiar_estado` | Cambia el estado (Activo/Inactivo) de un empleado |
-| `eliminar_empleado` | Da de baja a un empleado (R12): lo marca Inactivo y cierra contratos |
-
----
-
-## Templates HTML
-
-Los templates usan **Django Template Language (DTL)**, muy similar a PHP con `<?= ?>`.
-
-| Sintaxis PHP | Sintaxis Django |
-|---|---|
-| `<?= $variable ?>` | `{{ variable }}` |
-| `<?php if($x): ?>` | `{% if x %}` |
-| `<?php foreach($arr as $item): ?>` | `{% for item in arr %}` |
-| `include 'header.php'` | `{% extends "base.html" %}` |
-| `htmlspecialchars($x)` | `{{ x }}` (escapa automáticamente) |
-
-### `base.html`
-Template base con variables CSS globales (colores institucionales).
-Todos los demás templates lo extienden con `{% extends "asistencia/base.html" %}`.
-
-### `login.html`
-Pantalla de acceso con teclado numérico virtual.
-Usa JavaScript para capturar el PIN y enviarlo al servidor.
-Incluye soporte para teclado físico (teclas 0-9 y Backspace).
-
-### `registro.html`
-Panel del empleado con:
-- Reloj en tiempo real (JavaScript con `setInterval`)
-- Botones de entrada/salida que llaman a la vista via AJAX (fetch API)
-- Estadísticas del mes actual
-- Historial de los últimos 30 registros
-- Información del cargo, departamento y contrato vigente en el sidebar
-
-### `admin.html`
-Panel de administración con:
-- KPIs: total empleados, activos, presentes hoy, accidentes del mes
-- Tabla de empleados con filtro por nombre/documento y por estado
-- Tabs: Empleados, Contratos (R13), SST (R14)
-- Modales para crear/editar empleados, contratos y accidentes
-- Todas las acciones usan AJAX (sin recargar la página)
-
----
-
-## Equivalencias PHP → Django
-
-| Concepto PHP | Equivalente Django/Python |
-|---|---|
-| `$_SESSION` | `request.session` |
-| `$_POST` | `request.POST` |
-| `$_GET` | `request.GET` |
-| `header('Location: x')` | `redirect('nombre_url')` |
-| `json_encode($data)` | `JsonResponse(data)` |
-| `PDO + SQL manual` | Django ORM (models.py) |
-| `SELECT * FROM ...` | `Modelo.objects.all()` |
-| `WHERE campo = ?` | `.filter(campo=valor)` |
-| `INSERT INTO ...` | `Modelo.objects.create(...)` |
-| `UPDATE ... SET ...` | `.filter(...).update(...)` |
-
----
-
-## Comandos útiles
-
-```powershell
-# Instalar dependencias
+### 1. Instalar dependencias
+```bash
 pip install -r requirements.txt
-
-# Crear tablas en la BD
-python manage.py migrate
-
-# Cargar datos de ejemplo
-python manage.py loaddata initial_data
-
-# Correr el servidor de desarrollo
-python manage.py runserver
-
-# Cuando se modifica models.py, regenerar migraciones
-python manage.py makemigrations asistencia
-python manage.py migrate
-
-# Consola interactiva de Python con Django cargado
-python manage.py shell
 ```
+
+### 2. Configurar base de datos
+En `rhsoft/settings.py` ajusta si es necesario:
+```python
+DATABASES = {
+    'default': {
+        'NAME':     'gestion_empleados',
+        'USER':     'root',
+        'PASSWORD': 'root',
+        'HOST':     'localhost',
+        'PORT':     '3306',
+    }
+}
+```
+
+### 3. Crear la base de datos (MySQL)
+```sql
+CREATE DATABASE gestion_empleados CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### 4. Aplicar migraciones
+```bash
+python manage.py migrate
+```
+
+### 5. Cargar datos iniciales
+```bash
+python manage.py loaddata asistencia/fixtures/initial_data.json
+```
+
+### 6. Correr el servidor
+```bash
+python manage.py runserver
+```
+
+### 7. Acceder al sistema
+- **URL:** http://127.0.0.1:8000/
+- **Admin:** PIN `999999`
+- **Empleado de prueba:** PIN `100001`
+- **Formulario de postulación (público):** http://127.0.0.1:8000/postulacion/
 
 ---
 
-## Cómo agregar el módulo de un compañero
+## Archivos de medios (hojas de vida)
 
-1. Copia la carpeta del módulo dentro de `rhsoft.py/`
-2. En `rhsoft/settings.py` agrega el módulo a `INSTALLED_APPS`:
-   ```python
-   'asistencia',
-   'nomina',       # ← módulo del compañero
-   ```
-3. En `rhsoft/urls.py` agrega la ruta:
-   ```python
-   path('nomina/', include('nomina.urls')),
-   ```
-4. Corre `python manage.py migrate` para crear las tablas del nuevo módulo.
+Los PDF subidos se guardan en `rhsoft/media/hojas_de_vida/`. Esta carpeta se crea automáticamente la primera vez que alguien sube un archivo. En producción, esta carpeta debe estar fuera del repositorio (agregar `media/` al `.gitignore`).
+
+---
+
+## Tecnologías utilizadas
+
+| Tecnología | Versión | Uso |
+|---|---|---|
+| Python | 3.14 | Lenguaje base |
+| Django | 6.0 | Framework web |
+| MySQL | 8.0 | Base de datos |
+| mysqlclient | — | Conector MySQL para Django |
+| DM Sans / DM Serif Display | — | Tipografía (Google Fonts) |

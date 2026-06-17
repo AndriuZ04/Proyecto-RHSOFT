@@ -23,7 +23,7 @@
   .card {
     background: var(--blanco-roto);
     border-radius: 24px;
-    padding: 56px 52px;
+    padding: 32px 40px;
     width: min(460px, 94vw);
     box-shadow: var(--sombra);
     animation: aparecer .6s cubic-bezier(.22,1,.36,1) both;
@@ -40,7 +40,7 @@
   .logo-icon svg { width:26px; fill:var(--blanco-roto); }
   .logo-text h1 { font-family:'DM Serif Display',serif; font-size:1.25rem; color:var(--texto); line-height:1.2; }
   .logo-text p  { font-size:.78rem; color:var(--azul-oscuro); opacity:.7; margin-top:2px; letter-spacing:.04em; text-transform:uppercase; }
-  h2 { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--texto); line-height:1.15; margin-bottom:8px; }
+  h2 { font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--texto); line-height:1.15; margin-bottom:8px; }
   .subtitle { font-size:.92rem; color:var(--azul-oscuro); opacity:.65; margin-bottom:36px; }
   label { display:block; font-size:.82rem; font-weight:600; color:var(--azul-oscuro); letter-spacing:.05em; text-transform:uppercase; margin-bottom:10px; }
   .pin-group { display:flex; gap:10px; margin-bottom:28px; }
@@ -54,7 +54,7 @@
   .error-msg { background:#fff0f0; border:1.5px solid #f5b8b8; color:#c0392b; border-radius:10px; padding:12px 16px; font-size:.87rem; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
   .hint { text-align:center; margin-top:24px; font-size:.8rem; color:var(--azul-oscuro); opacity:.5; }
   .numpad { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:20px; }
-  .num-btn { height:52px; border:2px solid rgba(53,88,114,.15); border-radius:12px; background:white; font-size:1.2rem; font-weight:500; color:var(--texto); cursor:pointer; transition:all .15s; }
+  .num-btn { height:44px; border:2px solid rgba(53,88,114,.15); border-radius:12px; background:white; font-size:1.2rem; font-weight:500; color:var(--texto); cursor:pointer; transition:all .15s; }
   .num-btn:hover  { background:rgba(122,170,206,.15); border-color:var(--azul-medio); }
   .num-btn:active { transform:scale(.95); }
   .num-btn.del  { background:rgba(53,88,114,.08); font-size:.9rem; color:var(--azul-oscuro); }
@@ -64,6 +64,12 @@
 
 {% block body %}
 {% csrf_token %}
+<div style="position:fixed; top:24px; left:24px; background:rgba(255,255,255,.12); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.2); border-radius:16px; padding:14px 20px;">
+  <p style="color:rgba(255,255,255,.55); font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; margin:0 0 6px;">¿Buscas empleo?</p>
+  <a href="{% url 'postulacion' %}" style="color:white; font-weight:600; font-size:.88rem; text-decoration:none;">
+    Postúlate aquí →
+  </a>
+</div>
 <div class="card">
   <div class="logo-wrap">
     <div class="logo-icon">
@@ -138,3 +144,5 @@
   });
 </script>
 {% endblock %}
+
+
