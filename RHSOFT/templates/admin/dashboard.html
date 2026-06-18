@@ -19,47 +19,96 @@ Dashboard Administrador
             Panel de Administración
         </h1>
 
+        <p class="text-gray-500 mb-6">
+    Fecha: {{ fecha_actual }}
+</p>
+
         <!-- TARJETAS -->
 
-        <div class="grid md:grid-cols-3 gap-6">
+        <div class="grid md:grid-cols-4 gap-6">
 
-            <div class="bg-white p-6 rounded-xl shadow">
+    <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-blue-700">
+        <div class="text-4xl mb-2">👥</div>
+        <h3 class="text-gray-500">Empleados Activos</h3>
+        <p class="text-4xl font-bold text-blue-900 mt-2">
+            {{ empleados_activos }}
+        </p>
+    </div>
 
-                <h3 class="text-gray-500">
-                    Total Empleados
-                </h3>
+    <div class="bg-white p-6 rounded-xl shadow">
 
-                <p class="text-4xl font-bold text-blue-900 mt-2">
-    {{ total_empleados }}
-</p>
+    <h3 class="text-gray-500">
+        Empleados Inactivos
+    </h3>
 
-            </div>
+    <p class="text-4xl font-bold text-red-600 mt-2">
+        {{ empleados_inactivos }}
+    </p>
 
-            <div class="bg-white p-6 rounded-xl shadow">
+</div>
 
-                <h3 class="text-gray-500">
-                    Departamentos
-                </h3>
+    <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-red-600">
+        <div class="text-4xl mb-2">🚫</div>
+        <h3 class="text-gray-500">Empleados Inactivos</h3>
+        <p class="text-4xl font-bold text-red-600 mt-2">
+            {{ empleados_inactivos }}
+        </p>
+    </div>
 
-                <p class="text-4xl font-bold text-blue-900 mt-2">
-    {{ total_departamentos }}
-</p>
+    <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-cyan-600">
+        <div class="text-4xl mb-2">🏢</div>
+        <h3 class="text-gray-500">Departamentos</h3>
+        <p class="text-4xl font-bold text-cyan-700 mt-2">
+            {{ total_departamentos }}
+        </p>
+    </div>
 
-            </div>
+    <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-purple-600">
+        <div class="text-4xl mb-2">💼</div>
+        <h3 class="text-gray-500">Cargos</h3>
+        <p class="text-4xl font-bold text-purple-700 mt-2">
+            {{ total_cargos }}
+        </p>
+    </div>
 
-            <div class="bg-white p-6 rounded-xl shadow">
+</div>
 
-                <h3 class="text-gray-500">
-                    Cargos
-                </h3>
+<div class="grid md:grid-cols-4 gap-6 mt-6">
 
-                <p class="text-4xl font-bold text-blue-900 mt-2">
-    {{ total_cargos }}
-</p>
+    <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-green-600">
+        <div class="text-4xl mb-2">📄</div>
+        <h3 class="text-gray-500">Contratos</h3>
+        <p class="text-4xl font-bold text-green-700 mt-2">
+            {{ total_contratos }}
+        </p>
+    </div>
 
-            </div>
+    <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-yellow-500">
+        <div class="text-4xl mb-2">🌴</div>
+        <h3 class="text-gray-500">Vacaciones</h3>
+        <p class="text-4xl font-bold text-yellow-600 mt-2">
+            {{ total_vacaciones }}
+        </p>
+    </div>
 
-        </div>
+    <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-indigo-600">
+        <div class="text-4xl mb-2">📝</div>
+        <h3 class="text-gray-500">Permisos</h3>
+        <p class="text-4xl font-bold text-indigo-700 mt-2">
+            {{ total_permisos }}
+        </p>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-orange-500">
+        <div class="text-4xl mb-2">⏰</div>
+        <h3 class="text-gray-500">Registros Hoy</h3>
+        <p class="text-4xl font-bold text-orange-600 mt-2">
+            {{ registros_hoy }}
+        </p>
+    </div>
+
+</div>
+
 
         <!-- ACCIONES RAPIDAS -->
 

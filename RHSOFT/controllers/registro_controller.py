@@ -2,9 +2,12 @@ from flask import render_template
 from flask import redirect
 from flask import session
 from flask import flash
+from flask import request
 
 from config.db import mysql
 
+import os
+from werkzeug.utils import secure_filename
 
 # ==========================
 # VER ASISTENCIA
@@ -304,3 +307,51 @@ def dashboard_empleado():
         "empleado/dashboard.html",
         empleado=empleado
     )
+
+def subir_foto():
+
+    foto = request.files["foto"]
+
+    if foto:
+
+        nombre_archivo = secure_filename(foto.filename)
+
+        ruta = os.path.join(
+            "static",
+            "uploads",
+            "fotos",
+            nombre_archivo
+        )
+
+        foto.save(ruta)
+
+        id_usuario = session["id_usuario"]
+
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT id_persona
+            FROM empleados
+            WHERE id_usuario=%s
+        """, (id_usuario,))
+
+        persona = cursor.fetchone()
+
+        if persona:
+
+            cursor.execute("""
+                UPDATE personas
+                SET foto=%s
+                WHERE id_persona=%s
+            """,
+            (
+                nombre_archivo,
+                persona[0]
+            ))
+
+            mysql.connection.commit()
+
+            # ACTUALIZA LA FOTO EN LA SESIÓN
+            session["foto_empleado"] = nombre_archivo
+
+    return redirect("/perfil")

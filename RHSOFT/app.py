@@ -36,7 +36,8 @@ from controllers.registro_controller import (
     marcar_salida,
     listar_registros,
     perfil_empleado,
-    dashboard_empleado
+    dashboard_empleado,
+    subir_foto
 )
 from controllers.admin_controller import (
     dashboard_admin
@@ -319,6 +320,16 @@ app.add_url_rule(
     '/perfil',
     'perfil',
     perfil_empleado
+)
+
+# ==========================
+# SUBIR FOTO 
+# ==========================
+app.add_url_rule(
+    '/subir_foto',
+    'subir_foto',
+    subir_foto,
+    methods=['POST']
 )
 # ==========================
 # ASISTENCIA
