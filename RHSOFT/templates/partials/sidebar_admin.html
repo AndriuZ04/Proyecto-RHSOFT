@@ -1,64 +1,50 @@
-<aside class="w-64 bg-blue-900 text-white">
+<div class="bg-blue-900 text-white w-64 min-h-screen p-6 shadow-xl flex flex-col justify-between">
+    <div>
+        <div class="mb-10 text-center">
+            <h2 class="text-2xl font-bold tracking-wider text-cyan-400">RHSOFT</h2>
+            <p class="text-xs text-gray-400 mt-1">Panel de Administración</p>
+        </div>
 
-    <div class="p-6 text-center border-b border-blue-800">
+        <nav class="space-y-2">
+            
+            <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-800 transition-colors font-medium">
+                <span>📊</span> Dashboard
+            </a>
 
-        <img
-            src="{{ url_for('static', filename='img/logo_cobalsa.png') }}"
-            class="w-24 mx-auto mb-4">
+            <a href="/empleados" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-800 transition-colors font-medium">
+                <span>👥</span> Empleados
+            </a>
 
-        <h2 class="font-bold text-xl">
-            RHSOFT
-        </h2>
+            <a href="/contratos" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-800 transition-colors font-medium">
+                <span>📄</span> Contratos
+            </a>
 
+            <a href="/departamentos" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-800 transition-colors font-medium">
+                <span>🏢</span> Departamentos
+            </a>
+
+            <a href="/cargos" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-800 transition-colors font-medium">
+                <span>💼</span> Cargos
+            </a>
+
+            <a href="/vacaciones" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-800 transition-colors font-medium">
+                <span>🌴</span> Vacaciones
+            </a>
+
+            <a href="/permisos" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-800 transition-colors font-medium">
+                <span>📝</span> Permisos
+            </a>
+
+            <a href="/registros" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-800 transition-colors font-medium">
+                <span>⏰</span> Registros Asistencia
+            </a>
+
+        </nav>
     </div>
 
-    <nav class="mt-6">
-
-        <a href="/admin"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Dashboard
+    <div class="pt-6 border-t border-blue-800">
+        <a href="/logout" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 transition-colors font-medium text-center justify-center">
+            <span>🚪</span> Cerrar Sesión
         </a>
-
-        <a href="/empleados"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Empleados
-        </a>
-
-        <a href="/cargos"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Cargos
-        </a>
-
-        <a href="/departamentos"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Departamentos
-        </a>
-
-        <a href="/contratos"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Contratos
-        </a>
-
-        <a href="/vacaciones"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Vacaciones
-        </a>
-
-        <a href="/permisos"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Permisos
-        </a>
-
-        <a href="/registros"
-           class="block px-6 py-3 hover:bg-blue-800">
-            Registros
-        </a>
-
-        <a href="/logout"
-           class="block px-6 py-3 hover:bg-red-700">
-            Cerrar Sesión
-        </a>
-
-    </nav>
-
-</aside>
+    </div>
+</div>

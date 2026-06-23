@@ -2,7 +2,6 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -15,17 +14,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-
-        .sidebar-blue{
-            background:#003B7A;
+        .sidebar-blue {
+            background: #003B7A;
         }
 
-        .primary-blue{
-            background:#0056B3;
+        .primary-blue {
+            background: #0056B3;
         }
-
     </style>
-
 </head>
 
 <body class="bg-slate-100">
@@ -33,6 +29,97 @@
     {% block content %}
     {% endblock %}
 
+    <audio id="musicaAmbiente" loop autoplay>
+        <source src="{{ url_for('static', filename='audio/musica_relajante.mp3') }}" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <button id="btnMusica" class="fixed bottom-6 right-6 bg-blue-900 text-white p-4 rounded-full shadow-2xl hover:bg-blue-800 transition-all z-50 flex items-center justify-center text-xl" title="Música de fondo">
+        🎵
+    </button>
+
+    <script>
+        const musica = document.getElementById('musicaAmbiente');
+        const btnMusica = document.getElementById('btnMusica');
+        
+        // Volumen bajo y sutil (15%)
+        musica.volume = 0.15;
+
+        // Funciones de estado visual
+        function marcarComoReproduciendo() {
+            btnMusica.innerHTML = "🔊";
+            btnMusica.classList.remove('bg-blue-900');
+            btnMusica.classList.add('bg-cyan-600');
+        }
+
+        function marcarComoPausado() {
+            btnMusica.innerHTML = "🎵";
+            btnMusica.classList.remove('bg-cyan-600');
+            btnMusica.classList.add('bg-blue-900');
+        }
+
+        // ==========================================
+        // PERSISTENCIA: RECUPERAR TIEMPO Y ESTADO
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            // 1. Recuperar el segundo exacto donde se quedó la canción
+            const tiempoGuardado = localStorage.getItem('musica_tiempo');
+            if (tiempoGuardado) {
+                musica.currentTime = parseFloat(tiempoGuardado);
+            }
+
+            // 2. Revisar si el usuario la había pausado manualmente en la página anterior
+            const estadoPausado = localStorage.getItem('musica_pausada') === 'true';
+
+            if (!estadoPausado) {
+                // Intentar reproducir automáticamente
+                musica.play().then(() => {
+                    marcarComoReproduciendo();
+                }).catch(error => {
+                    console.log("Autoplay bloqueado. Esperando interacción...");
+                    
+                    // Si el navegador bloquea, suena al primer clic en cualquier lado
+                    document.body.addEventListener('click', () => {
+                        if (musica.paused && localStorage.getItem('musica_pausada') !== 'true') {
+                            musica.play();
+                            marcarComoReproduciendo();
+                        }
+                    }, { once: true });
+                });
+            } else {
+                marcarComoPausado();
+            }
+        });
+
+        // ==========================================
+        // GUARDAR EL TIEMPO CONSTANTEMENTE AL CAMBIAR DE PÁGINA
+        // ==========================================
+        // Guarda el segundo exacto justo antes de que la página se destruya o cambie
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('musica_tiempo', musica.currentTime);
+        });
+
+        // Opcional: Guarda cada segundo por si el usuario cierra la pestaña de golpe
+        musica.addEventListener('timeupdate', () => {
+            localStorage.setItem('musica_tiempo', musica.currentTime);
+        });
+
+        // ==========================================
+        // CONTROL MANUAL DEL BOTÓN
+        // ==========================================
+        btnMusica.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (musica.paused) {
+                musica.play();
+                marcarComoReproduciendo();
+                localStorage.setItem('musica_pausada', 'false');
+            } else {
+                musica.pause();
+                marcarComoPausado();
+                localStorage.setItem('musica_pausada', 'true');
+            }
+        });
+    </script>
 </body>
 
 </html>

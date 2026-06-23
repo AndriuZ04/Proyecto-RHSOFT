@@ -12,7 +12,8 @@ from controllers.empleado_controller import (
     guardar_empleado,
     editar_empleado,
     actualizar_empleado,
-    eliminar_empleado
+    eliminar_empleado,
+    activar_empleado
 )
 from controllers.cargo_controller import (
     listar_cargos,
@@ -151,7 +152,8 @@ app.add_url_rule(
 app.add_url_rule(
     '/eliminar_empleado/<int:id_empleado>',
     'eliminar_empleado',
-    eliminar_empleado
+    eliminar_empleado,
+    methods=['GET']
 )
 # ==========================
 # REGISTROS
@@ -196,26 +198,10 @@ app.add_url_rule(
 app.add_url_rule(
     '/eliminar_cargo/<int:id_cargo>',
     'eliminar_cargo',
-    eliminar_cargo
-)
-
-# 👇 ESTAS 3 RUTAS TE FALTAN
-app.add_url_rule(
-    '/editar_cargo/<int:id_cargo>',
-    'editar_cargo',
-    editar_cargo
-)
-app.add_url_rule(
-    '/actualizar_cargo/<int:id_cargo>',
-    'actualizar_cargo',
-    actualizar_cargo,
+    eliminar_cargo,
     methods=['POST']
 )
-app.add_url_rule(
-    '/eliminar_cargo/<int:id_cargo>',
-    'eliminar_cargo',
-    eliminar_cargo
-)
+
 # ==========================
 # DEPARTAMENTO
 # ==========================
@@ -313,6 +299,13 @@ def test_empleado():
     empleado = cursor.fetchone()
 
     return str(empleado)
+
+app.add_url_rule(
+    '/activar_empleado/<int:id_empleado>',
+    'activar_empleado',
+    activar_empleado,
+    methods=['GET']
+)
 # ==========================
 # PERFIL
 # ==========================
