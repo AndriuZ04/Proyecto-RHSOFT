@@ -6,52 +6,108 @@ Editar Empleado
 
 {% block content %}
 
-<div class="max-w-6xl mx-auto p-8">
+<div class="flex min-h-screen">
 
-    <h1 class="text-3xl font-bold text-blue-900 mb-8">
-        Editar Empleado
-    </h1>
+    {% include 'partials/sidebar_admin.html' %}
 
-    <form method="POST" action="/actualizar_empleado/{{ empleado[0] }}">
+    <main class="flex-1 p-8 bg-gray-50">
 
-        <div class="grid grid-cols-2 gap-6">
+        <div class="mb-8">
+            <p class="text-sm text-gray-400">Gestión de personal</p>
+            <h1 class="text-4xl font-bold text-blue-900">Editar Empleado</h1>
+        </div>
 
-            <input
-                type="text"
-                name="nombres"
-                value="{{ empleado[1] }}"
-                class="border p-3 rounded">
+        <div class="bg-white rounded-2xl shadow border border-gray-100 p-8">
 
-            <input
-                type="text"
-                name="apellidos"
-                value="{{ empleado[2] }}"
-                class="border p-3 rounded">
+            <form method="POST" action="/actualizar_empleado/{{ empleado[0] }}">
 
-            <input
-                type="text"
-                name="telefono"
-                value="{{ empleado[3] }}"
-                class="border p-3 rounded">
+                <div class="grid grid-cols-2 gap-6">
 
-            <input
-                type="text"
-                name="direccion"
-                value="{{ empleado[4] }}"
-                class="border p-3 rounded">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Nombres</label>
+                        <input type="text" name="nombres" value="{{ empleado[1] }}"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_nombres" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ El nombre es obligatorio y solo letras.</p>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Apellidos</label>
+                        <input type="text" name="apellidos" value="{{ empleado[2] }}"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_apellidos" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ Los apellidos son obligatorios y solo letras.</p>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Teléfono</label>
+                        <input type="text" name="telefono" value="{{ empleado[3] }}"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_telefono" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ Entre 7 y 15 dígitos.</p>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Dirección</label>
+                        <input type="text" name="direccion" value="{{ empleado[4] }}"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_direccion" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ La dirección es obligatoria.</p>
+                    </div>
+
+                </div>
+
+                <div class="flex gap-4 mt-8">
+                    <button type="submit"
+                        class="bg-blue-900 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-800 transition">
+                        Actualizar Empleado
+                    </button>
+                    <a href="/empleados"
+                        class="bg-gray-100 text-gray-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-200 transition">
+                        Cancelar
+                    </a>
+                </div>
+
+            </form>
 
         </div>
 
-        <button
-            type="submit"
-            class="mt-8 bg-blue-900 text-white px-8 py-3 rounded">
-
-            Actualizar Empleado
-
-        </button>
-
-    </form>
-
+    </main>
 </div>
+
+<script>
+function soloLetras(e) {
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/;
+    if (!regex.test(e.key)) e.preventDefault();
+}
+
+function soloNumeros(e) {
+    if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+}
+
+function mostrarError(id) {
+    document.getElementById('error_' + id).style.display = 'block';
+}
+
+function limpiarError(id) {
+    document.getElementById('error_' + id).style.display = 'none';
+}
+
+document.querySelector('[name="nombres"]').addEventListener('keypress', soloLetras);
+document.querySelector('[name="apellidos"]').addEventListener('keypress', soloLetras);
+document.querySelector('[name="telefono"]').addEventListener('keypress', soloNumeros);
+
+document.querySelector('form').addEventListener('submit', function(e) {
+    let valido = true;
+
+    const nombres = document.querySelector('[name="nombres"]').value.trim();
+    const apellidos = document.querySelector('[name="apellidos"]').value.trim();
+    const telefono = document.querySelector('[name="telefono"]').value.trim();
+    const direccion = document.querySelector('[name="direccion"]').value.trim();
+
+    if (!nombres || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombres)) { mostrarError('nombres'); valido = false; } else limpiarError('nombres');
+    if (!apellidos || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(apellidos)) { mostrarError('apellidos'); valido = false; } else limpiarError('apellidos');
+    if (!telefono || !/^\d{7,15}$/.test(telefono)) { mostrarError('telefono'); valido = false; } else limpiarError('telefono');
+    if (!direccion) { mostrarError('direccion'); valido = false; } else limpiarError('direccion');
+
+    if (!valido) e.preventDefault();
+});
+</script>
 
 {% endblock %}

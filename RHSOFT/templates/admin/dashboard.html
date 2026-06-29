@@ -10,136 +10,115 @@ Dashboard Administrador
 
     {% include 'partials/sidebar_admin.html' %}
 
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-8 bg-gray-50">
 
-        <h1 class="text-4xl font-bold text-blue-900 mb-8">
-            Panel de Administración
-        </h1>
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <p class="text-sm text-gray-400">Gestión de personal</p>
+                <h1 class="text-4xl font-bold text-blue-900">Panel de Administración</h1>
+            </div>
+            <p class="text-sm text-gray-400">📅 {{ fecha_actual }}</p>
+        </div>
 
-        <p class="text-gray-500 mb-6">
-            Fecha: {{ fecha_actual }}
-        </p>
+        <!-- Tarjetas de estadísticas fila 1 -->
+        <div class="grid md:grid-cols-4 gap-6 mb-6">
 
-        <div class="grid md:grid-cols-4 gap-6">
-
-            <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-blue-700">
-                <div class="text-4xl mb-2">👥</div>
-                <h3 class="text-gray-500">Empleados Activos</h3>
-                <p class="text-4xl font-bold text-blue-900 mt-2">
-                    {{ empleados_activos }}
-                </p>
+            <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+                <p class="text-sm text-blue-700 font-medium mb-1">👥 Empleados Activos</p>
+                <p class="text-4xl font-bold text-blue-900">{{ empleados_activos }}</p>
+                <p class="text-xs text-gray-400 mt-1">Personal activo</p>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-red-600">
-                <div class="text-4xl mb-2">🚫</div>
-                <h3 class="text-gray-500">Empleados Inactivos</h3>
-                <p class="text-4xl font-bold text-red-600 mt-2">
-                    {{ empleados_inactivos }}
-                </p>
+            <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+                <p class="text-sm text-red-600 font-medium mb-1">🚫 Empleados Inactivos</p>
+                <p class="text-4xl font-bold text-red-600">{{ empleados_inactivos }}</p>
+                <p class="text-xs text-gray-400 mt-1">Personal inactivo</p>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-cyan-600">
-                <div class="text-4xl mb-2">🏢</div>
-                <h3 class="text-gray-500">Departamentos</h3>
-                <p class="text-4xl font-bold text-cyan-700 mt-2">
-                    {{ total_departamentos }}
-                </p>
+            <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+                <p class="text-sm text-cyan-700 font-medium mb-1">🏢 Departamentos</p>
+                <p class="text-4xl font-bold text-cyan-700">{{ total_departamentos }}</p>
+                <p class="text-xs text-gray-400 mt-1">Registrados</p>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-purple-600">
-                <div class="text-4xl mb-2">💼</div>
-                <h3 class="text-gray-500">Cargos</h3>
-                <p class="text-4xl font-bold text-purple-700 mt-2">
-                    {{ total_cargos }}
-                </p>
+            <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+                <p class="text-sm text-purple-700 font-medium mb-1">💼 Cargos</p>
+                <p class="text-4xl font-bold text-purple-700">{{ total_cargos }}</p>
+                <p class="text-xs text-gray-400 mt-1">Registrados</p>
             </div>
 
         </div>
 
-        <div class="grid md:grid-cols-4 gap-6 mt-6">
+        <!-- Tarjetas de estadísticas fila 2 -->
+        <div class="grid md:grid-cols-4 gap-6 mb-10">
 
-            <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-green-600">
-                <div class="text-4xl mb-2">📄</div>
-                <h3 class="text-gray-500">Contratos</h3>
-                <p class="text-4xl font-bold text-green-700 mt-2">
-                    {{ total_contratos }}
-                </p>
+            <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+                <p class="text-sm text-green-700 font-medium mb-1">📄 Contratos</p>
+                <p class="text-4xl font-bold text-green-700">{{ total_contratos }}</p>
+                <p class="text-xs text-gray-400 mt-1">Registrados</p>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-yellow-500">
-                <div class="text-4xl mb-2">🌴</div>
-                <h3 class="text-gray-500">Vacaciones</h3>
-                <p class="text-4xl font-bold text-yellow-600 mt-2">
-                    {{ total_vacaciones }}
-                </p>
+            <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+                <p class="text-sm text-yellow-600 font-medium mb-1">🌴 Vacaciones</p>
+                <p class="text-4xl font-bold text-yellow-600">{{ total_vacaciones }}</p>
+                <p class="text-xs text-gray-400 mt-1">Solicitudes</p>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-indigo-600">
-                <div class="text-4xl mb-2">📝</div>
-                <h3 class="text-gray-500">Permisos</h3>
-                <p class="text-4xl font-bold text-indigo-700 mt-2">
-                    {{ total_permisos }}
-                </p>
+            <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+                <p class="text-sm text-indigo-700 font-medium mb-1">📝 Permisos</p>
+                <p class="text-4xl font-bold text-indigo-700">{{ total_permisos }}</p>
+                <p class="text-xs text-gray-400 mt-1">Registrados</p>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-orange-500">
-                <div class="text-4xl mb-2">⏰</div>
-                <h3 class="text-gray-500">Registros Hoy</h3>
-                <p class="text-4xl font-bold text-orange-600 mt-2">
-                    {{ registros_hoy }}
-                </p>
+            <div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+                <p class="text-sm text-orange-600 font-medium mb-1">⏰ Registros Hoy</p>
+                <p class="text-4xl font-bold text-orange-600">{{ registros_hoy }}</p>
+                <p class="text-xs text-gray-400 mt-1">Del día</p>
             </div>
 
         </div>
 
-        <div class="mt-10">
+        <!-- Acciones rápidas -->
+        <div class="bg-white rounded-2xl shadow p-6 border border-gray-100">
 
-            <h2 class="text-2xl font-bold text-blue-900 mb-4">
-                Acciones Rápidas
-            </h2>
+            <h2 class="text-xl font-bold text-blue-900 mb-5">Acciones Rápidas</h2>
 
-            <div class="grid md:grid-cols-3 gap-6">
+            <div class="grid md:grid-cols-3 gap-4">
 
-                <a href="/empleados" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-                    <h3 class="font-bold text-blue-900">
-                        Gestionar Empleados
-                    </h3>
+                <a href="/empleados" class="flex items-center gap-3 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow transition">
+                    <span class="text-2xl">👥</span>
+                    <span class="font-semibold text-blue-900">Gestionar Empleados</span>
                 </a>
 
-                <a href="/cargos" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-                    <h3 class="font-bold text-blue-900">
-                        Gestionar Cargos
-                    </h3>
+                <a href="/cargos" class="flex items-center gap-3 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow transition">
+                    <span class="text-2xl">💼</span>
+                    <span class="font-semibold text-blue-900">Gestionar Cargos</span>
                 </a>
 
-                <a href="/contratos" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-                    <h3 class="font-bold text-blue-900">
-                        Gestionar Contratos
-                    </h3>
+                <a href="/contratos" class="flex items-center gap-3 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow transition">
+                    <span class="text-2xl">📄</span>
+                    <span class="font-semibold text-blue-900">Gestionar Contratos</span>
                 </a>
 
-                <a href="/registros" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-                    <h3 class="font-bold text-blue-900">
-                        Ver Registros
-                    </h3>
+                <a href="/registros" class="flex items-center gap-3 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow transition">
+                    <span class="text-2xl">⏰</span>
+                    <span class="font-semibold text-blue-900">Ver Registros</span>
                 </a>
 
-                <a href="/permisos" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-                    <h3 class="font-bold text-blue-900">
-                        Gestionar Permisos
-                    </h3>
+                <a href="/permisos" class="flex items-center gap-3 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow transition">
+                    <span class="text-2xl">📝</span>
+                    <span class="font-semibold text-blue-900">Gestionar Permisos</span>
                 </a>
 
-                <a href="/vacaciones" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-                    <h3 class="font-bold text-blue-900">
-                        Gestionar Vacaciones
-                    </h3>
+                <a href="/vacaciones" class="flex items-center gap-3 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow transition">
+                    <span class="text-2xl">🌴</span>
+                    <span class="font-semibold text-blue-900">Gestionar Vacaciones</span>
                 </a>
 
-                <a href="/departamentos" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-                    <h3 class="font-bold text-blue-900">
-                        Gestionar Departamentos
-                    </h3>
+                <a href="/departamentos" class="flex items-center gap-3 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow transition">
+                    <span class="text-2xl">🏢</span>
+                    <span class="font-semibold text-blue-900">Gestionar Departamentos</span>
                 </a>
 
             </div>

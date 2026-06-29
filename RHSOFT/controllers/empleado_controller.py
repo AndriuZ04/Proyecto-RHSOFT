@@ -38,18 +38,9 @@ def listar_empleados():
 # ==========================
 def nuevo_empleado():
     cursor = mysql.connection.cursor()
-    cursor.execute("""
-        SELECT id_cargo, nombre
-        FROM cargos
-        ORDER BY nombre
-    """)
+    cursor.execute("SELECT id_cargo, nombre FROM cargos ORDER BY nombre")
     cargos = cursor.fetchall()
-
-    cursor.execute("""
-        SELECT id_departamento, nombre
-        FROM departamentos
-        ORDER BY nombre
-    """)
+    cursor.execute("SELECT id_departamento, nombre FROM departamentos ORDER BY nombre")
     departamentos = cursor.fetchall()
     cursor.close()
 
@@ -77,6 +68,23 @@ def guardar_empleado():
     fecha_ingreso = request.form["fecha_ingreso"]
 
     cursor = mysql.connection.cursor()
+
+    # Verificar si el documento ya existe
+    cursor.execute("SELECT id_persona FROM personas WHERE documento = %s", (documento,))
+    if cursor.fetchone():
+        cursor.close()
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT id_cargo, nombre FROM cargos ORDER BY nombre")
+        cargos = cursor.fetchall()
+        cursor.execute("SELECT id_departamento, nombre FROM departamentos ORDER BY nombre")
+        departamentos = cursor.fetchall()
+        cursor.close()
+        return render_template(
+            "admin/nuevo_empleado.html",
+            cargos=cargos,
+            departamentos=departamentos,
+            error_documento="El número de documento ya está registrado."
+        )
 
     # PERSONAS
     cursor.execute("""
@@ -143,12 +151,7 @@ def actualizar_empleado(id_empleado):
     direccion = request.form["direccion"].strip()
 
     cursor = mysql.connection.cursor()
-    cursor.execute("""
-        SELECT id_persona
-        FROM empleados
-        WHERE id_empleado=%s
-    """, (id_empleado,))
-    
+    cursor.execute("SELECT id_persona FROM empleados WHERE id_empleado=%s", (id_empleado,))
     resultado = cursor.fetchone()
     if resultado:
         id_persona = resultado[0]
@@ -158,7 +161,7 @@ def actualizar_empleado(id_empleado):
             WHERE id_persona=%s
         """, (nombres, apellidos, telefono, direccion, id_persona))
         mysql.connection.commit()
-    
+
     cursor.close()
     return redirect("/empleados")
 
@@ -167,58 +170,30 @@ def actualizar_empleado(id_empleado):
 # ==========================
 def eliminar_empleado(id_empleado):
     cursor = mysql.connection.cursor()
-    cursor.execute("""
-        SELECT id_usuario
-        FROM empleados
-        WHERE id_empleado = %s
-    """, (id_empleado,))
+    cursor.execute("SELECT id_usuario FROM empleados WHERE id_empleado = %s", (id_empleado,))
     resultado = cursor.fetchone()
 
     if resultado:
         id_usuario = resultado[0]
-        
-        cursor.execute("""
-            UPDATE empleados
-            SET estado='INACTIVO'
-            WHERE id_empleado=%s
-        """, (id_empleado,))
-
-        cursor.execute("""
-            UPDATE usuarios
-            SET estado='INACTIVO'
-            WHERE id_usuario=%s
-        """, (id_usuario,))
+        cursor.execute("UPDATE empleados SET estado='INACTIVO' WHERE id_empleado=%s", (id_empleado,))
+        cursor.execute("UPDATE usuarios SET estado='INACTIVO' WHERE id_usuario=%s", (id_usuario,))
         mysql.connection.commit()
 
     cursor.close()
     return redirect("/empleados")
 
 # ==========================
-# ACTIVAR EMPLEADO novamente
+# ACTIVAR EMPLEADO
 # ==========================
 def activar_empleado(id_empleado):
     cursor = mysql.connection.cursor()
-    cursor.execute("""
-        SELECT id_usuario
-        FROM empleados
-        WHERE id_empleado = %s
-    """, (id_empleado,))
+    cursor.execute("SELECT id_usuario FROM empleados WHERE id_empleado = %s", (id_empleado,))
     resultado = cursor.fetchone()
 
     if resultado:
         id_usuario = resultado[0]
-        
-        cursor.execute("""
-            UPDATE empleados
-            SET estado='ACTIVO'
-            WHERE id_empleado=%s
-        """, (id_empleado,))
-
-        cursor.execute("""
-            UPDATE usuarios
-            SET estado='ACTIVO'
-            WHERE id_usuario=%s
-        """, (id_usuario,))
+        cursor.execute("UPDATE empleados SET estado='ACTIVO' WHERE id_empleado=%s", (id_empleado,))
+        cursor.execute("UPDATE usuarios SET estado='ACTIVO' WHERE id_usuario=%s", (id_usuario,))
         mysql.connection.commit()
 
     cursor.close()

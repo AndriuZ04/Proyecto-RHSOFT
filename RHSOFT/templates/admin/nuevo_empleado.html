@@ -6,103 +6,199 @@ Nuevo Empleado
 
 {% block content %}
 
-<div class="max-w-6xl mx-auto p-8">
+<div class="flex min-h-screen">
 
-    <h1 class="text-3xl font-bold text-blue-900 mb-8">
-        Registrar Nuevo Empleado
-    </h1>
+    {% include 'partials/sidebar_admin.html' %}
 
-    <form method="POST" action="/guardar_empleado">
+    <main class="flex-1 p-8 bg-gray-50">
 
-        <div class="grid grid-cols-2 gap-6">
+        <div class="mb-8">
+            <p class="text-sm text-gray-400">Gestión de personal</p>
+            <h1 class="text-4xl font-bold text-blue-900">Registrar Nuevo Empleado</h1>
+        </div>
 
-            <input type="text" name="nombres"
-                placeholder="Nombres"
-                class="border p-3 rounded">
+        <div class="bg-white rounded-2xl shadow border border-gray-100 p-8">
 
-            <input type="text" name="apellidos"
-                placeholder="Apellidos"
-                class="border p-3 rounded">
+            <form method="POST" action="/guardar_empleado">
 
-            <input type="text" name="documento"
-                placeholder="Documento"
-                class="border p-3 rounded">
+                <div class="grid grid-cols-2 gap-6">
 
-            <input type="text" name="telefono"
-                placeholder="Teléfono"
-                class="border p-3 rounded">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Nombres</label>
+                        <input type="text" name="nombres" placeholder="Nombres"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_nombres" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ El nombre es obligatorio y solo letras.</p>
+                    </div>
 
-            <input type="email" name="correo"
-                placeholder="Correo"
-                class="border p-3 rounded">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Apellidos</label>
+                        <input type="text" name="apellidos" placeholder="Apellidos"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_apellidos" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ Los apellidos son obligatorios y solo letras.</p>
+                    </div>
 
-            <input type="text" name="direccion"
-                placeholder="Dirección"
-                class="border p-3 rounded">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Documento</label>
+                        <input type="text" name="documento" placeholder="Documento"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_documento" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ Solo se permiten números.</p>
+                        {% if error_documento %}
+                        <p style="color:#dc2626; font-size:0.8rem;">⚠️ {{ error_documento }}</p>
+                        {% endif %}
+                    </div>
 
-            <input type="date" name="fecha_nacimiento"
-                class="border p-3 rounded">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Teléfono</label>
+                        <input type="text" name="telefono" placeholder="Teléfono"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_telefono" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ Entre 7 y 15 dígitos.</p>
+                    </div>
 
-            <select name="genero"
-                class="border p-3 rounded">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Correo</label>
+                        <input type="email" name="correo" placeholder="Correo"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_correo" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ Correo no válido.</p>
+                    </div>
 
-                <option value="M">
-                    Masculino
-                </option>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Dirección</label>
+                        <input type="text" name="direccion" placeholder="Dirección"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_direccion" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ La dirección es obligatoria.</p>
+                    </div>
 
-                <option value="F">
-                    Femenino
-                </option>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Fecha de Nacimiento</label>
+                        <input type="date" name="fecha_nacimiento"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_fecha_nacimiento" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ El empleado debe ser mayor de 18 años.</p>
+                    </div>
 
-            </select>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Género</label>
+                        <select name="genero"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </select>
+                    </div>
 
-            <select name="id_cargo"
-                class="border p-3 rounded">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Cargo</label>
+                        <select name="id_cargo"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            {% for cargo in cargos %}
+                            <option value="{{ cargo[0] }}">{{ cargo[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                {% for cargo in cargos %}
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Departamento</label>
+                        <select name="id_departamento"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            {% for departamento in departamentos %}
+                            <option value="{{ departamento[0] }}">{{ departamento[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                <option value="{{ cargo[0] }}">
-                    {{ cargo[1] }}
-                </option>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Contraseña</label>
+                        <input type="password" name="password" placeholder="Contraseña"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_password" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ Mínimo 6 caracteres.</p>
+                    </div>
 
-                {% endfor %}
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm text-gray-500 font-medium">Fecha de Ingreso</label>
+                        <input type="date" name="fecha_ingreso"
+                            class="border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <p id="error_fecha_ingreso" style="display:none; color:#dc2626; font-size:0.8rem;">⚠️ La fecha de ingreso es obligatoria.</p>
+                    </div>
 
-            </select>
+                </div>
 
-            <select name="id_departamento"
-                class="border p-3 rounded">
+                <div class="flex gap-4 mt-8">
+                    <button type="submit"
+                        class="bg-blue-900 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-800 transition">
+                        Guardar Empleado
+                    </button>
+                    <a href="/empleados"
+                        class="bg-gray-100 text-gray-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-200 transition">
+                        Cancelar
+                    </a>
+                </div>
 
-                {% for departamento in departamentos %}
-
-                <option value="{{ departamento[0] }}">
-                    {{ departamento[1] }}
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-            <input type="password"
-                name="password"
-                placeholder="Contraseña"
-                class="border p-3 rounded">
-
-            <input type="date"
-                name="fecha_ingreso"
-                class="border p-3 rounded">
+            </form>
 
         </div>
 
-        <button
-            type="submit"
-            class="mt-8 bg-blue-900 text-white px-8 py-3 rounded">
-
-            Guardar Empleado
-
-        </button>
-
-    </form>
-
+    </main>
 </div>
+
+<script>
+function soloLetras(e) {
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/;
+    if (!regex.test(e.key)) e.preventDefault();
+}
+
+function soloNumeros(e) {
+    if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+}
+
+function mostrarError(id) {
+    document.getElementById('error_' + id).style.display = 'block';
+}
+
+function limpiarError(id) {
+    document.getElementById('error_' + id).style.display = 'none';
+}
+
+document.querySelector('[name="nombres"]').addEventListener('keypress', soloLetras);
+document.querySelector('[name="apellidos"]').addEventListener('keypress', soloLetras);
+document.querySelector('[name="documento"]').addEventListener('keypress', soloNumeros);
+document.querySelector('[name="telefono"]').addEventListener('keypress', soloNumeros);
+
+document.querySelector('form').addEventListener('submit', function(e) {
+    let valido = true;
+
+    const nombres = document.querySelector('[name="nombres"]').value.trim();
+    const apellidos = document.querySelector('[name="apellidos"]').value.trim();
+    const documento = document.querySelector('[name="documento"]').value.trim();
+    const telefono = document.querySelector('[name="telefono"]').value.trim();
+    const correo = document.querySelector('[name="correo"]').value.trim();
+    const direccion = document.querySelector('[name="direccion"]').value.trim();
+    const fecha_nacimiento = document.querySelector('[name="fecha_nacimiento"]').value;
+    const password = document.querySelector('[name="password"]').value;
+    const fecha_ingreso = document.querySelector('[name="fecha_ingreso"]').value;
+
+    if (!nombres || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombres)) { mostrarError('nombres'); valido = false; } else limpiarError('nombres');
+    if (!apellidos || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(apellidos)) { mostrarError('apellidos'); valido = false; } else limpiarError('apellidos');
+    if (!documento || !/^\d+$/.test(documento)) { mostrarError('documento'); valido = false; } else limpiarError('documento');
+    if (!telefono || !/^\d{7,15}$/.test(telefono)) { mostrarError('telefono'); valido = false; } else limpiarError('telefono');
+    if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) { mostrarError('correo'); valido = false; } else limpiarError('correo');
+    if (!direccion) { mostrarError('direccion'); valido = false; } else limpiarError('direccion');
+
+    if (!fecha_nacimiento) {
+        mostrarError('fecha_nacimiento'); valido = false;
+    } else {
+        const hoy = new Date();
+        const nacimiento = new Date(fecha_nacimiento);
+        const edad = hoy.getFullYear() - nacimiento.getFullYear();
+        const cumplioEsteAnio =
+            hoy.getMonth() > nacimiento.getMonth() ||
+            (hoy.getMonth() === nacimiento.getMonth() && hoy.getDate() >= nacimiento.getDate());
+        const edadReal = cumplioEsteAnio ? edad : edad - 1;
+        if (edadReal < 18) { mostrarError('fecha_nacimiento'); valido = false; } else limpiarError('fecha_nacimiento');
+    }
+
+    if (!password || password.length < 6) { mostrarError('password'); valido = false; } else limpiarError('password');
+    if (!fecha_ingreso) { mostrarError('fecha_ingreso'); valido = false; } else limpiarError('fecha_ingreso');
+
+    if (!valido) e.preventDefault();
+});
+</script>
 
 {% endblock %}
