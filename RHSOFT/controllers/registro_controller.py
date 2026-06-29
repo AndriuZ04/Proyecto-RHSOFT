@@ -168,7 +168,8 @@ def listar_registros():
             ON r.id_empleado = e.id_empleado
         INNER JOIN personas p
             ON e.id_persona = p.id_persona
-        ORDER BY r.fecha DESC
+        WHERE r.fecha = CURDATE()
+        ORDER BY r.hora_entrada DESC
     """)
     registros = cursor.fetchall()
     cursor.close()
