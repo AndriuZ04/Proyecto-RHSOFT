@@ -1,111 +1,147 @@
 {% extends 'base.html' %}
 
-{% block title %}
-Gestión de Cargos
-{% endblock %}
+{% block title %}Gestión de Cargos{% endblock %}
 
 {% block content %}
+<style>
+.cargo-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #3b82f6;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+.btn-edit {
+    background: #fef3c7;
+    color: #92400e;
+    border: none;
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-edit:hover { background: #fde68a; }
+.btn-del {
+    background: #fee2e2;
+    color: #991b1b;
+    border: none;
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.btn-del:hover { background: #fecaca; }
+</style>
 
 <div class="flex min-h-screen">
 
     {% include 'partials/sidebar_admin.html' %}
 
-    <main class="flex-1 p-8">
-        
-        <div class="flex justify-between items-center mb-8">
+    <main class="flex-1 p-8 bg-slate-50">
 
-            <h1 class="text-3xl font-bold text-blue-900">
-                Gestión de Cargos
-            </h1>
- 
-            <a
-    href="/nuevo_cargo"
-    class="bg-blue-900 text-white px-6 py-3 rounded-lg">
+        <!-- Encabezado -->
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <p class="text-xs text-slate-400 mb-1">Gestión de personal</p>
+                <h1 class="text-3xl font-bold text-blue-900">Gestión de Cargos</h1>
+            </div>
+            <a href="/nuevo_cargo"
+               class="bg-blue-900 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-800 transition">
+                ＋ Nuevo Cargo
+            </a>
+        </div>
 
-    + Nuevo Cargo
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="bg-white rounded-xl border border-slate-200 p-4">
+                <p class="text-xs text-slate-400 mb-1">💼 Total cargos</p>
+                <p class="text-2xl font-bold text-blue-900">{{ cargos | length }}</p>
+                <p class="text-xs text-slate-400 mt-1">Roles registrados</p>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 p-4">
+                <p class="text-xs text-slate-400 mb-1">💰 Salario promedio</p>
+                <p class="text-2xl font-bold text-blue-900">
+                    {% if cargos %}
+                        $ {{ "{:,.0f}".format((cargos | sum(attribute=2)) / (cargos | length)) }}
+                    {% else %}$ 0{% endif %}
+                </p>
+                <p class="text-xs text-slate-400 mt-1">Referencia general</p>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 p-4">
+                <p class="text-xs text-slate-400 mb-1">📈 Salario más alto</p>
+                <p class="text-2xl font-bold text-blue-900">
+                    {% if cargos %}
+                        $ {{ "{:,.0f}".format(cargos | map(attribute=2) | max) }}
+                    {% else %}$ 0{% endif %}
+                </p>
+                <p class="text-xs text-slate-400 mt-1">
+                    {% if cargos %}{{ (cargos | sort(attribute=2, reverse=True) | first)[1] }}{% endif %}
+                </p>
+            </div>
+        </div>
 
-</a>
+        <!-- Tabla -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
 
-    </div>
-
-  
-
-    
-
-        <!-- TABLA -->
-
-        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <div class="flex justify-between items-center px-5 py-4 border-b border-slate-100">
+               <input
+    class="buscar-input text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-200"
+    type="text"
+    placeholder="🔍 Buscar cargo...">
+            </div>
 
             <table class="w-full">
-
                 <thead class="bg-blue-900 text-white">
-
                     <tr>
-
-                        <th class="p-4 text-left">ID</th>
-                        <th class="p-4 text-left">Cargo</th>
-                        <th class="p-4 text-left">Salario</th>
-                        <th class="p-4 text-left">Descripción</th>
-                        <th class="p-4 text-left">Acciones</th>
-
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-blue-200">ID</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-blue-200">Cargo</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-blue-200">Salario</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-blue-200">Descripción</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-blue-200">Acciones</th>
                     </tr>
-
                 </thead>
-
                 <tbody>
-
-{% for cargo in cargos %}
-
-<tr class="border-b hover:bg-gray-50">
-
-    <td class="p-4">
-        {{ cargo[0] }}
-    </td>
-
-    <td class="p-4">
-        {{ cargo[1] }}
-    </td>
-
-    <td class="p-4">
-        $ {{ "{:,.0f}".format(cargo[2]) }}
-    </td>
-
-    <td class="p-4">
-        {{ cargo[3] }}
-    </td>
-
-    <td class="p-4">
-
-    <!-- Editar: enlace a la ruta de edición -->
-    <a href="/editar_cargo/{{ cargo[0] }}"
-       class="bg-yellow-500 text-white px-3 py-2 rounded inline-block">
-        Editar
-    </a>
-
-    <!-- Eliminar: formulario POST -->
-    <form action="/eliminar_cargo/{{ cargo[0] }}"
-          method="POST"
-          style="display:inline"
-          onsubmit="return confirm('¿Eliminar este cargo?')">
-        <button type="submit"
-                class="bg-red-600 text-white px-3 py-2 rounded">
-            Eliminar
-        </button>
-    </form>
-
-</td>
-</tr>
-
-{% endfor %}
-
-</tbody>
-
+                    {% for cargo in cargos %}
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                        <td class="px-5 py-4 text-sm text-slate-400 font-mono">{{ cargo[0] }}</td>
+                        <td class="px-5 py-4 text-sm font-semibold text-slate-700">
+                            <span class="cargo-dot"></span>{{ cargo[1] }}
+                        </td>
+                        <td class="px-5 py-4 text-sm font-bold text-emerald-600">
+                            $ {{ "{:,.0f}".format(cargo[2]) }}
+                        </td>
+                        <td class="px-5 py-4 text-sm text-slate-500">{{ cargo[3] }}</td>
+                        <td class="px-5 py-4">
+                            <div class="flex gap-2">
+                                <a href="/editar_cargo/{{ cargo[0] }}" class="btn-edit">✏ Editar</a>
+                                <form action="/eliminar_cargo/{{ cargo[0] }}" method="POST"
+                                      style="display:inline"
+                                      onsubmit="return confirm('¿Eliminar este cargo?')">
+                                    <button type="submit" class="btn-del">🗑 Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-
         </div>
 
     </main>
-
 </div>
-
+<script>
+document.querySelector('.buscar-input').addEventListener('input', function () {
+    const filtro = this.value.toLowerCase();
+    document.querySelectorAll('tbody tr').forEach(function (fila) {
+        const texto = fila.innerText.toLowerCase();
+        fila.style.display = texto.includes(filtro) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}
