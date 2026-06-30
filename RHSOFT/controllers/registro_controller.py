@@ -203,7 +203,7 @@ def perfil_empleado():
         INNER JOIN cargos c
             ON e.id_cargo = c.id_cargo
         INNER JOIN departamentos d
-            ON e.id_departmento = d.id_departamento
+            ON e.id_departamento = d.id_departamento
         WHERE e.id_usuario=%s
     """, (id_usuario,))
     empleado = cursor.fetchone()
@@ -213,7 +213,6 @@ def perfil_empleado():
         "empleado/perfil.html",
         empleado=empleado
     )
-
 # ==========================
 # DASHBOARD EMPLEADO
 # ==========================

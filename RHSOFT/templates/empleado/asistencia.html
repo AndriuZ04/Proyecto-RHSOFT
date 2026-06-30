@@ -6,236 +6,127 @@ Mi Asistencia
 
 {% block content %}
 
-<div class="flex min-h-screen">
+<div class="flex min-h-screen bg-gray-100">
 
-    {% include 'partials/sidebar_empleado.html' %}
+  {% include 'partials/sidebar_empleado.html' %}
 
-    <main class="flex-1 p-8">
+  <main class="flex-1 p-8">
 
-        <div class="bg-gradient-to-r from-blue-900 to-blue-700 rounded-3xl shadow-xl p-8 text-white mb-8">
+    <!-- ENCABEZADO -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-blue-900">⏰ Mi Asistencia</h1>
+      <p class="text-gray-500 mt-1">Consulta tu historial y registra tus jornadas laborales.</p>
+    </div>
 
-    <h1 class="text-4xl font-bold">
-        ⏰ Mi Asistencia
-    </h1>
+    <!-- MODAL FLASH -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div id="modalFlash" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-xl p-8 text-center max-w-md w-full mx-4">
 
-    <p class="text-blue-100 mt-2">
-        Consulta tu historial y registra tus jornadas laborales.
-    </p>
+          {% if category == 'success' %}
+            <div class="text-6xl mb-4">🎉</div>
+            <h2 class="text-2xl font-bold text-green-600 mb-2">Operación exitosa</h2>
+          {% else %}
+            <div class="text-6xl mb-4">⚠️</div>
+            <h2 class="text-2xl font-bold text-yellow-600 mb-2">Atención</h2>
+          {% endif %}
 
-</div>
-        {% with messages = get_flashed_messages(with_categories=true) %}
+          <p class="text-gray-600 text-base leading-relaxed">{{ message }}</p>
 
-{% if messages %}
-
-    {% for category, message in messages %}
-
-        <div id="modalFlash"
-             class="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50">
-
-            <div class="
-                {% if category == 'success' %}
-                    bg-gradient-to-br from-green-50 to-white
-                {% else %}
-                    bg-gradient-to-br from-red-50 to-white
-                {% endif %}
-                rounded-[30px]
-                shadow-[0_25px_60px_rgba(0,0,0,0.25)]
-                p-10
-                text-center
-                max-w-lg
-                w-full">
-
-                {% if category == 'success' %}
-
-                    <div class="text-9xl mb-6 animate-bounce">
-                        🎉
-                    </div>
-
-                    <h2 class="text-4xl font-extrabold text-green-600 mb-4">
-                        OPERACIÓN EXITOSA
-                    </h2>
-
-                {% else %}
-
-                    <div class="text-9xl mb-6 animate-pulse">
-                        ⚠️
-                    </div>
-
-                    <h2 class="text-4xl font-extrabold text-red-600 mb-4">
-                        ATENCIÓN
-                    </h2>
-
-                {% endif %}
-
-                <p class="text-xl text-gray-700 leading-relaxed">
-                    {{ message }}
-                </p>
-
-                <div class="mt-6">
-
-                    <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-
-                        <div
-                            id="barraProgreso"
-                            class="
-                            {% if category == 'success' %}
-                                bg-green-500
-                            {% else %}
-                                bg-red-500
-                            {% endif %}
-                            h-3 rounded-full"
-                            style="width:100%">
-                        </div>
-
-                    </div>
-
-                </div>
-
+          <div class="mt-5">
+            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div id="barraProgreso"
+                class="h-2 rounded-full {% if category == 'success' %}bg-green-500{% else %}bg-yellow-500{% endif %}"
+                style="width:100%">
+              </div>
             </div>
+          </div>
 
         </div>
+      </div>
 
-        <script>
+      <script>
+        let barra = document.getElementById('barraProgreso');
+        barra.style.transition = "width 4s linear";
+        setTimeout(() => { barra.style.width = "0%"; }, 100);
+        setTimeout(() => {
+          const modal = document.getElementById('modalFlash');
+          if (modal) modal.remove();
+        }, 4000);
+      </script>
+      {% endfor %}
+    {% endif %}
+    {% endwith %}
 
-            let barra =
-                document.getElementById('barraProgreso');
+    <!-- BOTONES ENTRADA / SALIDA -->
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
 
-            barra.style.transition = "width 4s linear";
-
-            setTimeout(() => {
-
-                barra.style.width = "0%";
-
-            }, 100);
-
-            setTimeout(() => {
-
-                const modal =
-                    document.getElementById('modalFlash');
-
-                if(modal){
-
-                    modal.remove();
-
-                }
-
-            }, 4000);
-
-        </script>
-
-    {% endfor %}
-
-{% endif %}
-
-{% endwith %}
-
-        <div class="grid md:grid-cols-2 gap-8 mb-8">
-
-    <!-- REGISTRAR ENTRADA -->
-
-    <a href="/marcar_entrada"
-       class="group bg-gradient-to-br from-green-500 to-green-700 text-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
-
-        <div class="text-6xl mb-4 group-hover:animate-bounce">
-            🚀
+      <a href="/marcar_entrada"
+         class="bg-white rounded-2xl shadow p-6 border-l-4 border-green-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 flex items-center gap-4">
+        <div class="text-4xl">🚀</div>
+        <div>
+          <h2 class="text-xl font-bold text-green-700">Registrar Entrada</h2>
+          <p class="text-gray-500 text-sm mt-1">Inicia tu jornada laboral.</p>
         </div>
+      </a>
 
-        <h2 class="text-3xl font-bold">
-            Registrar Entrada
-        </h2>
-
-        <p class="mt-3 text-green-100">
-            Inicia tu jornada laboral.
-        </p>
-
-    </a>
-
-    <!-- REGISTRAR SALIDA -->
-
-    <a href="/marcar_salida"
-       class="group bg-gradient-to-br from-red-500 to-red-700 text-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
-
-        <div class="text-6xl mb-4 group-hover:animate-bounce">
-            🏁
+      <a href="/marcar_salida"
+         class="bg-white rounded-2xl shadow p-6 border-l-4 border-red-500 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 flex items-center gap-4">
+        <div class="text-4xl">🏁</div>
+        <div>
+          <h2 class="text-xl font-bold text-red-600">Registrar Salida</h2>
+          <p class="text-gray-500 text-sm mt-1">Finaliza tu jornada laboral.</p>
         </div>
+      </a>
 
-        <h2 class="text-3xl font-bold">
-            Registrar Salida
-        </h2>
+    </div>
 
-        <p class="mt-3 text-red-100">
-            Finaliza tu jornada laboral.
-        </p>
+    <!-- TABLA -->
+    <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-    </a>
+      <table class="w-full text-sm">
 
-</div>
-</div>
+        <thead>
+          <tr class="bg-blue-900 text-white">
+            <th class="p-4 text-left font-semibold">Fecha</th>
+            <th class="p-4 text-left font-semibold">Entrada</th>
+            <th class="p-4 text-left font-semibold">Salida</th>
+            <th class="p-4 text-left font-semibold">Estado</th>
+          </tr>
+        </thead>
 
-        </div>
+        <tbody>
+          {% if registros %}
+            {% for registro in registros %}
+            <tr class="border-b border-gray-100 hover:bg-blue-50 transition-all duration-200">
 
-        <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+              <td class="p-4 font-medium text-gray-700">{{ registro[0] }}</td>
+              <td class="p-4 text-gray-600">{{ registro[1] }}</td>
+              <td class="p-4 text-gray-600">{{ registro[2] if registro[2] else '-' }}</td>
+              <td class="p-4">
+                {% if registro[2] %}
+                  <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">✅ Completo</span>
+                {% else %}
+                  <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">⏳ Pendiente</span>
+                {% endif %}
+              </td>
 
-            <table class="w-full overflow-hidden rounded-3xl">
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="4" class="p-8 text-center text-gray-400">No hay registros de asistencia.</td>
+            </tr>
+          {% endif %}
+        </tbody>
 
-                <thead class="bg-gradient-to-r from-blue-900 to-blue-700 text-white">
+      </table>
 
-                    <tr>
-                        <th class="p-4">Fecha</th>
-                        <th class="p-4">Entrada</th>
-                        <th class="p-4">Salida</th>
-                        <th class="p-4">Estado</th>
-                    </tr>
+    </div>
 
-                </thead>
-
-                <tbody>
-
-{% for registro in registros %}
-
-<tr class="border-b hover:bg-blue-50 transition-all duration-300">
-
-    <td class="p-5 font-medium">
-        {{ registro[0] }}
-    </td>
-
-    <td class="p-5 font-medium">
-        {{ registro[1] }}
-    </td>
-
-    <td class="p-5 font-medium">
-        {{ registro[2] if registro[2] else '-' }}
-    </td>
-
-    <td class="p-5 font-medium">
-
-        {% if registro[2] %}
-
-            <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full font-bold shadow-sm">
-    ✅ Completo
-</span>
-
-        {% else %}
-
-            <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-bold shadow-sm">
-    ⏳ Pendiente
-</span>
-
-        {% endif %}
-
-    </td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-            </table>
-
-        </div>
-
-    </main>
+  </main>
 
 </div>
 

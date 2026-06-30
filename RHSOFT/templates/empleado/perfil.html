@@ -6,158 +6,108 @@ Mi Perfil
 
 {% block content %}
 
-<div class="flex min-h-screen">
+<div class="flex min-h-screen bg-gray-100">
 
-```
-{% include 'partials/sidebar_empleado.html' %}
+  {% include 'partials/sidebar_empleado.html' %}
 
-<main class="flex-1 p-8">
+  <main class="flex-1 p-8">
 
     <!-- ENCABEZADO -->
-
-    <div class="bg-gradient-to-r from-blue-900 to-blue-700 rounded-3xl shadow-xl p-8 text-white mb-8">
-
-        <div class="flex flex-col md:flex-row items-center gap-6">
-
-            <div class="text-center">
-
-```
-<img
-    src="{{ url_for('static', filename='uploads/fotos/default.png') }}"
-    class="w-32 h-32 rounded-full border-4 border-white shadow-xl mx-auto">
-
-<form
-    action="/subir_foto"
-    method="POST"
-    enctype="multipart/form-data"
-    class="mt-4">
-
-    <input
-        type="file"
-        name="foto"
-        accept="image/*"
-        class="block w-full text-sm text-white">
-
-    <button
-        type="submit"
-        class="mt-3 bg-white text-blue-900 px-4 py-2 rounded-xl font-bold hover:bg-blue-100">
-
-        📷 Cambiar Foto
-
-    </button>
-
-</form>
-```
-
-</div>
-
-            <div>
-
-                <h1 class="text-4xl font-bold">
-                    {{ empleado[0] }}
-                </h1>
-
-                <p class="text-blue-100 text-lg mt-2">
-                    {{ empleado[2] }}
-                </p>
-
-                <p class="text-blue-200">
-                    {{ empleado[3] }}
-                </p>
-
-                <span class="inline-block mt-3 px-4 py-2 bg-green-500 rounded-full text-sm font-bold">
-                    {{ empleado[6] }}
-                </span>
-
-            </div>
-
-        </div>
-
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-blue-900">👤 Mi Perfil</h1>
+      <p class="text-gray-500 mt-1">Consulta tu información personal y actualiza tu foto.</p>
     </div>
 
-    <!-- INFORMACIÓN -->
+    {% if empleado %}
 
-    <div class="bg-white rounded-3xl shadow-xl p-8">
+    <!-- TARJETA SUPERIOR -->
+    <div class="bg-white rounded-2xl shadow p-6 mb-6 flex flex-col md:flex-row items-center gap-6 border-l-4 border-blue-700">
 
-        <h2 class="text-2xl font-bold text-blue-900 mb-6">
-            👤 Información Personal
+      <!-- FOTO -->
+      <div class="text-center">
+        <img
+          src="{{ url_for('static', filename='uploads/fotos/default.png') }}"
+          class="w-28 h-28 rounded-full border-4 border-blue-700 shadow mx-auto object-cover">
+
+        <form action="/subir_foto" method="POST" enctype="multipart/form-data" class="mt-3">
+          <input type="file" name="foto" accept="image/*"
+            class="block w-full text-sm text-gray-500 mt-2
+                   file:mr-3 file:py-1 file:px-3
+                   file:rounded-lg file:border-0
+                   file:text-sm file:font-semibold
+                   file:bg-blue-50 file:text-blue-700
+                   hover:file:bg-blue-100">
+          <button type="submit"
+            class="mt-3 bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-800 transition-all duration-200">
+            📷 Cambiar Foto
+          </button>
+        </form>
+      </div>
+
+      <!-- DATOS RÁPIDOS -->
+      <div>
+        <h2 class="text-2xl font-bold text-blue-900">
+          {{ empleado[0] if empleado[0] else 'Sin nombre' }}
         </h2>
+        <p class="text-gray-600 mt-1">{{ empleado[2] if empleado[2] else 'Sin cargo' }}</p>
+        <p class="text-gray-400 text-sm">{{ empleado[3] if empleado[3] else 'Sin departamento' }}</p>
+        <span class="inline-block mt-3 px-4 py-1 rounded-full text-sm font-bold
+          {% if empleado[6] and empleado[6]|lower == 'activo' %}
+            bg-green-100 text-green-700
+          {% else %}
+            bg-red-100 text-red-600
+          {% endif %}">
+          {{ empleado[6] if empleado[6] else 'Sin estado' }}
+        </span>
+      </div>
 
-        <div class="grid md:grid-cols-2 gap-6">
+    </div>
 
-            <div>
-                <label class="font-bold text-gray-600">
-                    Nombre Completo
-                </label>
+    <!-- INFORMACIÓN PERSONAL -->
+    <div class="bg-white rounded-2xl shadow p-6">
 
-                <input
-                    value="{{ empleado[0] }}"
-                    readonly
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl mt-2 bg-gray-50">
-            </div>
+      <h2 class="text-xl font-bold text-blue-900 mb-6">Información Personal</h2>
 
-            <div>
-                <label class="font-bold text-gray-600">
-                    Correo Electrónico
-                </label>
+      <div class="grid md:grid-cols-2 gap-6">
 
-                <input
-                    value="{{ empleado[1] }}"
-                    readonly
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl mt-2 bg-gray-50">
-            </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Nombre Completo</label>
+          <input value="{{ empleado[0] if empleado[0] else '' }}" readonly
+            class="w-full border border-gray-200 p-3 rounded-xl mt-1 bg-gray-50 text-gray-700 text-sm">
+        </div>
 
-            <div>
-                <label class="font-bold text-gray-600">
-                    Cargo
-                </label>
+        <div>
+          <label class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Correo Electrónico</label>
+          <input value="{{ empleado[1] if empleado[1] else '' }}" readonly
+            class="w-full border border-gray-200 p-3 rounded-xl mt-1 bg-gray-50 text-gray-700 text-sm">
+        </div>
 
-                <input
-                    value="{{ empleado[2] }}"
-                    readonly
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl mt-2 bg-gray-50">
-            </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Cargo</label>
+          <input value="{{ empleado[2] if empleado[2] else '' }}" readonly
+            class="w-full border border-gray-200 p-3 rounded-xl mt-1 bg-gray-50 text-gray-700 text-sm">
+        </div>
 
-            <div>
-                <label class="font-bold text-gray-600">
-                    Departamento
-                </label>
-
-                <input
-                    value="{{ empleado[3] }}"
-                    readonly
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl mt-2 bg-gray-50">
-            </div>
-
-            <div>
-                <label class="font-bold text-gray-600">
-                    Documento
-                </label>
-
-                <input
-                    value="{{ empleado[4] }}"
-                    readonly
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl mt-2 bg-gray-50">
-            </div>
-
-            <div>
-                <label class="font-bold text-gray-600">
-                    Fecha de Ingreso
-                </label>
-
-                <input
-                    value="{{ empleado[5] }}"
-                    readonly
-                    class="w-full border-2 border-gray-200 p-3 rounded-xl mt-2 bg-gray-50">
-            </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Departamento</label>
+          <input value="{{ empleado[3] if empleado[3] else '' }}" readonly
+            class="w-full border border-gray-200 p-3 rounded-xl mt-1 bg-gray-50 text-gray-700 text-sm">
+        </div>
 
         </div>
 
     </div>
 
-</main>
-```
+    {% else %}
+    <div class="bg-yellow-50 border border-yellow-300 text-yellow-800 rounded  
+xl p-4 mb-8">
+      <p class="font-semibold">No se encontró información de perfil.</p>
+        <p>Por favor, contacta al administrador para actualizar tus datos.</p>
+    </div>
+    {% endif %}
 
+    </main>
 </div>
 
 {% endblock %}
+    
