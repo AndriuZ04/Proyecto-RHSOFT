@@ -1,115 +1,110 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Nuevo Contrato
+Nuevo Contrato - RHSOFT
 {% endblock %}
 
 {% block content %}
 
-<div class="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-xl shadow">
+<div class="max-w-3xl mx-auto mt-10 p-4">
 
-    <h1 class="text-3xl font-bold text-blue-900 mb-6">
-        Nuevo Contrato
-    </h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="mb-6 p-4 rounded-lg text-white font-medium shadow-md {% if category == 'danger' %}bg-red-600{% elif category == 'warning' %}bg-amber-500{% else %}bg-green-600{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-    <form action="/guardar_contrato" method="POST">
+    <div class="bg-white p-8 rounded-xl shadow-2xl border border-slate-200">
 
-        <div class="mb-4">
+        <h1 class="text-3xl font-bold text-blue-900 mb-6 border-b pb-3 flex items-center gap-2">
+            💼 Registrar Nuevo Contrato Laboral
+        </h1>
 
-            <label class="font-bold">
-                Empleado
-            </label>
+        <form action="/guardar_contrato" method="POST" id="formNuevoContrato">
 
-            <select
-                name="id_empleado"
-                class="w-full border rounded p-3 mt-2"
-                required>
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold text-slate-700">Empleado *</label>
+                <select name="id_empleado" required class="w-full border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="" disabled selected>-- Selecciona un empleado disponible --</option>
+                    {% for empleado in empleados %}
+                    <option value="{{ empleado[0] }}">{{ empleado[1] }}</option>
+                    {% endfor %}
+                </select>
+                <p class="mt-1 text-xs text-slate-400">Solo aparecen empleados activos que no tengan un contrato vigente.</p>
+            </div>
 
-                {% for empleado in empleados %}
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold text-slate-700">Tipo de Contrato *</label>
+                <select name="tipo_contrato" required class="w-full border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="" disabled selected>-- Selecciona el tipo de vinculación --</option>
+                    <option value="TERMINO FIJO">TERMINO FIJO</option>
+                    <option value="INDEFINIDO">INDEFINIDO</option>
+                    <option value="PRESTACION DE SERVICIOS">PRESTACIÓN DE SERVICIOS</option>
+                    <option value="APRENDIZAJE SENA">CONTRATO DE APRENDIZAJE (SENA)</option>
+                </select>
+            </div>
 
-                <option value="{{ empleado[0] }}">
-                    {{ empleado[1] }}
-                </option>
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold text-slate-700">Salario Mensual *</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-slate-400 font-medium">$</span>
+                    <input type="number" name="salario" id="salario" required min="1750905" step="0.01" placeholder="Mínimo 1,750,905"
+                           class="w-full border border-slate-300 rounded-lg p-3 pl-8 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <p class="mt-1 text-xs text-slate-400">Debe ser igual o mayor al Salario Mínimo Legal Vigente.</p>
+            </div>
 
-                {% endfor %}
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold text-slate-700">Fecha de Inicio *</label>
+                <input type="date" name="fecha_inicio" id="fecha_inicio" required class="w-full border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
 
-            </select>
+            <div class="mb-6">
+                <label class="block mb-2 font-semibold text-slate-700">Fecha de Finalización (Opcional)</label>
+                <input type="date" name="fecha_fin" id="fecha_fin" class="w-full border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500">
+                <p class="mt-1 text-xs text-slate-400">Dejar en blanco si el contrato es a término indefinido.</p>
+            </div>
 
-        </div>
+            <div class="flex justify-end items-center gap-4 border-t pt-5">
+                <a href="/contratos" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition-all text-center">
+                    Cancelar
+                </a>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all">
+                    💾 Guardar Contrato
+                </button>
+            </div>
 
-        <div class="mb-4">
+        </form>
 
-            <label class="font-bold">
-                Tipo Contrato
-            </label>
-
-            <input
-                type="text"
-                name="tipo_contrato"
-                class="w-full border rounded p-3 mt-2"
-                required>
-
-        </div>
-
-        <div class="mb-4">
-
-            <label class="font-bold">
-                Fecha Inicio
-            </label>
-
-            <input
-                type="date"
-                name="fecha_inicio"
-                class="w-full border rounded p-3 mt-2"
-                required>
-
-        </div>
-
-        <div class="mb-4">
-
-            <label class="font-bold">
-                Fecha Fin
-            </label>
-
-            <input
-                type="date"
-                name="fecha_fin"
-                class="w-full border rounded p-3 mt-2">
-
-        </div>
-
-        <div class="mb-6">
-
-            <label class="font-bold">
-                Estado
-            </label>
-
-            <select
-                name="estado"
-                class="w-full border rounded p-3 mt-2">
-
-                <option value="ACTIVO">
-                    ACTIVO
-                </option>
-
-                <option value="FINALIZADO">
-                    FINALIZADO
-                </option>
-
-            </select>
-
-        </div>
-
-        <button
-            type="submit"
-            class="bg-green-600 text-white px-6 py-3 rounded">
-
-            Guardar Contrato
-
-        </button>
-
-    </form>
-
+    </div>
 </div>
+
+<script>
+    // Validaciones extras en Frontend antes de hacer el envío al backend
+    document.getElementById('formNuevoContrato').addEventListener('submit', function(e) {
+        const fechaInicio = document.getElementById('fecha_inicio').value;
+        const fechaFin = document.getElementById('fecha_fin').value;
+        const salario = parseFloat(document.getElementById('salario').value);
+        
+        // Validar salario mínimo por seguridad
+        if (salario < 1750905) {
+            e.preventDefault();
+            alert("⚠️ El salario no puede ser inferior al mínimo establecido ($1.750.905).");
+            return;
+        }
+
+        // Validar coherencia de fechas
+        if (fechaInicio && fechaFin) {
+            if (new Date(fechaFin) <= new Date(fechaInicio)) {
+                e.preventDefault();
+                alert("⚠️ La fecha de finalización debe ser estrictamente posterior a la fecha de inicio.");
+            }
+        }
+    });
+</script>
 
 {% endblock %}

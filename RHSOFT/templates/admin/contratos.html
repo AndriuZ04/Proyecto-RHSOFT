@@ -1,129 +1,85 @@
 {% extends 'base.html' %}
 
-{% block title %}
-Contratos
-{% endblock %}
+{% block title %} Contratos - RHSOFT {% endblock %}
 
 {% block content %}
-
-<div class="flex min-h-screen">
-
+<div class="flex min-h-screen bg-slate-50">
     {% include 'partials/sidebar_admin.html' %}
 
     <main class="flex-1 p-8">
-        
-        <div class="flex justify-between items-center mb-8">
-
-            <h1 class="text-3xl font-bold text-blue-900">
-                Gestión de Contratos
-            </h1>
-
-            <a
-                href="/nuevo_contrato"
-                class="bg-blue-900 text-white px-6 py-3 rounded-lg">
-
-                + Nuevo Contrato
-
-            </a>
-
-        </div>
-
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-
-            <table class="w-full">
-
-                <thead class="bg-blue-900 text-white">
-
-                    <tr>
-
-                        <th class="p-4">ID</th>
-                        <th class="p-4">Empleado</th>
-                        <th class="p-4">Tipo</th>
-                        <th class="p-4">Inicio</th>
-                        <th class="p-4">Fin</th>
-                        <th class="p-4">Estado</th>
-                        <th class="p-4">Acciones</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                {% for contrato in contratos %}
-
-                <tr class="border-b">
-
-                    <td class="p-4">
-                        {{ contrato[0] }}
-                    </td>
-
-                    <td class="p-4">
-                        {{ contrato[1] }}
-                    </td>
-
-                    <td class="p-4">
-                        {{ contrato[2] }}
-                    </td>
-
-                    <td class="p-4">
-                        {{ contrato[3] }}
-                    </td>
-
-                    <td class="p-4">
-                        {{ contrato[4] }}
-                    </td>
-
-                    <td class="p-4">
-
-                        {% if contrato[5] == 'ACTIVO' %}
-
-                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                            ACTIVO
-                        </span>
-
-                        {% else %}
-
-                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full">
-                            FINALIZADO
-                        </span>
-
-                        {% endif %}
-
-                    </td>
-                    <td class="p-4">
-
-    <a
-        href="/editar_contrato/{{ contrato[0] }}"
-        class="bg-yellow-500 text-white px-3 py-2 rounded">
-
-        Editar
-
-    </a>
-
-    <a
-        href="/eliminar_contrato/{{ contrato[0] }}"
-        class="bg-red-600 text-white px-3 py-2 rounded ml-2"
-        onclick="return confirm('¿Desea eliminar este contrato?')">
-
-        Eliminar
-
-    </a>
-
-</td>
-
-                </tr>
-
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-lg text-white font-medium shadow {% if category == 'danger' %}bg-red-600{% elif category == 'warning' %}bg-amber-500{% else %}bg-green-600{% endif %}">
+                        {{ message }}
+                    </div>
                 {% endfor %}
-
-                </tbody>
-
-            </table>
-
+            {% endif %}
+        {% endwith %}
+        
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gestión de personal</span>
+                <h1 class="text-3xl font-bold text-blue-900">Gestión de Contratos</h1>
+            </div>
+            <a href="/nuevo_contrato" class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold shadow transition-all">
+                + Nuevo Contrato
+            </a>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow border border-slate-100">
+                <div class="text-slate-500 font-medium text-sm flex items-center gap-2">💼 Total contratos</div>
+                <div class="mt-2 font-bold text-3xl text-slate-800">{{ stats.total }}</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow border border-slate-100">
+                <div class="text-slate-500 font-medium text-sm flex items-center gap-2">🟢 Contratos activos</div>
+                <div class="mt-2 font-bold text-3xl text-emerald-600">{{ stats.activos }}</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow border border-slate-100">
+                <div class="text-slate-500 font-medium text-sm flex items-center gap-2">🔴 Contratos finalizados</div>
+                <div class="mt-2 font-bold text-3xl text-rose-600">{{ stats.inactivos }}</div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow overflow-hidden border border-slate-200">
+            <table class="w-full">
+                <thead class="bg-blue-900 text-white">
+                    <tr>
+                        <th class="p-4 text-left">ID</th>
+                        <th class="p-4 text-left">Empleado</th>
+                        <th class="p-4 text-left">Tipo</th>
+                        <th class="p-4 text-left">Inicio</th>
+                        <th class="p-4 text-left">Fin</th>
+                        <th class="p-4 text-center">Estado</th>
+                        <th class="p-4 text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for contrato in contratos %}
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-4">{{ contrato[0] }}</td>
+                        <td class="p-4 font-semibold">{{ contrato[1] }}</td>
+                        <td class="p-4 text-slate-600">{{ contrato[2] if contrato[2] else 'No asignado' }}</td>
+                        <td class="p-4 text-slate-600">{{ contrato[3] }}</td>
+                        <td class="p-4 text-slate-600">{{ contrato[4] if contrato[4] else 'Indefinido' }}</td>
+                        <td class="p-4 text-center">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold 
+                                {% if contrato[5]|upper == 'ACTIVO' %} bg-green-100 text-green-700
+                                {% elif contrato[5]|upper in ['FINALIZADO', 'TERMINADO', 'INACTIVO'] or not contrato[5] %} bg-red-100 text-red-700
+                                {% else %} bg-amber-100 text-amber-700 {% endif %}">
+                                {{ contrato[5] if contrato[5] else 'FINALIZADO' }}
+                            </span>
+                        </td>
+                        <td class="p-4 flex justify-center gap-2">
+                            <a href="/editar_contrato/{{ contrato[0] }}" class="bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-medium">Editar</a>
+                            <a href="/eliminar_contrato/{{ contrato[0] }}" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium" onclick="return confirm('¿Deseas dar de baja este contrato?')">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </main>
-
 </div>
-
 {% endblock %}

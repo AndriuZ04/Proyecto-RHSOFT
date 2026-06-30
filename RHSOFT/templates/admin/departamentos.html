@@ -1,105 +1,95 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Departamentos
+Gestión de Departamentos - RHSOFT
 {% endblock %}
 
 {% block content %}
 
-<div class="flex min-h-screen">
+<div class="flex min-h-screen bg-slate-50">
 
     {% include 'partials/sidebar_admin.html' %}
 
     <main class="flex-1 p-8">
         
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-lg text-white font-medium shadow-md {% if category == 'danger' %}bg-red-600{% elif category == 'warning' %}bg-amber-500{% else %}bg-green-600{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
         <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-900">
+                🏢 Gestión de Departamentos
+            </h1>
 
-    <h1 class="text-3xl font-bold text-blue-900">
-        Gestión de Departamentos
-    </h1>
+            <a href="/nuevo_departamento"
+               class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all flex items-center gap-2">
+                ➕ Nuevo Departamento
+            </a>
+        </div>
 
-    <a
-        href="/nuevo_departamento"
-        class="bg-blue-900 text-white px-6 py-3 rounded-lg">
-
-        + Nuevo Departamento
-
-    </a>
-
-</div>
-
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-
-            <table class="w-full">
-
+        <div class="bg-white rounded-xl shadow overflow-hidden border border-slate-200">
+            <table class="w-full border-collapse">
                 <thead class="bg-blue-900 text-white">
-
                     <tr>
-
-                        <th class="p-4 text-left">ID</th>
-                        <th class="p-4 text-left">Departamento</th>
-                        <th class="p-4 text-left">Descripción</th>
-                        <th class="p-4 text-left">Acciones</th>
-
+                        <th class="p-4 text-left font-semibold">ID</th>
+                        <th class="p-4 text-left font-semibold">Departamento</th>
+                        <th class="p-4 text-left font-semibold">Descripción</th>
+                        <th class="p-4 text-center font-semibold">N° Empleados</th>
+                        <th class="p-4 text-center font-semibold">Acciones</th>
                     </tr>
-
                 </thead>
 
-                <tbody>
-
+                <tbody class="divide-y divide-slate-200">
                     {% for departamento in departamentos %}
-
-                    <tr class="border-b">
-
-                        <td class="p-4">
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-4 font-medium text-slate-600">
                             {{ departamento[0] }}
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 font-semibold text-slate-800">
                             {{ departamento[1] }}
                         </td>
 
-                        <td class="p-4">
-                            {{ departamento[2] }}
+                        <td class="p-4 text-slate-600 max-w-xs truncate" title="{{ departamento[2] }}">
+                            {{ departamento[2] if departamento[2] else 'Sin descripción registrada' }}
                         </td>
-                        <td class="p-4">
 
-  
+                        <td class="p-4 text-center">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold {% if departamento[3] > 0 %}bg-blue-100 text-blue-700{% else %}bg-slate-100 text-slate-500{% endif %}">
+                                {{ departamento[3] }} colaboradores
+                            </span>
+                        </td>
 
-</td>
-<td class="p-4">
+                        <td class="p-4 flex justify-center items-center gap-2">
+                            <a href="/editar_departamento/{{ departamento[0] }}"
+                               class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition-all text-sm">
+                                ✏️ Editar
+                            </a>
 
-    <a
-        href="/editar_departamento/{{ departamento[0] }}"
-        class="bg-yellow-500 text-white px-4 py-2 rounded">
-
-        Editar
-
-    </a>
-
-    <a
-        href="/eliminar_departamento/{{ departamento[0] }}"
-        class="bg-red-600 text-white px-4 py-2 rounded ml-2"
-        onclick="return confirm('¿Deseas eliminar este departamento?')">
-
-        Eliminar
-
-    </a>
-
-</td>
-
+                            <a href="/eliminar_departamento/{{ departamento[0] }}"
+                               class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition-all text-sm"
+                               onclick="return confirm('⚠️ ¿Estás seguro de que deseas eliminar el departamento \n Recuerda que no debe tener personal asociado.');">
+                                🗑️ Eliminar
+                            </a>
+                        </td>
                     </tr>
-
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-slate-400 font-medium">
+                            No hay departamentos registrados en el sistema actualmente.
+                        </td>
+                    </tr>
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
-
     </main>
-
 </div>
 
 {% endblock %}

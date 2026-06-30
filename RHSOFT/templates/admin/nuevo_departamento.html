@@ -1,58 +1,83 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Nuevo Departamento
+Nuevo Departamento - RHSOFT
 {% endblock %}
 
 {% block content %}
 
-<div class="max-w-3xl mx-auto mt-10">
+<div class="max-w-3xl mx-auto mt-10 p-4">
 
-    <div class="bg-white p-8 rounded-xl shadow">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="mb-6 p-4 rounded-lg text-white font-medium shadow-md {% if category == 'danger' %}bg-red-600{% elif category == 'warning' %}bg-amber-500{% else %}bg-green-600{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-        <h1 class="text-3xl font-bold text-blue-900 mb-6">
-            Nuevo Departamento
+    <div class="bg-white p-8 rounded-xl shadow-2xl border border-slate-200">
+
+        <h1 class="text-3xl font-bold text-blue-900 mb-6 border-b pb-3 flex items-center gap-2">
+            🏢 Registrar Nuevo Departamento
         </h1>
 
-        <form action="/guardar_departamento" method="POST">
+        <form action="/guardar_departamento" method="POST" id="formNuevoDepartamento">
 
-            <div class="mb-4">
-
-                <label class="block mb-2 font-semibold">
-                    Nombre
+            <div class="mb-5">
+                <label class="block mb-2 font-semibold text-slate-700">
+                    Nombre del Departamento / Área *
                 </label>
-
                 <input
                     type="text"
                     name="nombre"
+                    id="nombre_dept"
                     required
-                    class="w-full border rounded-lg px-4 py-3">
-
+                    pattern=".*\S.*"
+                    placeholder="Ej. Recursos Humanos, Tecnología, Contabilidad"
+                    class="peer w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all invalid:border-red-500">
+                <p class="mt-1 text-xs text-red-500 invisible peer-invalid:visible">⚠️ El nombre del departamento no puede quedar vacío ni contener solo espacios.</p>
             </div>
 
-            <div class="mb-4">
-
-                <label class="block mb-2 font-semibold">
-                    Descripción
+            <div class="mb-6">
+                <label class="block mb-2 font-semibold text-slate-700">
+                    Descripción de Funciones / Notas
                 </label>
-
                 <textarea
                     name="descripcion"
-                    class="w-full border rounded-lg px-4 py-3 h-32"></textarea>
-
+                    placeholder="Describe brevemente las responsabilidades u objetivos principales de esta área..."
+                    class="w-full border border-slate-300 rounded-lg px-4 py-3 h-32 outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"></textarea>
             </div>
 
-            <button
-                class="bg-green-600 text-white px-6 py-3 rounded-lg">
-
-                Guardar Departamento
-
-            </button>
+            <div class="flex justify-end items-center gap-4 border-t pt-5">
+                <a href="/departamentos" 
+                   class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition-all text-center">
+                    Cancelar
+                </a>
+                <button
+                    type="submit"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all">
+                    💾 Guardar Departamento
+                </button>
+            </div>
 
         </form>
 
     </div>
 
 </div>
+
+<script>
+    // Pequeño control en JS para limpiar espacios adicionales antes de enviar el formulario
+    document.getElementById('formNuevoDepartamento').addEventListener('submit', function(e) {
+        const inputNombre = document.getElementById('nombre_dept');
+        if (inputNombre.value.trim() === "") {
+            e.preventDefault();
+            alert("⚠️ Por favor, ingresa un nombre válido para el departamento.");
+        }
+    });
+</script>
 
 {% endblock %}

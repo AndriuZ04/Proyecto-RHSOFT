@@ -1,131 +1,82 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Editar Contrato
+Editar Contrato - RHSOFT
 {% endblock %}
 
 {% block content %}
 
-<div class="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-xl shadow">
+<div class="max-w-3xl mx-auto mt-10 p-4">
 
-    <h1 class="text-3xl font-bold text-blue-900 mb-6">
-        Editar Contrato
-    </h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="mb-6 p-4 rounded-lg text-white font-medium shadow-md {% if category == 'danger' %}bg-red-600{% elif category == 'warning' %}bg-amber-500{% else %}bg-green-600{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-    <form
-        action="/actualizar_contrato/{{ contrato[0] }}"
-        method="POST">
+    <div class="bg-white p-8 rounded-xl shadow-2xl border border-slate-200">
 
-        <div class="mb-4">
+        <h1 class="text-3xl font-bold text-blue-900 mb-6 border-b pb-3 flex items-center gap-2">
+            📝 Editar Contrato Laboral
+        </h1>
 
-            <label class="font-bold">
-                Empleado
-            </label>
+        <form action="/actualizar_contrato/{{ contrato[0] }}" method="POST">
 
-            <select
-                name="id_empleado"
-                class="w-full border rounded p-3 mt-2">
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold text-slate-700">Empleado *</label>
+                <select name="id_empleado" required class="w-full border border-slate-300 rounded-lg p-3 bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
+                    {% for empleado in empleados %}
+                    <option value="{{ empleado[0] }}" {% if empleado[0] == contrato[1] %}selected{% endif %}>
+                        {{ empleado[1] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-                {% for empleado in empleados %}
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold text-slate-700">Tipo de Contrato *</label>
+                <select name="tipo_contrato" required class="w-full border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="TERMINO FIJO" {% if contrato[2]|upper == 'TERMINO FIJO' or contrato[2]|upper == 'FIJO' %}selected{% endif %}>TERMINO FIJO</option>
+                    <option value="INDEFINIDO" {% if contrato[2]|upper == 'INDEFINIDO' %}selected{% endif %}>INDEFINIDO</option>
+                    <option value="PRESTACION DE SERVICIOS" {% if contrato[2]|upper == 'PRESTACION DE SERVICIOS' %}selected{% endif %}>PRESTACIÓN DE SERVICIOS</option>
+                    <option value="APRENDIZAJE SENA" {% if contrato[2]|upper == 'APRENDIZAJE' or contrato[2]|upper == 'APRENDIZAJE SENA' %}selected{% endif %}>CONTRATO DE APRENDIZAJE (SENA)</option>
+                </select>
+            </div>
 
-                <option
-                    value="{{ empleado[0] }}"
-                    {% if empleado[0] == contrato[1] %}
-                    selected
-                    {% endif %}>
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold text-slate-700">Fecha de Inicio *</label>
+                <input type="date" name="fecha_inicio" value="{{ contrato[3] }}" required class="w-full border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
 
-                    {{ empleado[1] }}
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold text-slate-700">Fecha de Finalización (Opcional)</label>
+                <input type="date" name="fecha_fin" value="{{ contrato[4] if contrato[4] else '' }}" class="w-full border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
 
-                </option>
+            <div class="mb-6">
+                <label class="block mb-2 font-semibold text-slate-700">Estado del Contrato *</label>
+                <select name="estado" required class="w-full border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="ACTIVO" {% if contrato[5]|upper == 'ACTIVO' %}selected{% endif %}>ACTIVO</option>
+                    <option value="FINALIZADO" {% if contrato[5]|upper in ['FINALIZADO', 'TERMINADO', 'INACTIVO'] or not contrato[5] %}selected{% endif %}>FINALIZADO</option>
+                </select>
+            </div>
 
-                {% endfor %}
+            <div class="flex justify-end items-center gap-4 border-t pt-5">
+                <a href="/contratos" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition-all text-center">
+                    Cancelar
+                </a>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all">
+                    💾 Actualizar Contrato
+                </button>
+            </div>
 
-            </select>
+        </form>
 
-        </div>
-
-        <div class="mb-4">
-
-            <label class="font-bold">
-                Tipo Contrato
-            </label>
-
-            <input
-                type="text"
-                name="tipo_contrato"
-                value="{{ contrato[2] }}"
-                class="w-full border rounded p-3 mt-2">
-
-        </div>
-
-        <div class="mb-4">
-
-            <label class="font-bold">
-                Fecha Inicio
-            </label>
-
-            <input
-                type="date"
-                name="fecha_inicio"
-                value="{{ contrato[3] }}"
-                class="w-full border rounded p-3 mt-2">
-
-        </div>
-
-        <div class="mb-4">
-
-            <label class="font-bold">
-                Fecha Fin
-            </label>
-
-            <input
-                type="date"
-                name="fecha_fin"
-                value="{{ contrato[4] }}"
-                class="w-full border rounded p-3 mt-2">
-
-        </div>
-
-        <div class="mb-6">
-
-            <label class="font-bold">
-                Estado
-            </label>
-
-            <select
-                name="estado"
-                class="w-full border rounded p-3 mt-2">
-
-                <option
-                    value="ACTIVO"
-                    {% if contrato[5]=='ACTIVO' %}
-                    selected
-                    {% endif %}>
-                    ACTIVO
-                </option>
-
-                <option
-                    value="FINALIZADO"
-                    {% if contrato[5]=='FINALIZADO' %}
-                    selected
-                    {% endif %}>
-                    FINALIZADO
-                </option>
-
-            </select>
-
-        </div>
-
-        <button
-            type="submit"
-            class="bg-green-600 text-white px-6 py-3 rounded">
-
-            Actualizar Contrato
-
-        </button>
-
-    </form>
-
+    </div>
 </div>
 
 {% endblock %}
