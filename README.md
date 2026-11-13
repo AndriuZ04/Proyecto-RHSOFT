@@ -79,4 +79,4 @@ Son datos ficticios solo para pruebas.
 
 ## Autor
 
-Andriu David Zambrano Velasco — [LinkedIn / correo de contacto]
+Andriu David Zambrano Velasco — [LinkedIn / zandriu04@gmail.com]
