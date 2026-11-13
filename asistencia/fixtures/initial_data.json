@@ -1,0 +1,545 @@
+[
+  {
+    "model": "asistencia.departamento",
+    "pk": 1,
+    "fields": {
+      "Nombre_Departamento": "Administrativo"
+    }
+  },
+  {
+    "model": "asistencia.departamento",
+    "pk": 2,
+    "fields": {
+      "Nombre_Departamento": "Producción y Empaquetamiento"
+    }
+  },
+  {
+    "model": "asistencia.departamento",
+    "pk": 3,
+    "fields": {
+      "Nombre_Departamento": "Calidad"
+    }
+  },
+  {
+    "model": "asistencia.departamento",
+    "pk": 4,
+    "fields": {
+      "Nombre_Departamento": "Financiero"
+    }
+  },
+  {
+    "model": "asistencia.cargo",
+    "pk": 1,
+    "fields": {
+      "ID_Departamento": 1,
+      "Nombre_Cargo": "Coordinador RRHH",
+      "Descripcion_Funciones": "Gestión del talento humano",
+      "Salario_Base": "3800000.00",
+      "Hora_Inicio_Jornada": "08:00:00",
+      "Hora_Fin_Jornada": "17:00:00"
+    }
+  },
+  {
+    "model": "asistencia.cargo",
+    "pk": 2,
+    "fields": {
+      "ID_Departamento": 2,
+      "Nombre_Cargo": "Operario de Producción",
+      "Descripcion_Funciones": "Operación de maquinaria y línea de producción",
+      "Salario_Base": "1900000.00",
+      "Hora_Inicio_Jornada": "06:00:00",
+      "Hora_Fin_Jornada": "14:00:00"
+    }
+  },
+  {
+    "model": "asistencia.cargo",
+    "pk": 3,
+    "fields": {
+      "ID_Departamento": 3,
+      "Nombre_Cargo": "Inspector de Calidad",
+      "Descripcion_Funciones": "Control y aseguramiento de calidad",
+      "Salario_Base": "2900000.00",
+      "Hora_Inicio_Jornada": "07:00:00",
+      "Hora_Fin_Jornada": "16:00:00"
+    }
+  },
+  {
+    "model": "asistencia.cargo",
+    "pk": 4,
+    "fields": {
+      "ID_Departamento": 4,
+      "Nombre_Cargo": "Contador",
+      "Descripcion_Funciones": "Gestión contable y financiera",
+      "Salario_Base": "3200000.00",
+      "Hora_Inicio_Jornada": "08:00:00",
+      "Hora_Fin_Jornada": "17:00:00"
+    }
+  },
+  {
+    "model": "asistencia.cargo",
+    "pk": 5,
+    "fields": {
+      "ID_Departamento": 1,
+      "Nombre_Cargo": "Auxiliar Administrativo",
+      "Descripcion_Funciones": "Apoyo en procesos administrativos",
+      "Salario_Base": "1800000.00",
+      "Hora_Inicio_Jornada": "08:00:00",
+      "Hora_Fin_Jornada": "17:00:00"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 1,
+    "fields": {
+      "Numero_Documento": "1000000001",
+      "Nombres": "Carlos",
+      "Apellidos": "Administrador",
+      "Email": "admin@empresa.com",
+      "Telefono": "3001234567",
+      "Fecha_Nacimiento": "1985-06-15"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 2,
+    "fields": {
+      "Numero_Documento": "1000000002",
+      "Nombres": "Cristian",
+      "Apellidos": "Escobar",
+      "Email": "cristian.escobar@empresa.com",
+      "Telefono": "3001234568",
+      "Fecha_Nacimiento": "1994-11-10"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 3,
+    "fields": {
+      "Numero_Documento": "1000000003",
+      "Nombres": "Jack",
+      "Apellidos": "Pérez",
+      "Email": "jack.perez@empresa.com",
+      "Telefono": "3001234569",
+      "Fecha_Nacimiento": "1995-10-11"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 4,
+    "fields": {
+      "Numero_Documento": "1000000004",
+      "Nombres": "Alejandro",
+      "Apellidos": "Zapata",
+      "Email": "alejandro.zapata@empresa.com",
+      "Telefono": "3001234570",
+      "Fecha_Nacimiento": "1995-10-20"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 5,
+    "fields": {
+      "Numero_Documento": "1000000005",
+      "Nombres": "Mateo",
+      "Apellidos": "Rodríguez",
+      "Email": "mateo.rodriguez@empresa.com",
+      "Telefono": "3001234571",
+      "Fecha_Nacimiento": "1996-08-08"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 6,
+    "fields": {
+      "Numero_Documento": "1000000006",
+      "Nombres": "Andriu",
+      "Apellidos": "Zambrano",
+      "Email": "andriu.zambrano@empresa.com",
+      "Telefono": "3001234572",
+      "Fecha_Nacimiento": "1996-03-06"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 7,
+    "fields": {
+      "Numero_Documento": "1000000007",
+      "Nombres": "Manuel",
+      "Apellidos": "González",
+      "Email": "manuel.gonzalez@empresa.com",
+      "Telefono": "3001234573",
+      "Fecha_Nacimiento": "1995-11-24"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 8,
+    "fields": {
+      "Numero_Documento": "1000000008",
+      "Nombres": "María",
+      "Apellidos": "Sarmiento",
+      "Email": "maria.sarmiento@empresa.com",
+      "Telefono": "3001234574",
+      "Fecha_Nacimiento": "1997-02-05"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 9,
+    "fields": {
+      "Numero_Documento": "1000000009",
+      "Nombres": "Marta",
+      "Apellidos": "López",
+      "Email": "marta.lopez@empresa.com",
+      "Telefono": "3001234575",
+      "Fecha_Nacimiento": "1995-11-02"
+    }
+  },
+  {
+    "model": "asistencia.persona",
+    "pk": 10,
+    "fields": {
+      "Numero_Documento": "1000000010",
+      "Nombres": "Mariana",
+      "Apellidos": "Padilla",
+      "Email": "mariana.padilla@empresa.com",
+      "Telefono": "3001234576",
+      "Fecha_Nacimiento": "1996-03-29"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 1,
+    "fields": {
+      "ID_Persona": 1,
+      "ID_Cargo": 1,
+      "PIN": "999999",
+      "Rol": "admin",
+      "Fecha_Ingreso": "2020-01-15",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 2,
+    "fields": {
+      "ID_Persona": 2,
+      "ID_Cargo": 2,
+      "PIN": "100001",
+      "Rol": "empleado",
+      "Fecha_Ingreso": "2022-01-01",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 3,
+    "fields": {
+      "ID_Persona": 3,
+      "ID_Cargo": 3,
+      "PIN": "100002",
+      "Rol": "empleado",
+      "Fecha_Ingreso": "2022-01-01",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 4,
+    "fields": {
+      "ID_Persona": 4,
+      "ID_Cargo": 2,
+      "PIN": "100003",
+      "Rol": "empleado",
+      "Fecha_Ingreso": "2022-03-15",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 5,
+    "fields": {
+      "ID_Persona": 5,
+      "ID_Cargo": 4,
+      "PIN": "100004",
+      "Rol": "empleado",
+      "Fecha_Ingreso": "2022-05-10",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 6,
+    "fields": {
+      "ID_Persona": 6,
+      "ID_Cargo": 5,
+      "PIN": "100005",
+      "Rol": "empleado",
+      "Fecha_Ingreso": "2023-01-10",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 7,
+    "fields": {
+      "ID_Persona": 7,
+      "ID_Cargo": 3,
+      "PIN": "100006",
+      "Rol": "empleado",
+      "Fecha_Ingreso": "2023-02-20",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 8,
+    "fields": {
+      "ID_Persona": 8,
+      "ID_Cargo": 2,
+      "PIN": "100007",
+      "Rol": "empleado",
+      "Fecha_Ingreso": "2023-04-05",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 9,
+    "fields": {
+      "ID_Persona": 9,
+      "ID_Cargo": 4,
+      "PIN": "100008",
+      "Rol": "empleado",
+      "Fecha_Ingreso": "2023-06-15",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.empleado",
+    "pk": 10,
+    "fields": {
+      "ID_Persona": 10,
+      "ID_Cargo": 5,
+      "PIN": "100009",
+      "Rol": "empleado",
+      "Fecha_Ingreso": "2024-01-08",
+      "Fecha_Retiro": null,
+      "Estado_Empleado": "Activo"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 1,
+    "fields": {
+      "ID_Empleado": 1,
+      "ID_Cargo": 1,
+      "Tipo_Contrato": "Indefinido",
+      "Salario_Pactado": "3500000.00",
+      "Fecha_Inicio": "2020-01-15",
+      "Fecha_Fin": null,
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 2,
+    "fields": {
+      "ID_Empleado": 2,
+      "ID_Cargo": 2,
+      "Tipo_Contrato": "Indefinido",
+      "Salario_Pactado": "1800000.00",
+      "Fecha_Inicio": "2022-01-01",
+      "Fecha_Fin": null,
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 3,
+    "fields": {
+      "ID_Empleado": 3,
+      "ID_Cargo": 3,
+      "Tipo_Contrato": "Temporal",
+      "Salario_Pactado": "2800000.00",
+      "Fecha_Inicio": "2022-01-01",
+      "Fecha_Fin": "2024-01-01",
+      "Estado_Contrato": "Terminado"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 4,
+    "fields": {
+      "ID_Empleado": 3,
+      "ID_Cargo": 3,
+      "Tipo_Contrato": "Indefinido",
+      "Salario_Pactado": "2900000.00",
+      "Fecha_Inicio": "2024-01-02",
+      "Fecha_Fin": null,
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 5,
+    "fields": {
+      "ID_Empleado": 4,
+      "ID_Cargo": 2,
+      "Tipo_Contrato": "Temporal",
+      "Salario_Pactado": "1800000.00",
+      "Fecha_Inicio": "2022-03-15",
+      "Fecha_Fin": "2023-03-15",
+      "Estado_Contrato": "Terminado"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 6,
+    "fields": {
+      "ID_Empleado": 4,
+      "ID_Cargo": 2,
+      "Tipo_Contrato": "Indefinido",
+      "Salario_Pactado": "1900000.00",
+      "Fecha_Inicio": "2023-03-16",
+      "Fecha_Fin": null,
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 7,
+    "fields": {
+      "ID_Empleado": 5,
+      "ID_Cargo": 4,
+      "Tipo_Contrato": "Indefinido",
+      "Salario_Pactado": "3200000.00",
+      "Fecha_Inicio": "2022-05-10",
+      "Fecha_Fin": null,
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 8,
+    "fields": {
+      "ID_Empleado": 6,
+      "ID_Cargo": 5,
+      "Tipo_Contrato": "Prácticas",
+      "Salario_Pactado": "1800905.00",
+      "Fecha_Inicio": "2023-01-10",
+      "Fecha_Fin": "2023-07-10",
+      "Estado_Contrato": "Terminado"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 9,
+    "fields": {
+      "ID_Empleado": 6,
+      "ID_Cargo": 5,
+      "Tipo_Contrato": "Indefinido",
+      "Salario_Pactado": "1800905.00",
+      "Fecha_Inicio": "2023-07-11",
+      "Fecha_Fin": null,
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 10,
+    "fields": {
+      "ID_Empleado": 7,
+      "ID_Cargo": 3,
+      "Tipo_Contrato": "Indefinido",
+      "Salario_Pactado": "2800000.00",
+      "Fecha_Inicio": "2023-02-20",
+      "Fecha_Fin": null,
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 11,
+    "fields": {
+      "ID_Empleado": 8,
+      "ID_Cargo": 2,
+      "Tipo_Contrato": "Temporal",
+      "Salario_Pactado": "1800000.00",
+      "Fecha_Inicio": "2023-04-05",
+      "Fecha_Fin": "2024-04-05",
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 12,
+    "fields": {
+      "ID_Empleado": 9,
+      "ID_Cargo": 4,
+      "Tipo_Contrato": "Indefinido",
+      "Salario_Pactado": "3200000.00",
+      "Fecha_Inicio": "2023-06-15",
+      "Fecha_Fin": null,
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.contrato",
+    "pk": 13,
+    "fields": {
+      "ID_Empleado": 10,
+      "ID_Cargo": 5,
+      "Tipo_Contrato": "Prácticas",
+      "Salario_Pactado": "1800905.00",
+      "Fecha_Inicio": "2024-01-08",
+      "Fecha_Fin": "2024-07-08",
+      "Estado_Contrato": "Vigente"
+    }
+  },
+  {
+    "model": "asistencia.sstaccidente",
+    "pk": 1,
+    "fields": {
+      "ID_Empleado": 2,
+      "Fecha_Accidente": "2025-03-05",
+      "Tipo_Accidente": "Caída",
+      "Descripcion": "Resbalón en piso mojado cerca de la línea de producción",
+      "Accion_Inmediata": "Primeros auxilios y reporte a SST",
+      "Fecha_Reporte": "2025-03-05"
+    }
+  },
+  {
+    "model": "asistencia.sstaccidente",
+    "pk": 2,
+    "fields": {
+      "ID_Empleado": 4,
+      "Fecha_Accidente": "2025-04-12",
+      "Tipo_Accidente": "Corte",
+      "Descripcion": "Herida leve con herramienta de corte",
+      "Accion_Inmediata": "Curación y vendaje",
+      "Fecha_Reporte": "2025-04-12"
+    }
+  },
+  {
+    "model": "asistencia.sstaccidente",
+    "pk": 3,
+    "fields": {
+      "ID_Empleado": 8,
+      "Fecha_Accidente": "2025-05-20",
+      "Tipo_Accidente": "Golpe",
+      "Descripcion": "Golpe contra maquinaria al desplazarse",
+      "Accion_Inmediata": "Evaluación médica y reposo",
+      "Fecha_Reporte": "2025-05-20"
+    }
+  }
+]

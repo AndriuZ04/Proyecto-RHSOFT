@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}RHSOFT{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul-oscuro : #355872;
+    --azul-medio  : #7aaace;
+    --azul-claro  : #9cd5ff;
+    --blanco-roto : #f7f8f0;
+    --texto       : #1e3344;
+    --fondo       : #eef2f6;
+    --sombra      : 0 4px 24px rgba(53,88,114,.12);
+    --verde       : #27ae60;
+    --naranja     : #e67e22;
+    --rojo        : #c0392b;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--fondo); color: var(--texto); }
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% extends "asistencia/base.html" %}
+{% block title %}Restablecer contraseña — RHSOFT{% endblock %}
+
+{% block extra_head %}
+<style>
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--azul-oscuro);
+  }
+  .card {
+    background: var(--blanco-roto);
+    border-radius: 24px;
+    padding: 32px 40px;
+    width: min(460px, 94vw);
+    box-shadow: var(--sombra);
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 5px;
+    background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio), var(--azul-claro));
+  }
+  h2 { font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--texto); margin-bottom:8px; }
+  .subtitle { font-size:.92rem; color:var(--azul-oscuro); opacity:.65; margin-bottom:28px; }
+  label { display:block; font-size:.82rem; font-weight:600; color:var(--azul-oscuro); letter-spacing:.05em; text-transform:uppercase; margin-bottom:10px; }
+  .text-input { width:100%; padding:14px 16px; border:2px solid rgba(53,88,114,.2); border-radius:12px; background:white; font-size:1rem; color:var(--texto); outline:none; margin-bottom:20px; box-sizing:border-box; font-family:'DM Sans',sans-serif; }
+  .btn { width:100%; padding:16px; background:var(--azul-oscuro); color:var(--blanco-roto); border:none; border-radius:14px; font-size:1rem; font-weight:600; cursor:pointer; }
+  .btn:hover { background:#2a4860; }
+  .msg-err { background:#fff0f0; border:1.5px solid #f5b8b8; color:var(--rojo); border-radius:10px; padding:12px 16px; font-size:.87rem; margin-bottom:20px; }
+  .back-link { text-align:center; margin-top:18px; font-size:.85rem; }
+  .back-link a { color:var(--azul-oscuro); opacity:.75; text-decoration:none; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="card">
+  {% if token_valido %}
+    <h2>Crea tu<br><em>nueva contraseña</em></h2>
+    <p class="subtitle">Ingresa una contraseña nueva para tu cuenta.</p>
+    {% if error %}<div class="msg-err">{{ error }}</div>{% endif %}
+    <form method="POST">
+      {% csrf_token %}
+      <label>Nueva contraseña</label>
+      <input type="password" name="password" class="text-input" placeholder="••••••••" required>
+      <label>Confirmar contraseña</label>
+      <input type="password" name="password_confirm" class="text-input" placeholder="••••••••" required>
+      <button type="submit" class="btn">Cambiar contraseña →</button>
+    </form>
+  {% else %}
+    <h2>Enlace<br><em>no válido</em></h2>
+    <div class="msg-err">{{ error }}</div>
+    <div class="back-link">
+      <a href="{% url 'password_reset_request' %}">Solicitar un nuevo enlace</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
