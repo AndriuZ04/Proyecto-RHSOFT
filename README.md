@@ -1,119 +1,82 @@
-# RHSOFT — Migración PHP → Django
+# RHSOFT
 
-Sistema de gestión de asistencia y empleados migrado a Python/Django.
+Sistema web de gestión de recursos humanos desarrollado con Python/Django y MySQL. Proyecto de formación del SENA (tecnólogo en desarrollo de software), con cumplimiento de la normativa laboral colombiana.
 
-## Estructura del proyecto
+## Funcionalidades
+
+- Inicio de sesión con correo y contraseña (contraseñas con hash)
+- Recuperación de contraseña por correo
+- Registro y control de asistencia
+- Gestión de empleados, cargos y capacitaciones
+- Evaluaciones de desempeño
+- Postulaciones y selección de candidatos
+- Panel de administración y perfil de usuario
+- [Nómina / prestaciones, si aplica]
+
+## Stack
+
+Python 3.10+ · Django · MySQL/MariaDB · HTML/CSS · Arquitectura MVT con ORM de Django
+
+## Estructura
 
 ```
-rhsoft/
 ├── manage.py
 ├── requirements.txt
-├── rhsoft/                  ← Configuración del proyecto
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-└── asistencia/              ← Tu módulo (equivale a los .php originales)
-    ├── models.py            ← Tablas de la BD como clases Python
-    ├── views.py             ← Lógica (index.php + registro.php + admin.php)
-    ├── urls.py              ← Rutas
-    └── templates/
-        └── asistencia/
-            ├── base.html
-            ├── login.html   ← index.php
-            ├── registro.html← registro.php
-            └── admin.html   ← admin.php
+├── seed_data.py          # datos de demostración
+├── .env.example          # variables de entorno requeridas
+├── rhsoft/               # configuración (settings, urls, wsgi)
+└── asistencia/           # app principal
+    ├── models.py
+    ├── views.py
+    ├── urls.py
+    ├── fixtures/
+    ├── migrations/
+    └── templates/asistencia/
 ```
 
-## Instalación paso a paso
+## Instalación
 
-### 1. Requisitos previos
-- Python 3.10 o superior
-- XAMPP corriendo (MySQL/MariaDB)
-- La base de datos `gestion_empleados` ya importada
-
-### 2. Instalar dependencias
-
+1. Clonar y crear entorno virtual:
 ```bash
-# Abre una terminal en la carpeta rhsoft/
+git clone https://github.com/AndriuZ04/Proyecto-RHSOFT.git
+cd Proyecto-RHSOFT
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> Si hay error con mysqlclient en Windows, instala primero:
-> `pip install mysqlclient` desde https://www.lfd.uci.edu/~gohlke/pythonlibs/
-
-### 3. Configurar la base de datos
-
-Abre `rhsoft/settings.py` y ajusta si es necesario:
-```python
-DATABASES = {
-    'default': {
-        'NAME':     'gestion_empleados',
-        'USER':     'root',
-        'PASSWORD': '',   # ← tu contraseña si tienes
-        'HOST':     'localhost',
-        'PORT':     '3306',
-    }
-}
+2. Crear la base de datos en MySQL:
+```sql
+CREATE DATABASE gestion_empleados CHARACTER SET utf8mb4;
 ```
 
-### 4. Preparar sesiones de Django
-
+3. Configurar variables de entorno:
 ```bash
-python manage.py migrate --run-syncdb
+cp .env.example .env
+```
+Completar en `.env`: `DB_PASSWORD`, `SECRET_KEY`, `EMAIL_HOST_USER` y `EMAIL_HOST_PASSWORD` (este último solo para el envío de correos).
+
+4. Migrar y cargar datos de prueba:
+```bash
+python manage.py migrate
+python seed_data.py
 ```
 
-Esto crea la tabla de sesiones en tu BD existente sin tocar las demás tablas.
-
-### 5. Correr el servidor
-
+5. Ejecutar:
 ```bash
 python manage.py runserver
 ```
+Abrir http://127.0.0.1:8000/
 
-Abre en el navegador: **http://127.0.0.1:8000/**
+## Credenciales de demostración
 
-### 6. Iniciar sesión
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Empleado | camilo.rodriguez@rhsoft.com | Empleado2026 |
+| [Admin] | [correo del admin] | [contraseña] |
 
-- **Admin:** PIN `999999`
-- **Empleado de prueba:** PIN `123456`
+Son datos ficticios solo para pruebas.
 
----
+## Autor
 
-## Equivalencias PHP → Python
-
-| PHP              | Django/Python           |
-|------------------|------------------------|
-| `config.php`     | `settings.py`          |
-| `index.php`      | `views.login_view`     |
-| `registro.php`   | `views.registro_view`  |
-| `admin.php`      | `views.admin_view`     |
-| `PDO + SQL`      | Django ORM (models.py) |
-| `$_SESSION`      | `request.session`      |
-| `$_POST`         | `request.POST`         |
-| `header(Location)`| `redirect()`          |
-| `json_encode`    | `JsonResponse()`       |
-| `<?= $var ?>`    | `{{ variable }}`       |
-
----
-
-## Agregar módulos de compañeros
-
-En `rhsoft/settings.py`:
-```python
-INSTALLED_APPS = [
-    ...
-    'asistencia',
-    'nomina',      # ← módulo de compañero 1
-    'sst_externo', # ← módulo de compañero 2
-]
-```
-
-En `rhsoft/urls.py`:
-```python
-urlpatterns = [
-    path('',        include('asistencia.urls')),
-    path('nomina/', include('nomina.urls')),
-]
-```
-
-Cada módulo es una carpeta con su propio `models.py`, `views.py`, `urls.py` y `templates/`.
+Andriu David Zambrano Velasco — [LinkedIn / correo de contacto]
